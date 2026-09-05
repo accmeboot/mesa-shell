@@ -65,7 +65,7 @@ Rectangle {
           Layout.fillWidth: true
           Layout.maximumWidth: Math.ceil(implicitWidth)
 
-          text: modelData.appName
+          text: modelData.appName || "Unknown"
           color: {
             switch (modelData.urgency) {
               case NotificationUrgency.Critical:
