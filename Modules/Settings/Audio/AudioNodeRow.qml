@@ -97,8 +97,6 @@ RowLayout {
     Layout.alignment: Qt.AlignVCenter
 
     icon: root.node.audio.muted ? root.mutedIcon : root.icon
-    iconSize: Math.round(ConfigService.font.size * 1.2)
-    verticalPadding: Math.round(ConfigService.spacing / 2)
     contentColor: root.node.audio.muted ? ConfigService.colors.critical : ConfigService.colors.foreground
 
     onClicked: root.node.audio.muted = !root.node.audio.muted
