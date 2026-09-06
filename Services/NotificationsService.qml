@@ -123,8 +123,7 @@ Singleton {
       actions: notification.actions.map((action, index) => {
         return {
           id: makeNotificationActionId(notification.id, index),
-          identifier: action.identifier // this is icon name
-          ,
+          identifier: action.identifier,
           text: action.text
         };
       })

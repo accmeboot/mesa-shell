@@ -6,125 +6,111 @@ import qs.Services
 import qs.Components
 import qs.Modules.Settings.Common
 
-ColumnLayout {
+PanelSection {
   id: root
 
   readonly property var devices: Networking.devices.values.filter(device => device.type === DeviceType.Wired)
   readonly property alias count: repeater.count
 
-  Layout.fillWidth: true
+  property WiredDevice selectedDevice: null
 
-  spacing: ConfigService.border
+  title: "Ethernet"
+  visible: root.count > 0
 
   Repeater {
     id: repeater
 
     model: root.devices
 
-    SettingsCard {
-      id: card
+    ColumnLayout {
+      id: entry
 
       required property WiredDevice modelData
 
-      InfoGrid {
-        MesaText {
-          Layout.alignment: Qt.AlignVCenter
+      readonly property bool selected: root.selectedDevice === entry.modelData
 
-          text: card.modelData.name
-          font.bold: true
-        }
+      Layout.fillWidth: true
 
-        RowLayout {
-          Layout.fillWidth: true
+      spacing: 0
 
-          spacing: ConfigService.spacing
+      PanelRow {
+        label: entry.modelData.name
+        value: {
+          if (!entry.modelData.hasLink) return "No cable";
 
-          InfoValue {
-            text: {
-              if (!card.modelData.hasLink) return "No cable";
-
-              switch (card.modelData.state) {
-              case ConnectionState.Connected: return "Connected";
-              case ConnectionState.Connecting: return "Connecting";
-              case ConnectionState.Disconnecting: return "Disconnecting";
-              case ConnectionState.Disconnected: return "Disconnected";
-              default: return "Unknown";
-              }
-            }
-            color: {
-              const colors = ConfigService.colors;
-
-              if (!card.modelData.hasLink) return colors.foreground;
-
-              switch (card.modelData.state) {
-              case ConnectionState.Connecting:
-              case ConnectionState.Disconnecting:
-                return colors.attention;
-              default:
-                return ColorService.status(card.modelData.connected);
-              }
-            }
-          }
-
-          MesaButton {
-            id: connectButton
-
-            readonly property Network network: card.modelData.network
-
-            Layout.alignment: Qt.AlignVCenter
-
-            visible: card.modelData.connected || connectButton.network !== null
-            enabled: !(connectButton.network && connectButton.network.stateChanging)
-            text: card.modelData.connected ? "Disconnect" : "Connect"
-
-            onClicked: {
-              if (card.modelData.connected) card.modelData.disconnect();
-              else connectButton.network.connect();
-            }
+          switch (entry.modelData.state) {
+          case ConnectionState.Connected: return "Connected";
+          case ConnectionState.Connecting: return "Connecting";
+          case ConnectionState.Disconnecting: return "Disconnecting";
+          case ConnectionState.Disconnected: return "Disconnected";
+          default: return "Unknown";
           }
         }
+        valueColor: {
+          const colors = ConfigService.colors;
 
-        InfoLabel {
-          visible: macAddress.visible
+          if (!entry.modelData.hasLink) return colors.on_surface;
 
-          text: "MAC"
+          switch (entry.modelData.state) {
+          case ConnectionState.Connecting:
+          case ConnectionState.Disconnecting:
+            return colors.attention;
+          default:
+            return ColorService.status(entry.modelData.connected);
+          }
         }
+        interactive: true
+        selected: entry.selected
 
-        InfoValue {
-          id: macAddress
+        onClicked: root.selectedDevice = entry.selected ? null : entry.modelData
+      }
 
-          visible: card.modelData.address !== ""
+      PanelRow {
+        visible: entry.selected
+        selected: true
+        label: "MAC"
+        value: entry.modelData.address || "Unknown"
+      }
 
-          text: card.modelData.address
-        }
+      PanelRow {
+        visible: entry.selected && entry.modelData.hasLink && entry.modelData.linkSpeed > 0
+        selected: true
+        label: "Link"
+        value: `${entry.modelData.linkSpeed} Mbps`
+      }
 
-        InfoLabel {
-          visible: link.visible
-
-          text: "Link"
-        }
-
-        InfoValue {
-          id: link
-
-          visible: card.modelData.hasLink && card.modelData.linkSpeed > 0
-
-          text: `${card.modelData.linkSpeed} Mbps`
-        }
-
-        InfoLabel {
-          Layout.topMargin: ConfigService.spacing
-
-          text: "Autoconnect"
-        }
+      PanelRow {
+        visible: entry.selected
+        selected: true
+        label: "Autoconnect"
 
         MesaIndicator {
-          Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-          Layout.topMargin: ConfigService.spacing
+          Layout.alignment: Qt.AlignVCenter
 
-          checked: card.modelData.autoconnect
+          checked: entry.modelData.autoconnect
 
-          onToggled: card.modelData.autoconnect = !card.modelData.autoconnect
+          onToggled: entry.modelData.autoconnect = !entry.modelData.autoconnect
+        }
+      }
+
+      PanelRow {
+        id: actions
+
+        readonly property Network network: entry.modelData.network
+
+        visible: entry.selected && (entry.modelData.connected || actions.network !== null)
+        selected: true
+
+        MesaButton {
+          Layout.alignment: Qt.AlignVCenter
+
+          enabled: !(actions.network && actions.network.stateChanging)
+          text: entry.modelData.connected ? "Disconnect" : "Connect"
+
+          onClicked: {
+            if (entry.modelData.connected) entry.modelData.disconnect();
+            else actions.network.connect();
+          }
         }
       }
     }

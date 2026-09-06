@@ -5,7 +5,7 @@ import Quickshell.Services.Pipewire
 import qs.Services
 import qs.Components
 
-ColumnLayout {
+RowLayout {
   id: root
 
   required property PwNode node
@@ -28,7 +28,11 @@ ColumnLayout {
 
   signal activated
 
-  spacing: 0
+  Layout.fillWidth: true
+  Layout.leftMargin: ConfigService.spacing
+  Layout.rightMargin: ConfigService.spacing
+
+  spacing: Math.round(ConfigService.spacing / 2)
 
   TextMetrics {
     id: volumeMetrics
@@ -37,62 +41,66 @@ ColumnLayout {
     text: "100%"
   }
 
-  RowLayout {
+  MesaIndicator {
+    Layout.alignment: Qt.AlignVCenter
+
+    visible: root.selectable
+    radio: true
+    checked: root.isDefault
+
+    onToggled: root.activated()
+  }
+
+  MesaText {
     Layout.fillWidth: true
+    Layout.alignment: Qt.AlignVCenter
 
-    spacing: ConfigService.spacing
+    text: root.displayName
+    color: root.selectable && !root.isDefault ? ConfigService.colors.on_surface : ConfigService.colors.foreground
+    elide: Text.ElideRight
 
-    MesaIndicator {
-      radio: true
-      checked: root.isDefault
-      visible: root.selectable
-    }
-
-    MesaText {
-      id: label
-      Layout.fillWidth: true
-      text: root.displayName
-      elide: Text.ElideRight
-    }
-
-    MouseArea {
-      anchors.fill: parent
+    HoverHandler {
       enabled: root.selectable
-      hoverEnabled: true
       cursorShape: Qt.PointingHandCursor
-      onClicked: root.activated()
+    }
+
+    TapHandler {
+      enabled: root.selectable
+
+      onTapped: root.activated()
     }
   }
 
-  RowLayout {
-    Layout.fillWidth: true
+  MesaSlider {
+    id: volume
 
-    MesaSlider {
-      id: volume
+    Layout.preferredWidth: Math.round(ConfigService.font.size * 8)
+    Layout.alignment: Qt.AlignVCenter
 
-      Layout.fillWidth: true
+    value: root.node.audio.volume
 
-      value: root.node.audio.volume
+    onMoved: root.node.audio.volume = volume.value
+  }
 
-      onMoved: root.node.audio.volume = volume.value
-    }
+  MesaText {
+    id: percent
 
-    MesaText {
-      id: percent
+    Layout.preferredWidth: Math.ceil(volumeMetrics.advanceWidth)
+    Layout.alignment: Qt.AlignVCenter
 
-      Layout.preferredWidth: Math.ceil(volumeMetrics.advanceWidth)
+    text: `${Math.round(volume.value * 100)}%`
+    horizontalAlignment: Text.AlignRight
+    color: ConfigService.colors.on_surface
+  }
 
-      text: `${Math.round(volume.value * 100)}%`
-      horizontalAlignment: Text.AlignRight
-      color: ConfigService.colors.foreground
-    }
+  MesaButton {
+    Layout.alignment: Qt.AlignVCenter
 
-    MesaButton {
-      Layout.alignment: Qt.AlignVCenter
+    icon: root.node.audio.muted ? root.mutedIcon : root.icon
+    iconSize: Math.round(ConfigService.font.size * 1.2)
+    verticalPadding: Math.round(ConfigService.spacing / 2)
+    contentColor: root.node.audio.muted ? ConfigService.colors.critical : ConfigService.colors.foreground
 
-      icon: root.node.audio.muted ? root.mutedIcon : root.icon
-
-      onClicked: root.node.audio.muted = !root.node.audio.muted
-    }
+    onClicked: root.node.audio.muted = !root.node.audio.muted
   }
 }

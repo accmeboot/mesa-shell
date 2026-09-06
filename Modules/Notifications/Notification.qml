@@ -106,7 +106,6 @@ Rectangle {
         textFormat: Text.StyledText
       }
 
-
       Flow {
         id: actionsFlow
         Layout.fillWidth: true
@@ -131,7 +130,6 @@ Rectangle {
       }
     }
   }
-
 
   function getTime(timestamp) {
     var date = new Date(timestamp);

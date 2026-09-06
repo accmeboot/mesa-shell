@@ -6,7 +6,6 @@ import Quickshell.Services.SystemTray
 import qs.Components
 import qs.Services
 
-
 RowLayout {
   id: trayRow
 

@@ -19,4 +19,3 @@ Rectangle {
     color: ConfigService.colors.background
   }
 }
-

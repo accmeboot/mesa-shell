@@ -1,4 +1,5 @@
 import Quickshell
+import Quickshell.Wayland
 import QtQuick
 
 import qs.Services
@@ -6,39 +7,68 @@ import qs.Services
 Scope {
   id: root
 
-  LazyLoader {
-    id: loader
+  readonly property var focusedScreen: {
+    const screens = Quickshell.screens;
 
+    return screens.find(screen => screen.name === SwayService.focusedOutput) ?? screens[0] ?? null;
+  }
+
+  LazyLoader {
     activeAsync: SettingsService.isOpen
 
-    FloatingWindow {
-      title: "Settings"
+    Scope {
+      Variants {
+        model: Quickshell.screens
 
-      implicitWidth: 600
-      implicitHeight: 600
+        PanelWindow {
+          required property var modelData
 
-      property size size: Qt.size(implicitWidth, implicitHeight)
+          screen: modelData
+          color: "transparent"
+          exclusionMode: ExclusionMode.Ignore
 
-      minimumSize: size
-      maximumSize: size
+          WlrLayershell.layer: WlrLayer.Top
+          WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+          WlrLayershell.namespace: "mesa-settings-catcher"
 
-      color: ConfigService.colors.background
+          anchors {
+            top: true
+            bottom: true
+            left: true
+            right: true
+          }
 
-      onClosed: SettingsService.close()
+          MouseArea {
+            anchors.fill: parent
 
-      Rectangle {
-        id: background
+            onClicked: SettingsService.close()
+          }
+        }
+      }
 
-        anchors.fill: parent
+      PanelWindow {
+        id: window
 
-        color: ConfigService.colors.background
+        screen: root.focusedScreen
+        color: "transparent"
+        exclusiveZone: 0
 
-        border.color: ConfigService.colors.on_surface
-        border.width: ConfigService.border
+        WlrLayershell.layer: WlrLayer.Overlay
+        WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+        WlrLayershell.namespace: "mesa-settings"
 
-        Sections {
+        implicitWidth: Math.round(ConfigService.font.size * 34)
+        implicitHeight: Math.min(panel.implicitHeight, window.screen ? window.screen.height * 0.8 : panel.implicitHeight)
+
+        anchors {
+          top: true
+          right: true
+        }
+
+        Panel {
+          id: panel
+
           anchors.fill: parent
-          anchors.margins: background.border.width
         }
       }
     }

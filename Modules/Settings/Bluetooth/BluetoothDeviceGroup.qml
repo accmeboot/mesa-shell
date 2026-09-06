@@ -6,7 +6,7 @@ import qs.Services
 import qs.Components
 import qs.Modules.Settings.Common
 
-ColumnLayout {
+PanelSection {
   id: root
 
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
@@ -19,14 +19,11 @@ ColumnLayout {
   readonly property var available: root.devices.filter(device => !device.paired && device.deviceName !== "")
   readonly property var listed: root.scanning ? root.paired.concat(root.available) : root.paired
   readonly property bool scanning: root.adapter !== null && root.adapter.discovering
-  readonly property alias count: repeater.count
 
   property BluetoothDevice selectedDevice: null
   property BluetoothDevice pairingDevice: null
 
-  Layout.fillWidth: true
-
-  spacing: ConfigService.border
+  title: "Devices"
 
   Component.onDestruction: if (root.adapter) root.adapter.discovering = false
 
@@ -55,175 +52,167 @@ ColumnLayout {
     }
   }
 
-  Repeater {
-    id: repeater
+  PanelRow {
+    visible: root.listed.length === 0
+    indented: true
+    label: root.scanning ? "Scanning" : "No devices"
+    labelColor: root.scanning ? ConfigService.colors.attention : ConfigService.colors.on_surface
+  }
 
+  Repeater {
     model: root.listed
 
-    SettingsCard {
-      id: card
+    ColumnLayout {
+      id: entry
 
       required property BluetoothDevice modelData
 
-      readonly property bool selected: root.selectedDevice === card.modelData
+      readonly property bool selected: root.selectedDevice === entry.modelData
 
-      highlighted: card.selected
+      Layout.fillWidth: true
 
-      RowLayout {
-        Layout.fillWidth: true
+      spacing: 0
 
-        spacing: ConfigService.spacing
+      PanelRow {
+        label: entry.modelData.name
+        value: {
+          if (entry.modelData.pairing) return "Pairing";
+          if (!entry.modelData.paired) return "Not paired";
 
-        HoverHandler {
-          cursorShape: Qt.PointingHandCursor
+          switch (entry.modelData.state) {
+          case BluetoothDeviceState.Connected: return "Connected";
+          case BluetoothDeviceState.Connecting: return "Connecting";
+          case BluetoothDeviceState.Disconnecting: return "Disconnecting";
+          default: return "Disconnected";
+          }
+        }
+        valueColor: {
+          const colors = ConfigService.colors;
+
+          if (entry.modelData.pairing) return colors.attention;
+          if (!entry.modelData.paired) return colors.on_surface;
+
+          switch (entry.modelData.state) {
+          case BluetoothDeviceState.Connected: return colors.ok;
+          case BluetoothDeviceState.Connecting:
+          case BluetoothDeviceState.Disconnecting:
+            return colors.attention;
+          default: return colors.on_surface;
+          }
+        }
+        interactive: true
+        selected: entry.selected
+
+        leading: Item {
+          implicitWidth: dot.implicitWidth
+          implicitHeight: dot.implicitHeight
+
+          MesaIcon {
+            id: dot
+
+            visible: entry.modelData.connected
+            name: "dot"
+            size: Math.round(ConfigService.font.size * 0.5)
+            color: ConfigService.colors.ok
+          }
         }
 
-        TapHandler {
-          onTapped: root.selectedDevice = card.selected ? null : card.modelData
-        }
-
-        MesaIcon {
-          Layout.alignment: Qt.AlignVCenter
-
-          visible: card.modelData.connected
-          name: "dot"
-          color: ConfigService.colors.ok
-          size: ConfigService.font.size * 0.5
-        }
-
-        InfoValue {
-          text: card.modelData.name
-        }
+        onClicked: root.selectedDevice = entry.selected ? null : entry.modelData
 
         MesaText {
           Layout.alignment: Qt.AlignVCenter
 
-          visible: card.modelData.connected && card.modelData.batteryAvailable
-          text: `${Math.round(card.modelData.battery * 100)}%`
-          color: ColorService.threshold(card.modelData.battery * 100, 30, 15)
+          visible: entry.modelData.connected && entry.modelData.batteryAvailable
+          text: `${Math.round(entry.modelData.battery * 100)}%`
+          color: ColorService.threshold(entry.modelData.battery * 100, 30, 15)
         }
+      }
 
-        MesaText {
+      PanelRow {
+        visible: entry.selected
+        selected: true
+        indented: true
+        label: "Address"
+        value: entry.modelData.address
+      }
+
+      PanelRow {
+        visible: entry.selected && entry.modelData.paired
+        selected: true
+        indented: true
+        label: "Connect automatically"
+
+        MesaIndicator {
           Layout.alignment: Qt.AlignVCenter
 
-          text: {
-            if (card.modelData.pairing) return "Pairing";
-            if (!card.modelData.paired) return "Not paired";
+          checked: entry.modelData.trusted
 
-            switch (card.modelData.state) {
-            case BluetoothDeviceState.Connected: return "Connected";
-            case BluetoothDeviceState.Connecting: return "Connecting";
-            case BluetoothDeviceState.Disconnecting: return "Disconnecting";
-            default: return "Disconnected";
-            }
-          }
-          color: {
-            const colors = ConfigService.colors;
-
-            if (card.modelData.pairing) return colors.attention;
-            if (!card.modelData.paired) return colors.foreground;
-
-            switch (card.modelData.state) {
-            case BluetoothDeviceState.Connected: return colors.ok;
-            case BluetoothDeviceState.Connecting:
-            case BluetoothDeviceState.Disconnecting:
-              return colors.attention;
-            default: return colors.foreground;
-            }
-          }
+          onToggled: entry.modelData.trusted = !entry.modelData.trusted
         }
       }
 
-      InfoGrid {
-        visible: card.selected
-
-        InfoLabel {
-          text: "Address"
-        }
-
-        InfoValue {
-          text: card.modelData.address
-        }
-
-        InfoLabel {
-          visible: card.modelData.paired
-
-          text: "Connect automatically"
-        }
+      PanelRow {
+        visible: entry.selected && entry.modelData.paired
+        selected: true
+        indented: true
+        label: "Wake from sleep"
 
         MesaIndicator {
-          Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+          Layout.alignment: Qt.AlignVCenter
 
-          visible: card.modelData.paired
-          checked: card.modelData.trusted
+          checked: entry.modelData.wakeAllowed
 
-          onToggled: card.modelData.trusted = !card.modelData.trusted
-        }
-
-        InfoLabel {
-          visible: card.modelData.paired
-
-          text: "Wake from sleep"
-        }
-
-        MesaIndicator {
-          Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-
-          visible: card.modelData.paired
-          checked: card.modelData.wakeAllowed
-
-          onToggled: card.modelData.wakeAllowed = !card.modelData.wakeAllowed
+          onToggled: entry.modelData.wakeAllowed = !entry.modelData.wakeAllowed
         }
       }
 
-      RowLayout {
-        Layout.fillWidth: true
-
-        visible: card.selected
-        spacing: ConfigService.spacing
+      PanelRow {
+        visible: entry.selected
+        selected: true
+        indented: true
 
         MesaButton {
           Layout.alignment: Qt.AlignVCenter
 
-          visible: card.modelData.paired
-          enabled: card.modelData.state === BluetoothDeviceState.Connected || card.modelData.state === BluetoothDeviceState.Disconnected
-          text: card.modelData.connected ? "Disconnect" : "Connect"
+          visible: entry.modelData.paired
+          enabled: entry.modelData.state === BluetoothDeviceState.Connected || entry.modelData.state === BluetoothDeviceState.Disconnected
+          text: entry.modelData.connected ? "Disconnect" : "Connect"
 
           onClicked: {
-            if (card.modelData.connected) card.modelData.disconnect();
-            else card.modelData.connect();
+            if (entry.modelData.connected) entry.modelData.disconnect();
+            else entry.modelData.connect();
           }
         }
 
         MesaButton {
           Layout.alignment: Qt.AlignVCenter
 
-          visible: card.modelData.paired
+          visible: entry.modelData.paired
           text: "Forget"
 
           onClicked: {
-            if (card.selected) root.selectedDevice = null;
-            card.modelData.forget();
+            if (entry.selected) root.selectedDevice = null;
+            entry.modelData.forget();
           }
         }
 
         MesaButton {
           Layout.alignment: Qt.AlignVCenter
 
-          visible: !card.modelData.paired
+          visible: !entry.modelData.paired
           enabled: pairingAgent.registered
-          text: card.modelData.pairing ? "Cancel" : "Pair"
-          contentColor: card.modelData.pairing ? ConfigService.colors.attention : ConfigService.colors.foreground
+          text: entry.modelData.pairing ? "Cancel" : "Pair"
+          contentColor: entry.modelData.pairing ? ConfigService.colors.attention : ConfigService.colors.foreground
 
           onClicked: {
-            if (card.modelData.pairing) {
-              card.modelData.cancelPair();
+            if (entry.modelData.pairing) {
+              entry.modelData.cancelPair();
               root.pairingDevice = null;
               return;
             }
 
-            root.pairingDevice = card.modelData;
-            card.modelData.pair();
+            root.pairingDevice = entry.modelData;
+            entry.modelData.pair();
           }
         }
       }

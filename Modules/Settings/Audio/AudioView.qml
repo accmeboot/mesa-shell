@@ -2,6 +2,7 @@ import QtQuick.Layouts
 import Quickshell.Services.Pipewire
 
 import qs.Services
+import qs.Modules.Settings.Common
 
 ColumnLayout {
   id: root
@@ -18,7 +19,7 @@ ColumnLayout {
     return monitor === true || monitor === "true";
   }
 
-  spacing: ConfigService.spacing * 3
+  spacing: ConfigService.spacing
 
   PwObjectTracker {
     objects: root.nodes
@@ -57,5 +58,8 @@ ColumnLayout {
 
     nodes: root.recordings
     selectable: false
+
+    icon: "microphone"
+    mutedIcon: "microphone-off"
   }
 }

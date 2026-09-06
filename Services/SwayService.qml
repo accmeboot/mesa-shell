@@ -7,7 +7,9 @@ import Quickshell.Io
 Singleton {
   id: root
 
-  property string mode: "defulat" // resize
+  readonly property string focusedOutput: I3.focusedMonitor?.name ?? ""
+
+  property string mode: "defulat"
 
   function getWorkspacesForMonitor(monitor: string): var {
     const existingWorkspaces = I3.workspaces.values

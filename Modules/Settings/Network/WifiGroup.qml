@@ -6,19 +6,18 @@ import qs.Services
 import qs.Components
 import qs.Modules.Settings.Common
 
-ColumnLayout {
+PanelSection {
   id: root
 
   readonly property WifiDevice device: Networking.devices.values.find(device => device.type === DeviceType.Wifi) || null
-  readonly property alias count: repeater.count
+  readonly property var networks: root.device && Networking.wifiEnabled ? root.device.networks.values : []
 
   property WifiNetwork selectedNetwork: null
   property WifiNetwork promptedNetwork: null
   property string password: ""
 
-  Layout.fillWidth: true
-
-  spacing: ConfigService.border
+  title: "Wi-Fi"
+  visible: root.device !== null
 
   onSelectedNetworkChanged: {
     if (root.selectedNetwork !== root.promptedNetwork) root.promptedNetwork = null;
@@ -29,43 +28,62 @@ ColumnLayout {
   Binding {
     target: root.device
     property: "scannerEnabled"
-    value: true
+    value: Networking.wifiEnabled
+  }
+
+  PanelRow {
+    indented: true
+    label: "Enabled"
+    value: Networking.wifiHardwareEnabled ? "" : "Blocked by rfkill"
+    valueColor: ConfigService.colors.critical
+
+    MesaIndicator {
+      Layout.alignment: Qt.AlignVCenter
+
+      enabled: Networking.wifiHardwareEnabled
+      checked: Networking.wifiEnabled
+
+      onToggled: Networking.wifiEnabled = !Networking.wifiEnabled
+    }
+  }
+
+  PanelRow {
+    visible: Networking.wifiEnabled && root.networks.length === 0
+    indented: true
+    label: "Scanning"
+    labelColor: ConfigService.colors.attention
   }
 
   Repeater {
-    id: repeater
+    model: root.networks
 
-    model: root.device ? root.device.networks.values : []
-
-    SettingsCard {
-      id: card
+    ColumnLayout {
+      id: entry
 
       required property WifiNetwork modelData
 
       property string error: ""
 
-      readonly property bool selected: root.selectedNetwork === card.modelData
-      readonly property bool prompting: root.promptedNetwork === card.modelData
-      readonly property bool needsPassword: !card.modelData.known && card.modelData.security !== WifiSecurityType.Open && card.modelData.security !== WifiSecurityType.Owe
-
-      highlighted: card.selected
+      readonly property bool selected: root.selectedNetwork === entry.modelData
+      readonly property bool prompting: root.promptedNetwork === entry.modelData
+      readonly property bool needsPassword: !entry.modelData.known && entry.modelData.security !== WifiSecurityType.Open && entry.modelData.security !== WifiSecurityType.Owe
 
       function activate(): void {
-        const network = card.modelData;
+        const network = entry.modelData;
 
-        card.error = "";
+        entry.error = "";
 
         if (network.connected) {
           network.disconnect();
           return;
         }
 
-        if (card.prompting) {
+        if (entry.prompting) {
           network.connectWithPsk(root.password);
           return;
         }
 
-        if (card.needsPassword) {
+        if (entry.needsPassword) {
           root.promptedNetwork = network;
           return;
         }
@@ -73,83 +91,92 @@ ColumnLayout {
         network.connect();
       }
 
+      Layout.fillWidth: true
+
+      spacing: 0
+
       onSelectedChanged: {
-        if (!card.selected) card.error = "";
+        if (!entry.selected) entry.error = "";
       }
 
       Connections {
-        target: card.modelData
+        target: entry.modelData
 
         function onConnectionFailed(reason: int): void {
           switch (reason) {
           case ConnectionFailReason.NoSecrets:
-            card.error = "Wrong password";
+            entry.error = "Wrong password";
             break;
           case ConnectionFailReason.WifiAuthTimeout:
-            card.error = "Authentication timed out";
+            entry.error = "Authentication timed out";
             break;
           case ConnectionFailReason.WifiNetworkLost:
-            card.error = "Network lost";
+            entry.error = "Network lost";
             break;
           case ConnectionFailReason.WifiClientDisconnected:
-            card.error = "Disconnected";
+            entry.error = "Disconnected";
             break;
           default:
-            card.error = "Connection failed";
+            entry.error = "Connection failed";
           }
 
-          if (!card.needsPassword) return;
+          if (!entry.needsPassword) return;
 
-          root.selectedNetwork = card.modelData;
-          root.promptedNetwork = card.modelData;
+          root.selectedNetwork = entry.modelData;
+          root.promptedNetwork = entry.modelData;
         }
 
         function onConnectedChanged(): void {
-          if (!card.modelData.connected) return;
+          if (!entry.modelData.connected) return;
 
-          card.error = "";
-          if (card.prompting) root.promptedNetwork = null;
+          entry.error = "";
+          if (entry.prompting) root.promptedNetwork = null;
         }
       }
 
-      RowLayout {
-        Layout.fillWidth: true
+      PanelRow {
+        label: entry.modelData.name
+        value: {
+          switch (entry.modelData.state) {
+          case ConnectionState.Connecting: return "Connecting";
+          case ConnectionState.Disconnecting: return "Disconnecting";
+          default: return entry.modelData.connected ? "Connected" : "";
+          }
+        }
+        valueColor: entry.modelData.stateChanging ? ConfigService.colors.attention : ConfigService.colors.ok
+        interactive: true
+        selected: entry.selected
 
-        spacing: ConfigService.spacing
+        leading: Item {
+          implicitWidth: dot.implicitWidth
+          implicitHeight: dot.implicitHeight
+
+          MesaIcon {
+            id: dot
+
+            visible: entry.modelData.connected
+            name: "dot"
+            size: Math.round(ConfigService.font.size * 0.5)
+            color: ConfigService.colors.ok
+          }
+        }
+
+        onClicked: root.selectedNetwork = entry.selected ? null : entry.modelData
 
         MesaIcon {
           Layout.alignment: Qt.AlignVCenter
 
-          visible: card.modelData.connected
-          name: "dot"
-          color: ConfigService.colors.ok
-          size: ConfigService.font.size * 0.5
-        }
-
-        InfoValue {
-          text: card.modelData.name
-        }
-
-        MesaIcon {
-          Layout.alignment: Qt.AlignVCenter
-
-          name: card.modelData.security === WifiSecurityType.Open || card.modelData.security === WifiSecurityType.Owe ? "lock-open" : "lock"
-        }
-
-        HoverHandler {
-          cursorShape: Qt.PointingHandCursor
-        }
-
-        TapHandler {
-          onTapped: root.selectedNetwork = card.selected ? null : card.modelData
+          name: entry.modelData.security === WifiSecurityType.Open || entry.modelData.security === WifiSecurityType.Owe ? "lock-open" : "lock"
+          size: Math.round(ConfigService.font.size * 1.1)
+          color: ConfigService.colors.on_surface
         }
       }
 
-      RowLayout {
-        Layout.fillWidth: true
-
-        visible: card.selected
-        spacing: ConfigService.spacing
+      PanelRow {
+        visible: entry.selected
+        selected: true
+        indented: true
+        wideTrailing: true
 
         MesaInput {
           id: passwordInput
@@ -163,7 +190,7 @@ ColumnLayout {
 
           Layout.fillWidth: true
 
-          visible: card.prompting
+          visible: entry.prompting
           echoMode: TextInput.Password
           placeholderText: "Password"
           text: root.password
@@ -171,7 +198,7 @@ ColumnLayout {
           Keys.onEscapePressed: root.promptedNetwork = null
 
           onTextEdited: root.password = passwordInput.text
-          onAccepted: card.activate()
+          onAccepted: entry.activate()
           onVisibleChanged: passwordInput.restoreFocus()
 
           Component.onCompleted: Qt.callLater(passwordInput.restoreFocus)
@@ -180,42 +207,43 @@ ColumnLayout {
         MesaButton {
           Layout.alignment: Qt.AlignVCenter
 
-          enabled: !card.modelData.stateChanging
+          enabled: !entry.modelData.stateChanging
           text: {
-            switch (card.modelData.state) {
+            switch (entry.modelData.state) {
             case ConnectionState.Connecting: return "Connecting";
             case ConnectionState.Disconnecting: return "Disconnecting";
-            default: return card.modelData.connected ? "Disconnect" : "Connect";
+            default: return entry.modelData.connected ? "Disconnect" : "Connect";
             }
           }
 
-          onClicked: card.activate()
+          onClicked: entry.activate()
         }
 
         MesaButton {
           Layout.alignment: Qt.AlignVCenter
 
-          visible: card.modelData.known && !card.prompting
+          visible: entry.modelData.known && !entry.prompting
           text: "Forget"
 
-          onClicked: card.modelData.forget()
+          onClicked: entry.modelData.forget()
         }
 
         MesaButton {
           Layout.alignment: Qt.AlignVCenter
 
-          visible: card.prompting
+          visible: entry.prompting
           text: "Cancel"
 
           onClicked: root.promptedNetwork = null
         }
       }
 
-      InfoValue {
-        visible: card.error !== ""
-
-        text: card.error
-        color: ConfigService.colors.critical
+      PanelRow {
+        visible: entry.error !== ""
+        selected: entry.selected
+        indented: true
+        label: entry.error
+        labelColor: ConfigService.colors.critical
       }
     }
   }

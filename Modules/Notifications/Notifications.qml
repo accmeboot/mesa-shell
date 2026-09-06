@@ -36,11 +36,6 @@ Scope {
         right: true
       }
 
-      margins {
-        top: ConfigService.spacing
-        right: ConfigService.spacing
-      }
-
       ColumnLayout {
         id: notificationsColumn
 

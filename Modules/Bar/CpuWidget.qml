@@ -39,7 +39,6 @@ Rectangle {
     path: "/proc/stat"
 
     onLoaded: {
-      // first line of /proc/stat is the aggregate: "cpu user nice system idle iowait ..."
       const times = text().split("\n")[0].split(/\s+/).slice(1).map(Number)
 
       const total = times.reduce((sum, time) => sum + time, 0)

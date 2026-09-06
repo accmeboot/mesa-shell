@@ -6,136 +6,86 @@ import qs.Services
 import qs.Components
 import qs.Modules.Settings.Common
 
-ColumnLayout {
+PanelSection {
   id: root
 
   readonly property var adapters: Bluetooth.adapters.values
   readonly property alias count: repeater.count
 
-  Layout.fillWidth: true
+  function formatTimeout(seconds: int): string {
+    if (seconds === 0) return "never";
+    if (seconds % 60 === 0) return `${seconds / 60} min`;
 
-  spacing: ConfigService.border
-
-  component ToggleRow: RowLayout {
-    id: toggle
-
-    property bool active: false
-    property bool available: true
-    property int timeout: 0
-
-    signal toggled
-
-    function formatTimeout(seconds: int): string {
-      if (seconds === 0) return "never";
-      if (seconds % 60 === 0) return `${seconds / 60} min`;
-
-      return `${seconds}s`;
-    }
-
-    Layout.fillWidth: true
-
-    spacing: ConfigService.spacing
-
-    MesaIndicator {
-      Layout.alignment: Qt.AlignVCenter
-
-      enabled: toggle.available
-      checked: toggle.active
-
-      onToggled: toggle.toggled()
-    }
-
-    InfoValue {
-      visible: toggle.active && toggle.timeout > 0
-
-      text: `resets after ${toggle.formatTimeout(toggle.timeout)}`
-      color: ConfigService.colors.foreground
-    }
+    return `${seconds}s`;
   }
+
+  title: "Adapter"
+  visible: root.count > 0
 
   Repeater {
     id: repeater
 
     model: root.adapters
 
-    SettingsCard {
-      id: card
+    ColumnLayout {
+      id: entry
 
       required property BluetoothAdapter modelData
 
-      readonly property bool busy: card.modelData.state === BluetoothAdapterState.Enabling || card.modelData.state === BluetoothAdapterState.Disabling
-      readonly property bool blocked: card.modelData.state === BluetoothAdapterState.Blocked
+      readonly property bool busy: entry.modelData.state === BluetoothAdapterState.Enabling || entry.modelData.state === BluetoothAdapterState.Disabling
+      readonly property bool blocked: entry.modelData.state === BluetoothAdapterState.Blocked
 
-      InfoGrid {
-        MesaText {
+      Layout.fillWidth: true
+
+      spacing: 0
+
+      PanelRow {
+        label: entry.modelData.name || entry.modelData.adapterId
+        sublabel: entry.modelData.adapterId
+        value: {
+          switch (entry.modelData.state) {
+          case BluetoothAdapterState.Enabled: return "Enabled";
+          case BluetoothAdapterState.Disabled: return "Disabled";
+          case BluetoothAdapterState.Enabling: return "Enabling";
+          case BluetoothAdapterState.Disabling: return "Disabling";
+          case BluetoothAdapterState.Blocked: return "Blocked by rfkill";
+          default: return "Unknown";
+          }
+        }
+        valueColor: {
+          const colors = ConfigService.colors;
+
+          switch (entry.modelData.state) {
+          case BluetoothAdapterState.Enabled: return colors.ok;
+          case BluetoothAdapterState.Enabling:
+          case BluetoothAdapterState.Disabling:
+            return colors.attention;
+          case BluetoothAdapterState.Blocked: return colors.critical;
+          default: return colors.on_surface;
+          }
+        }
+
+        MesaIndicator {
           Layout.alignment: Qt.AlignVCenter
 
-          text: card.modelData.name || card.modelData.adapterId
-          font.bold: true
+          enabled: !entry.busy && !entry.blocked
+          checked: entry.modelData.enabled
+
+          onToggled: entry.modelData.enabled = !entry.modelData.enabled
         }
+      }
 
-        RowLayout {
-          Layout.fillWidth: true
+      PanelRow {
+        label: "Discoverable"
+        value: entry.modelData.discoverable && entry.modelData.discoverableTimeout > 0 ? `resets after ${root.formatTimeout(entry.modelData.discoverableTimeout)}` : ""
 
-          spacing: ConfigService.spacing
+        MesaIndicator {
+          Layout.alignment: Qt.AlignVCenter
 
-          InfoValue {
-            text: {
-              switch (card.modelData.state) {
-              case BluetoothAdapterState.Enabled: return "Enabled";
-              case BluetoothAdapterState.Disabled: return "Disabled";
-              case BluetoothAdapterState.Enabling: return "Enabling";
-              case BluetoothAdapterState.Disabling: return "Disabling";
-              case BluetoothAdapterState.Blocked: return "Blocked by rfkill";
-              default: return "Unknown";
-              }
-            }
-            color: {
-              const colors = ConfigService.colors;
+          enabled: entry.modelData.enabled
+          checked: entry.modelData.discoverable
 
-              switch (card.modelData.state) {
-              case BluetoothAdapterState.Enabled: return colors.ok;
-              case BluetoothAdapterState.Enabling:
-              case BluetoothAdapterState.Disabling:
-                return colors.attention;
-              case BluetoothAdapterState.Blocked: return colors.critical;
-              default: return colors.on_surface;
-              }
-            }
-          }
-
-          MesaButton {
-            Layout.alignment: Qt.AlignVCenter
-
-            enabled: !card.busy && !card.blocked
-            text: card.modelData.enabled ? "Turn off" : "Turn on"
-
-            onClicked: card.modelData.enabled = !card.modelData.enabled
-          }
-        }
-
-        InfoLabel {
-          text: "Adapter"
-        }
-
-        InfoValue {
-          text: card.modelData.adapterId
-        }
-
-        InfoLabel {
-          Layout.topMargin: ConfigService.spacing
-
-          text: "Discoverable"
-        }
-
-        ToggleRow {
-          Layout.topMargin: ConfigService.spacing
-
-          active: card.modelData.discoverable
-          available: card.modelData.enabled
-          timeout: card.modelData.discoverableTimeout
-
-          onToggled: card.modelData.discoverable = !card.modelData.discoverable
+          onToggled: entry.modelData.discoverable = !entry.modelData.discoverable
         }
       }
     }

@@ -3,9 +3,10 @@ import QtQuick.Layouts
 import Quickshell.Services.Pipewire
 
 import qs.Services
+import qs.Components
 import qs.Modules.Settings.Common
 
-SettingsGroup {
+PanelSection {
   id: root
 
   property var nodes: []
@@ -18,31 +19,19 @@ SettingsGroup {
 
   visible: root.nodes.length > 0
 
-  ColumnLayout {
-    Layout.fillWidth: true
+  Repeater {
+    model: root.nodes
 
-    spacing: ConfigService.border
+    AudioNodeRow {
+      required property PwNode modelData
 
-    Repeater {
-      model: root.nodes
+      node: modelData
+      isDefault: root.defaultNode === modelData
+      selectable: root.selectable
+      icon: root.icon
+      mutedIcon: root.mutedIcon
 
-      SettingsCard {
-        id: card
-
-        required property PwNode modelData
-
-        AudioNodeRow {
-          Layout.fillWidth: true
-
-          node: card.modelData
-          isDefault: root.defaultNode === card.modelData
-          selectable: root.selectable
-          icon: root.icon
-          mutedIcon: root.mutedIcon
-
-          onActivated: root.nodeActivated(card.modelData)
-        }
-      }
+      onActivated: root.nodeActivated(modelData)
     }
   }
 }

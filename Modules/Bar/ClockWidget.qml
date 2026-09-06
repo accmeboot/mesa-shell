@@ -5,7 +5,6 @@ import QtQuick.Layouts
 import qs.Components
 import qs.Services
 
-
 Rectangle {
   color: ConfigService.colors.background
 

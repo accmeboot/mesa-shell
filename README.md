@@ -1,7 +1,13 @@
 # mesa-shell
 
-A minimal status bar, notification daemon and settings panel for
+A minimal status bar, notification daemon and quick settings panel for
 [Quickshell](https://github.com/outfoxxed/quickshell), built for Sway.
+
+The settings panel is a `wlr-layer-shell` surface pinned to the top right
+corner, laid out like a quick settings menu: a home view with status tiles and
+volume sliders, and a sub-view per section reached through the `>` chevrons. It
+opens on the focused Sway output, and closes on `Escape` or a click anywhere
+else on the desktop.
 
 ![mesa-shell](assets/screenshot.png)
 
@@ -12,10 +18,10 @@ A minimal status bar, notification daemon and settings panel for
 | [Quickshell](https://github.com/outfoxxed/quickshell) | The runtime the whole shell is built on |
 | `qt6.qt5compat` | `Qt5Compat.GraphicalEffects`, used to recolour the SVG icons |
 | Sway | Workspaces and binding mode over the Sway IPC socket; the bar and notifications are `wlr-layer-shell` surfaces |
-| UPower | Battery widget and the About section's battery details |
-| PipeWire | Audio section: sinks, sources, playback and recording streams |
-| NetworkManager | Network widget and the Wi-Fi / Ethernet sections |
-| BlueZ | Bluetooth section: adapters, pairing, connecting |
+| UPower | Battery widget and the About view's battery details |
+| PipeWire | Audio view: sinks, sources, playback and recording streams |
+| NetworkManager | Network widget and the Wi-Fi / Ethernet views |
+| BlueZ | Bluetooth view: adapters, pairing, connecting |
 
 The shell registers itself as the `org.freedesktop.Notifications` service, so it
 will not show notifications while another daemon (mako, dunst, ...) holds that
@@ -42,12 +48,19 @@ qs -c mesa-shell ipc call dmenu close
 qs -c mesa-shell ipc call dmenu toggle
 ```
 
-### `settingsWindow` — the settings window
+### `settingsWindow` — the quick settings panel
 
 ```bash
 qs -c mesa-shell ipc call settingsWindow open
 qs -c mesa-shell ipc call settingsWindow close
 qs -c mesa-shell ipc call settingsWindow toggle
+```
+
+`view` opens the panel straight onto a sub-view — `audio`, `network`,
+`bluetooth` or `about`. Any other name lands on the home view.
+
+```bash
+qs -c mesa-shell ipc call settingsWindow view network
 ```
 
 ### `config` — re-read `config.json`
@@ -64,6 +77,7 @@ something writes it in a way the watcher misses.
 ```
 bindsym $mod+d exec qs -c mesa-shell ipc call dmenu toggle
 bindsym $mod+p exec qs -c mesa-shell ipc call settingsWindow toggle
+bindsym $mod+n exec qs -c mesa-shell ipc call settingsWindow view network
 ```
 
 ## Installation
@@ -112,11 +126,11 @@ is chosen by what it signals, not by what colour it is.
 
 | Key | Default | Used for |
 | --- | --- | --- |
-| `background` | `#1d2021` | Bar, window and menu backgrounds; also the gap showing between items in a list |
-| `surface` | `#3c3836` | Raised fills — cards, buttons, the settings tab strip |
-| `on_surface` | `#504945` | Every border, and text for absent information (`No playback`, `Unknown`) or disabled controls |
+| `background` | `#1d2021` | Bar, panel and menu backgrounds |
+| `surface` | `#3c3836` | Raised fills — buttons, quick settings tiles, hovered and opened rows, the panel's back header |
+| `on_surface` | `#504945` | Every border, and text for secondary values (`Unknown`, `Not paired`) or disabled controls |
 | `foreground` | `#d5c4a1` | Primary text and icons |
-| `highlight` | `#83a598` | Accent — focused workspace, active tab, text selection, slider fill |
+| `highlight` | `#83a598` | Accent — focused workspace, an active quick settings tile, text selection, slider fill |
 | `ok` | `#b8bb26` | Healthy state — connected, paired, enabled, normal threshold band |
 | `attention` | `#fabd2f` | Transitional or warning state — connecting, pairing, scanning, warning threshold band |
 | `critical` | `#fb4934` | Failure or urgent state — disconnected, errors, urgent notifications, critical threshold band |
@@ -132,8 +146,8 @@ is chosen by what it signals, not by what colour it is.
 
 | Key | Type | Default | Used for |
 | --- | --- | --- | --- |
-| `spacing` | number | `10` | The base unit in pixels. Widget padding and the gaps between items derive from it, so raising it loosens the whole shell at once |
-| `border` | number | `1` | Border width in pixels for every bordered element, and the gap between items in the settings lists |
+| `spacing` | number | `10` | The base unit in pixels. Widget padding, row heights and the gaps between items derive from it, so raising it loosens the whole shell at once |
+| `border` | number | `1` | Border width in pixels for every bordered element |
 
 ## License
 
