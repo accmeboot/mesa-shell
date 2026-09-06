@@ -41,45 +41,29 @@ RowLayout {
     text: "100%"
   }
 
-  MesaIndicator {
+  MesaButton {
     Layout.alignment: Qt.AlignVCenter
 
     visible: root.selectable
-    radio: true
-    checked: root.isDefault
 
-    onToggled: root.activated()
-  }
+    icon: AudioService.deviceIcon(root.node)
+    color: root.isDefault ? ConfigService.colors.highlight : ConfigService.colors.surface
+    contentColor: root.isDefault ? ConfigService.colors.background : ConfigService.colors.on_surface
 
-  MesaText {
-    Layout.fillWidth: true
-    Layout.alignment: Qt.AlignVCenter
-
-    text: root.displayName
-    color: root.selectable && !root.isDefault ? ConfigService.colors.on_surface : ConfigService.colors.foreground
-    elide: Text.ElideRight
-
-    HoverHandler {
-      enabled: root.selectable
-      cursorShape: Qt.PointingHandCursor
-    }
-
-    TapHandler {
-      enabled: root.selectable
-
-      onTapped: root.activated()
-    }
+    onClicked: root.activated()
   }
 
   MesaSlider {
     id: volume
 
-    Layout.preferredWidth: Math.round(ConfigService.font.size * 8)
     Layout.alignment: Qt.AlignVCenter
+    Layout.fillWidth: true
 
     value: root.node.audio.volume
 
     onMoved: root.node.audio.volume = volume.value
+
+    text: root.displayName
   }
 
   MesaText {
@@ -90,7 +74,6 @@ RowLayout {
 
     text: `${Math.round(volume.value * 100)}%`
     horizontalAlignment: Text.AlignRight
-    color: ConfigService.colors.on_surface
   }
 
   MesaButton {

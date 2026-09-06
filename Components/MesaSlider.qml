@@ -2,25 +2,26 @@ import QtQuick
 import QtQuick.Controls
 
 import qs.Services
+import qs.Components
 
 Slider {
   id: root
 
-  property int handleSize: Math.round(ConfigService.font.size * 1.0)
+  property string text: ""
 
   from: 0
   to: 1
 
   background: Item {
     implicitWidth: 140
-    implicitHeight: root.handleSize
+    implicitHeight: Math.round(ConfigService.font.size + ConfigService.spacing)
 
     Rectangle {
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.verticalCenter: parent.verticalCenter
 
-      implicitHeight: 2
+      implicitHeight: parent.implicitHeight
 
       color: ConfigService.colors.on_surface
 
@@ -30,19 +31,26 @@ Slider {
 
         color: ConfigService.colors.highlight
       }
+
+      MesaText {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.leftMargin: ConfigService.spacing
+        anchors.rightMargin: ConfigService.spacing
+
+        text: root.text
+        elide: Text.ElideRight
+
+        color: ConfigService.colors.background
+      }
     }
   }
 
   handle: Rectangle {
-    x: root.leftPadding + root.visualPosition * (root.availableWidth - width)
-    anchors.verticalCenter: parent.verticalCenter
-
-    implicitWidth: root.handleSize
-    implicitHeight: root.handleSize
-
-    radius: width / 2
-
-    color: ConfigService.colors.foreground
+    implicitWidth: 0
+    implicitHeight: 0
+    radius: 0
   }
 
   HoverHandler {
