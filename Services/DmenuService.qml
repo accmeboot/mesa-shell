@@ -11,6 +11,7 @@ Singleton {
   property var applications: []
 
   function open(): void {
+    loadApplications();
     isOpen = true;
   }
 
@@ -29,6 +30,9 @@ Singleton {
   }
 
   function loadApplications(): void {
+    if (applicationsProcess.running) {
+      return;
+    }
     applicationsProcess.running = true;
   }
 
