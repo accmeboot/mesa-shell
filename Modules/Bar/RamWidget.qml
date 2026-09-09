@@ -23,8 +23,9 @@ Rectangle {
     id: ramRow
     anchors.centerIn: parent
 
-    MesaText {
-      text: "RAM"
+    MesaIcon {
+      name: "ram"
+      size: Math.round(ConfigService.font.size * 1.5)
       color: ColorService.threshold(root.usage, 50, 80)
     }
 

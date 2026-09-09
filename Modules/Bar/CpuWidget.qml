@@ -20,8 +20,9 @@ Rectangle {
     id: cpuRow
     anchors.centerIn: parent
 
-    MesaText {
-      text: "CPU"
+    MesaIcon {
+      name: "cpu"
+      size: Math.round(ConfigService.font.size * 1.5)
       color: ColorService.threshold(root.usage, 20, 60)
     }
 

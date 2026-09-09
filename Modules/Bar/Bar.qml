@@ -49,10 +49,10 @@ Scope {
         Item { Layout.fillWidth: true }
 
         TrayWidget { id: tray }
+        NetworkWidget {}
         CpuWidget {}
         RamWidget {}
         BatteryWidget {}
-        NetworkWidget {}
         ClockWidget {}
         SettingsWidget {}
       }

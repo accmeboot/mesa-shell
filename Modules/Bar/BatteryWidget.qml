@@ -19,35 +19,38 @@ Rectangle {
 
   visible: device.isLaptopBattery
 
-  readonly property string status: {
+  readonly property string icon: {
     switch (device.state) {
     case UPowerDeviceState.Charging:
-      return "charging"
+      return "battery-charging"
     case UPowerDeviceState.PendingCharge:
-      return "plugged"
+      return "battery-plugged"
     case UPowerDeviceState.FullyCharged:
-      return "full"
+      return "battery-full"
     case UPowerDeviceState.Empty:
-      return "empty"
-    case UPowerDeviceState.Discharging:
-    case UPowerDeviceState.PendingDischarge:
-      return "on battery"
+      return "battery-empty"
     }
 
-    return "unknown"
+    if (percentage >= 90) return "battery-full"
+    if (percentage >= 65) return "battery-high"
+    if (percentage >= 40) return "battery-medium"
+    if (percentage >= 15) return "battery-low"
+
+    return "battery-empty"
   }
 
   RowLayout {
     id: batteryRow
     anchors.centerIn: parent
 
-    MesaText {
-      text: "BAT"
+    MesaIcon {
+      name: root.icon
+      size: Math.round(ConfigService.font.size * 1.5)
       color: ColorService.threshold(root.percentage, 50, 20)
     }
 
     MesaText {
-      text: root.percentage + "% (" + root.status + ")"
+      text: root.percentage + "%"
     }
   }
 }

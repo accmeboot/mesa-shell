@@ -33,12 +33,21 @@ Rectangle {
     return true
   }
 
+  readonly property string icon: {
+    if (!device) return "network-off"
+
+    if (device.type === DeviceType.Wifi) return connected ? "wifi" : "network-off"
+
+    return "ethernet"
+  }
+
   RowLayout {
     id: networkRow
     anchors.centerIn: parent
 
-    MesaText {
-      text: "NET"
+    MesaIcon {
+      name: root.icon
+      size: Math.round(ConfigService.font.size * 1.5)
       color: ColorService.status(root.connected)
     }
 
@@ -46,9 +55,9 @@ Rectangle {
       text: {
         if (!root.device) return "N/A"
 
-        if (root.device.type === DeviceType.Wifi) return root.connected ? root.ssid + " (wifi)" : "Disconnected"
+        if (root.device.type === DeviceType.Wifi) return root.connected ? root.ssid : "Disconnected"
 
-        return root.device.name + " (wired)"
+        return root.device.name
       }
     }
   }
