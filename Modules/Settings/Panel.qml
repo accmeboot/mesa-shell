@@ -5,6 +5,7 @@ import qs.Services
 import qs.Components
 import qs.Modules.Settings.Common
 import qs.Modules.Settings.Audio
+import qs.Modules.Settings.Display
 import qs.Modules.Settings.Network
 import qs.Modules.Settings.Bluetooth
 import qs.Modules.Settings.About
@@ -12,11 +13,16 @@ import qs.Modules.Settings.About
 Rectangle {
   id: root
 
+  property string pendingAction: ""
+
+  readonly property int barHeight: Math.max(headerRow.implicitHeight, actions.implicitHeight) + Math.round(ConfigService.spacing / 2)
+
   readonly property string view: SettingsService.view
   readonly property bool onHome: root.view === SettingsService.home
   readonly property string title: {
     switch (root.view) {
     case "audio": return "Audio";
+    case "display": return "Display";
     case "network": return "Network";
     case "bluetooth": return "Bluetooth";
     case "about": return "About";
@@ -33,12 +39,14 @@ Rectangle {
   focus: true
 
   Keys.onEscapePressed: {
-    if (root.onHome) SettingsService.close();
+    if (root.pendingAction !== "") root.pendingAction = "";
+    else if (root.onHome) SettingsService.close();
     else SettingsService.back();
   }
 
   Component { id: home; HomeView {} }
   Component { id: audio; AudioView {} }
+  Component { id: display; DisplayView {} }
   Component { id: network; NetworkView {} }
   Component { id: bluetooth; BluetoothView {} }
   Component { id: about; AboutView {} }
@@ -52,23 +60,25 @@ Rectangle {
     spacing: 0
 
     Rectangle {
-      id: header
-
       Layout.fillWidth: true
 
-      visible: !root.onHome
-      implicitHeight: back.implicitHeight + ConfigService.spacing
+      implicitHeight: root.barHeight
       color: ConfigService.colors.surface
 
       HoverHandler {
+        enabled: !root.onHome
         cursorShape: Qt.PointingHandCursor
       }
 
       TapHandler {
+        enabled: !root.onHome
+
         onTapped: SettingsService.back()
       }
 
       RowLayout {
+        id: headerRow
+
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
@@ -82,12 +92,15 @@ Rectangle {
 
           Layout.alignment: Qt.AlignVCenter
 
+          visible: !root.onHome
           name: "arrow-left"
-          size: Math.round(ConfigService.font.size * 1.3)
+          size: Math.round(ConfigService.font.size * 1.2)
           color: ConfigService.colors.foreground
         }
 
         MesaText {
+          id: title
+
           Layout.fillWidth: true
 
           text: root.title
@@ -97,9 +110,7 @@ Rectangle {
       }
     }
 
-    Divider {
-      visible: header.visible
-    }
+    Divider {}
 
     Flickable {
       id: scroll
@@ -123,6 +134,7 @@ Rectangle {
         sourceComponent: {
           switch (root.view) {
           case "audio": return audio;
+          case "display": return display;
           case "network": return network;
           case "bluetooth": return bluetooth;
           case "about": return about;
@@ -132,6 +144,86 @@ Rectangle {
 
         onLoaded: scroll.contentY = 0
       }
+    }
+
+    Divider {}
+
+    Rectangle {
+      Layout.fillWidth: true
+
+      implicitHeight: root.barHeight
+      color: ConfigService.colors.surface
+
+      RowLayout {
+        id: actions
+
+        anchors.fill: parent
+
+        spacing: 0
+
+        MesaButton {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+
+          icon: "lock"
+
+          onClicked: {
+            PowerService.lock();
+            SettingsService.close();
+          }
+        }
+
+        MesaButton {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+
+          icon: "suspend"
+
+          onClicked: {
+            PowerService.suspend();
+            SettingsService.close();
+          }
+        }
+
+        MesaButton {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+
+          icon: "restart"
+
+          onClicked: root.pendingAction = "reboot"
+        }
+
+        MesaButton {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+
+          icon: "power"
+          contentColor: ConfigService.colors.critical
+
+          onClicked: root.pendingAction = "shutdown"
+        }
+      }
+    }
+  }
+
+  ConfirmDialog {
+    anchors.fill: parent
+    anchors.margins: root.border.width
+
+    visible: root.pendingAction !== ""
+    message: root.pendingAction === "shutdown" ? "Shut down the system?" : "Restart the system?"
+    confirmLabel: root.pendingAction === "shutdown" ? "Shut down" : "Restart"
+    confirmColor: ConfigService.colors.critical
+
+    onCancelled: root.pendingAction = ""
+
+    onConfirmed: {
+      if (root.pendingAction === "shutdown") PowerService.shutdown();
+      else PowerService.reboot();
+
+      root.pendingAction = "";
+      SettingsService.close();
     }
   }
 }

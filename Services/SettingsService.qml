@@ -7,7 +7,7 @@ Singleton {
   id: root
 
   readonly property string home: ""
-  readonly property var views: ["audio", "network", "bluetooth", "about"]
+  readonly property var views: ["audio", "display", "network", "bluetooth", "about"]
 
   property bool isOpen: false
   property string view: root.home

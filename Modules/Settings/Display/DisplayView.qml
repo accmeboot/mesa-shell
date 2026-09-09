@@ -5,7 +5,9 @@ import qs.Services
 ColumnLayout {
   spacing: ConfigService.spacing * 2
 
-  BluetoothAdapterGroup {}
+  BrightnessGroup {}
 
-  BluetoothDeviceGroup {}
+  OutputGroup {}
+
+  MonitorGroup {}
 }

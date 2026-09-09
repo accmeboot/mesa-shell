@@ -4,10 +4,12 @@ A minimal status bar, notification daemon and quick settings panel for
 [Quickshell](https://github.com/outfoxxed/quickshell), built for Sway.
 
 The settings panel is a `wlr-layer-shell` surface pinned to the top right
-corner, laid out like a quick settings menu: a home view with status tiles and
-volume sliders, and a sub-view per section reached through the `>` chevrons. It
-opens on the focused Sway output, and closes on `Escape` or a click anywhere
-else on the desktop.
+corner, laid out like a quick settings menu: a home view where each section is
+one line showing its status, with the volume and brightness sliders inline, and
+a sub-view per section reached through the `>` chevrons. A footer bar mirroring
+the title row holds the lock, suspend, restart and shutdown buttons; restart and
+shutdown ask for confirmation first. It opens on the focused Sway output, and
+closes on `Escape` or a click anywhere else on the desktop.
 
 ![mesa-shell](assets/screenshot.png)
 
@@ -22,6 +24,9 @@ else on the desktop.
 | PipeWire | Audio view: sinks, sources, playback and recording streams |
 | NetworkManager | Network widget and the Wi-Fi / Ethernet views |
 | BlueZ | Bluetooth view: adapters, pairing, connecting |
+| `swaylock` | The lock button in the panel footer |
+| systemd | The suspend, restart and shutdown buttons — `systemctl suspend`, `reboot` and `poweroff` |
+| `brightnessctl` | Display view: reading and setting the backlight. Optional — where no `/sys/class/backlight` device exists (desktops, external monitors over DisplayPort/HDMI) the brightness slider is hidden and the rest of the Display view still works |
 
 The shell registers itself as the `org.freedesktop.Notifications` service, so it
 will not show notifications while another daemon (mako, dunst, ...) holds that
@@ -56,8 +61,8 @@ qs -c mesa-shell ipc call settingsWindow close
 qs -c mesa-shell ipc call settingsWindow toggle
 ```
 
-`view` opens the panel straight onto a sub-view — `audio`, `network`,
-`bluetooth` or `about`. Any other name lands on the home view.
+`view` opens the panel straight onto a sub-view — `audio`, `display`,
+`network`, `bluetooth` or `about`. Any other name lands on the home view.
 
 ```bash
 qs -c mesa-shell ipc call settingsWindow view network
@@ -127,10 +132,10 @@ is chosen by what it signals, not by what colour it is.
 | Key | Default | Used for |
 | --- | --- | --- |
 | `background` | `#1d2021` | Bar, panel and menu backgrounds |
-| `surface` | `#3c3836` | Raised fills — buttons, quick settings tiles, hovered and opened rows, the panel's back header |
+| `surface` | `#3c3836` | Raised fills — buttons, dropdowns, hovered and opened rows, the panel's title and footer bars |
 | `on_surface` | `#504945` | Every border, and text for secondary values (`Unknown`, `Not paired`) or disabled controls |
 | `foreground` | `#d5c4a1` | Primary text and icons |
-| `highlight` | `#83a598` | Accent — focused workspace, an active quick settings tile, text selection, slider fill |
+| `highlight` | `#83a598` | Accent — focused workspace, the hovered dropdown option, text selection, slider fill |
 | `ok` | `#b8bb26` | Healthy state — connected, paired, enabled, normal threshold band |
 | `attention` | `#fabd2f` | Transitional or warning state — connecting, pairing, scanning, warning threshold band |
 | `critical` | `#fb4934` | Failure or urgent state — disconnected, errors, urgent notifications, critical threshold band |

@@ -10,23 +10,9 @@ RowLayout {
 
   required property PwNode node
 
-  property bool isDefault: false
-  property bool selectable: true
+  property bool showName: true
   property string icon: "volume"
   property string mutedIcon: "volume-mute"
-
-  readonly property string displayName: {
-    const node = root.node;
-
-    if (!node.isStream) return node.nickname || node.description || node.name;
-
-    const application = node.properties["application.name"] || node.name;
-    const media = node.properties["media.name"];
-
-    return media && media !== application ? `${application}: ${media}` : application;
-  }
-
-  signal activated
 
   Layout.fillWidth: true
   Layout.leftMargin: ConfigService.spacing
@@ -44,13 +30,18 @@ RowLayout {
   MesaButton {
     Layout.alignment: Qt.AlignVCenter
 
-    visible: root.selectable
+    icon: root.node.audio.muted ? root.mutedIcon : root.icon
 
-    icon: AudioService.deviceIcon(root.node)
-    color: root.isDefault ? ConfigService.colors.highlight : ConfigService.colors.surface
-    contentColor: root.isDefault ? ConfigService.colors.background : ConfigService.colors.on_surface
+    onClicked: root.node.audio.muted = !root.node.audio.muted
+  }
 
-    onClicked: root.activated()
+  MesaText {
+    Layout.preferredWidth: Math.round(ConfigService.font.size * 14)
+    Layout.alignment: Qt.AlignVCenter
+
+    visible: root.showName
+    text: AudioService.nodeName(root.node)
+    elide: Text.ElideRight
   }
 
   MesaSlider {
@@ -62,26 +53,16 @@ RowLayout {
     value: root.node.audio.volume
 
     onMoved: root.node.audio.volume = volume.value
-
-    text: root.displayName
   }
 
   MesaText {
     id: percent
 
     Layout.preferredWidth: Math.ceil(volumeMetrics.advanceWidth)
+    Layout.leftMargin: Math.round(ConfigService.spacing / 2)
     Layout.alignment: Qt.AlignVCenter
 
     text: `${Math.round(volume.value * 100)}%`
     horizontalAlignment: Text.AlignRight
-  }
-
-  MesaButton {
-    Layout.alignment: Qt.AlignVCenter
-
-    icon: root.node.audio.muted ? root.mutedIcon : root.icon
-    contentColor: root.node.audio.muted ? ConfigService.colors.critical : ConfigService.colors.foreground
-
-    onClicked: root.node.audio.muted = !root.node.audio.muted
   }
 }

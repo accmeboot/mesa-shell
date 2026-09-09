@@ -8,25 +8,27 @@ ColumnLayout {
   id: root
 
   property string title
+  property string value
+  property color valueColor: ConfigService.colors.on_surface
   property string view: ""
-  property bool filled: false
 
   default property alias content: body.data
 
   readonly property bool navigable: root.view !== ""
-  readonly property color baseColor: root.filled ? ConfigService.colors.surface : "transparent"
 
   Layout.fillWidth: true
 
-  spacing: Math.round(ConfigService.spacing / 2)
+  spacing: body.visibleChildren.length > 0 ? Math.round(ConfigService.spacing / 2) : 0
 
   Rectangle {
     Layout.fillWidth: true
 
     implicitHeight: header.implicitHeight + ConfigService.spacing
-    color: root.baseColor
+    color: root.navigable && hover.hovered ? ConfigService.colors.surface : "transparent"
 
     HoverHandler {
+      id: hover
+
       enabled: root.navigable
       cursorShape: Qt.PointingHandCursor
     }
@@ -53,9 +55,22 @@ ColumnLayout {
 
         text: root.title
         font.bold: true
+        elide: Text.ElideRight
+      }
+
+      MesaText {
+        Layout.alignment: Qt.AlignVCenter
+        Layout.maximumWidth: Math.round(ConfigService.font.size * 12)
+
+        visible: root.value !== ""
+        text: root.value
+        color: root.valueColor
+        elide: Text.ElideRight
       }
 
       MesaIcon {
+        Layout.alignment: Qt.AlignVCenter
+
         visible: root.navigable
         name: "arrow-right"
         size: Math.round(ConfigService.font.size * 1.2)

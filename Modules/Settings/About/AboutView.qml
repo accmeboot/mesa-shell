@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import qs.Services
 
 ColumnLayout {
-  spacing: ConfigService.spacing
+  spacing: ConfigService.spacing * 2
 
   SystemGroup {}
 

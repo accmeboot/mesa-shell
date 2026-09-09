@@ -19,22 +19,22 @@ ColumnLayout {
     return monitor === true || monitor === "true";
   }
 
-  spacing: ConfigService.spacing
+  spacing: ConfigService.spacing * 2
 
   PwObjectTracker {
     objects: root.nodes
   }
 
-  AudioNodeGroup {
+  AudioDeviceGroup {
     title: "Output"
 
     nodes: root.sinks
     defaultNode: Pipewire.defaultAudioSink
 
-    onNodeActivated: node => Pipewire.preferredDefaultAudioSink = node
+    onNodeSelected: node => Pipewire.preferredDefaultAudioSink = node
   }
 
-  AudioNodeGroup {
+  AudioDeviceGroup {
     title: "Input"
 
     nodes: root.sources
@@ -43,21 +43,19 @@ ColumnLayout {
     icon: "microphone"
     mutedIcon: "microphone-off"
 
-    onNodeActivated: node => Pipewire.preferredDefaultAudioSource = node
+    onNodeSelected: node => Pipewire.preferredDefaultAudioSource = node
   }
 
   AudioNodeGroup {
     title: "Playback"
 
     nodes: root.playbacks
-    selectable: false
   }
 
   AudioNodeGroup {
     title: "Recording"
 
     nodes: root.recordings
-    selectable: false
 
     icon: "microphone"
     mutedIcon: "microphone-off"
