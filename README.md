@@ -103,8 +103,8 @@ cp ~/.config/quickshell/mesa-shell/config.example.json \
    ~/.config/quickshell/mesa-shell/config.json
 ```
 
-`config.json` holds the colours, font, `spacing` and `border` values. It is
-watched at runtime, so edits apply without restarting.
+`config.json` holds the colours, font, wallpaper, `spacing` and `border`
+values. It is watched at runtime, so edits apply without restarting.
 
 Run it:
 
@@ -146,6 +146,34 @@ is chosen by what it signals, not by what colour it is.
 | --- | --- | --- | --- |
 | `font.name` | string | `JetBrainsMono Nerd Font` | Any family fontconfig can resolve |
 | `font.size` | number | `12` | Point size; icon sizes are derived from it |
+
+### `wallpaper`
+
+| Key | Type | Default | Used for |
+| --- | --- | --- | --- |
+| `wallpaper` | string | `assets/sway.png` | Path to the image drawn on the background layer. Absolute paths, `~/...` and paths relative to the shell directory all work. Set it to `""` for no image — the layer stays filled with `colors.background` |
+
+The wallpaper is a `wlr-layer-shell` surface on the background layer, one per
+output, so nothing else needs to paint the desktop. It is input-transparent and
+claims no exclusive zone, so tiling is unaffected. The image is cropped to fill
+the output and decoded at that resolution; an image whose aspect ratio is far
+from the screen's is upscaled after the crop, so match it roughly.
+
+Changing the path swaps the image without a gap — `Image.retainWhileLoading`
+keeps the current one on screen until the new file has finished decoding, so a
+large image or a path that fails to load never blanks the desktop.
+
+`config.json` is watched for edits, but a symlink being *replaced* — how
+Home Manager and its specialisations install the file — does not raise a change
+event. Call the IPC handler after switching to pick the new file up:
+
+```bash
+qs -c mesa-shell ipc call config reload
+```
+
+Keep an `output * bg <color> solid_color` line in the Sway config as a fallback
+— it covers the frames before the shell maps its surfaces, and is what shows
+whenever the shell is not running.
 
 ### Metrics
 

@@ -12,6 +12,21 @@ Singleton {
   readonly property alias spacing: adapter.spacing
   readonly property alias border: adapter.border
 
+  property bool settled: false
+
+  readonly property url wallpaper: {
+    if (!settled) return "";
+
+    const path = (adapter.wallpaper ?? "").trim();
+
+    if (!path) return "";
+    if (path.startsWith("file://")) return path;
+    if (path.startsWith("~/")) return "file://" + Quickshell.env("HOME") + path.slice(1);
+    if (path.startsWith("/")) return "file://" + path;
+
+    return Qt.resolvedUrl("../" + path);
+  }
+
   IpcHandler {
     target: "config"
 
@@ -26,6 +41,9 @@ Singleton {
     path: Qt.resolvedUrl("../config.json")
     watchChanges: true
     onFileChanged: reload()
+
+    onLoaded: root.settled = true
+    onLoadFailed: root.settled = true
 
     JsonAdapter {
       id: adapter
@@ -45,6 +63,8 @@ Singleton {
         property string name: "JetBrainsMono Nerd Font"
         property int size: 12
       }
+
+      property string wallpaper: "assets/sway.png"
 
       property int spacing: 10
 
