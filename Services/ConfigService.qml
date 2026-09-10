@@ -13,6 +13,7 @@ Singleton {
   readonly property alias border: adapter.border
   readonly property alias hooks: adapter.hooks
   readonly property alias defaultPolarity: adapter.defaultPolarity
+  readonly property alias dateTimeFormat: adapter.dateTimeFormat
 
   property bool settled: false
 
@@ -80,6 +81,8 @@ Singleton {
       }
 
       property string wallpaper: "assets/sway.png"
+
+      property string dateTimeFormat: "ddd d MMM HH:mm"
 
       property string defaultPolarity: "dark"
 

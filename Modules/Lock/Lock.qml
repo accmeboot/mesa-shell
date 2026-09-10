@@ -54,7 +54,7 @@ Scope {
         MesaText {
           Layout.alignment: Qt.AlignVCenter
 
-          text: Qt.formatDateTime(clock.date, "dddd HH:mm")
+          text: Qt.formatDateTime(clock.date, ConfigService.dateTimeFormat)
           font.pointSize: ConfigService.font.size * 2
 
           SystemClock {

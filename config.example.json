@@ -31,6 +31,7 @@
     "size": 12
   },
   "wallpaper": "assets/sway.png",
+  "dateTimeFormat": "ddd d MMM HH:mm",
   "spacing": 8,
   "border": 1
 }
