@@ -24,25 +24,13 @@ Rectangle {
     anchors.centerIn: parent
 
     MesaIcon {
-      name: "memory"
-      Layout.alignment: Qt.AlignTop
-      Layout.topMargin: Math.round(label.baselineOffset + glyphs.tightBoundingRect.y + glyphs.tightBoundingRect.height / 2 - size / 2)
-      size: {
-        const base = Math.round(ConfigService.font.size * 1.5)
-        return base + Math.abs(glyphs.tightBoundingRect.height - base) % 2
-      }
+      name: "media-memory"
+      size: Math.round(ConfigService.font.size * 1.5)
       color: ColorService.threshold(root.usage, 50, 80)
     }
 
     MesaText {
-      id: label
       text: used.toFixed(1) + "G" + " / " + total.toFixed(0) + "G"
-    }
-
-    TextMetrics {
-      id: glyphs
-      font: label.font
-      text: "0123456789"
     }
   }
 

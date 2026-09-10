@@ -19,7 +19,7 @@ Rectangle {
   signal clicked(var mouse)
 
   implicitWidth: (root.icon ? iconLoader.implicitWidth : label.width) + root.horizontalPadding
-  implicitHeight: label.implicitHeight + root.verticalPadding
+  implicitHeight: (root.icon ? iconLoader.implicitHeight : label.implicitHeight) + root.verticalPadding
   color: ThemeService.colors.surface
 
   border.color: ThemeService.colors.on_surface
@@ -43,7 +43,7 @@ Rectangle {
 
     sourceComponent: MesaIcon {
       name: root.icon
-      size: root.iconSize + Math.abs(root.implicitHeight - root.iconSize) % 2
+      size: root.iconSize
       color: root.effectiveContentColor
     }
   }

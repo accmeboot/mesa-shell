@@ -40,6 +40,7 @@ Scope {
         spacing: ConfigService.spacing
 
         SettingsWidget {
+          Layout.fillHeight: true
           Layout.rightMargin: -mainLayout.spacing
         }
 
@@ -48,20 +49,28 @@ Scope {
           screen: modelData
         }
         ModeWidget {}
-        DmenuWidget {}
+        DmenuWidget {
+          Layout.fillHeight: true
+        }
 
         Item { Layout.fillWidth: true }
 
-        TrayWidget { id: tray }
+        TrayWidget {
+          id: tray
+          Layout.fillHeight: true
+        }
         NetworkWidget {}
         CpuWidget {}
         RamWidget {}
         BatteryWidget {}
         ClockWidget {}
         ThemeWidget {
+          Layout.fillHeight: true
           Layout.rightMargin: -mainLayout.spacing
         }
-        NotificationWidget {}
+        NotificationWidget {
+          Layout.fillHeight: true
+        }
       }
     }
   }

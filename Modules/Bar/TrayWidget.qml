@@ -57,6 +57,7 @@ RowLayout {
   }
 
   MesaButton {
+    Layout.fillHeight: true
     icon: trayRow.isVisible ? "window-close" : "view-more-horizontal"
     onClicked: trayRow.isVisible = !trayRow.isVisible
   }

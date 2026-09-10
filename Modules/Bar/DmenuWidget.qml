@@ -40,6 +40,7 @@ RowLayout {
   spacing: 0
 
   MesaButton {
+    Layout.fillHeight: true
     icon: DmenuService.isOpen ? "window-close" : "cm_runterm"
     onClicked: DmenuService.isOpen ? DmenuService.close() : DmenuService.open()
   }
