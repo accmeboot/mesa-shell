@@ -47,7 +47,7 @@ Rectangle {
       Layout.alignment: Qt.AlignVCenter
 
       name: 'notifications'
-      size: Math.round(ConfigService.font.size * 4)
+      size: Math.round(ConfigService.font.size * 3)
     }
 
     ColumnLayout {
