@@ -1,7 +1,7 @@
 # mesa-shell
 
-A minimal status bar, notification daemon and quick settings panel for
-[Quickshell](https://github.com/outfoxxed/quickshell), built for Sway.
+A minimal status bar, notification daemon, quick settings panel and lockscreen
+for [Quickshell](https://github.com/outfoxxed/quickshell), built for Sway.
 
 The settings panel is a `wlr-layer-shell` surface pinned to the top right
 corner, laid out like a quick settings menu: a home view where each section is
@@ -10,6 +10,13 @@ a sub-view per section reached through the `>` chevrons. A footer bar mirroring
 the title row holds the lock, suspend, restart and shutdown buttons; restart and
 shutdown ask for confirmation first. It opens on the focused Sway output, and
 closes on `Escape` or a click anywhere else on the desktop.
+
+The lockscreen covers every output with the wallpaper, dimmed, and the user
+name above a password field in the middle. It is an `ext-session-lock-v1` lock,
+so if the shell dies while locked the compositor keeps the session locked rather
+than exposing it. `Enter` submits the password, `Escape` clears it, and a wrong
+password turns the field's border to `colors.critical`. The bottom right corner
+shows the clock followed by exit session, restart and shutdown buttons.
 
 ![mesa-shell](assets/screenshot.png)
 
@@ -24,7 +31,7 @@ closes on `Escape` or a click anywhere else on the desktop.
 | PipeWire | Audio view: sinks, sources, playback and recording streams |
 | NetworkManager | Network widget and the Wi-Fi / Ethernet views |
 | BlueZ | Bluetooth view: adapters, pairing, connecting |
-| `swaylock` | The lock button in the panel footer |
+| PAM | Lockscreen: the password is checked against the `login` service in `/etc/pam.d` |
 | systemd | The suspend, restart and shutdown buttons — `systemctl suspend`, `reboot` and `poweroff` |
 | `brightnessctl` | Display view: reading and setting the backlight. Optional — where no `/sys/class/backlight` device exists (desktops, external monitors over DisplayPort/HDMI) the brightness slider is hidden and the rest of the Display view still works |
 
@@ -67,6 +74,27 @@ qs -c mesa-shell ipc call settingsWindow toggle
 ```bash
 qs -c mesa-shell ipc call settingsWindow view network
 ```
+
+### `lock` — the lockscreen
+
+```bash
+qs -c mesa-shell ipc call lock lock
+qs -c mesa-shell ipc call lock isLocked
+```
+
+There is no `unlock` — only the password ends the lock. Point an idle daemon at
+`lock` instead of swaylock, e.g. for hypridle:
+
+```
+general {
+  lock_cmd = qs -c mesa-shell ipc call lock lock
+  before_sleep_cmd = loginctl lock-session
+}
+```
+
+File watching is paused while locked: a reload hands the lock to a fresh
+instance that starts unlocked, which would release it. Save a file again after
+unlocking to pick up edits made while the screen was locked.
 
 ### `config` — re-read `config.json`
 

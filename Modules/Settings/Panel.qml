@@ -168,7 +168,7 @@ Rectangle {
           icon: "lock"
 
           onClicked: {
-            PowerService.lock();
+            LockService.lock();
             SettingsService.close();
           }
         }

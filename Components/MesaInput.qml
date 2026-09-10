@@ -6,6 +6,8 @@ import qs.Services
 TextField {
   id: root
 
+  property color borderColor: ConfigService.colors.on_surface
+
   color: ConfigService.colors.foreground
   font.family: ConfigService.font.name
   font.pointSize: ConfigService.font.size
@@ -20,7 +22,7 @@ TextField {
 
   background: Rectangle {
     color: "transparent"
-    border.color: ConfigService.colors.on_surface
+    border.color: root.borderColor
     border.width: ConfigService.border
   }
 }
