@@ -8,21 +8,21 @@ Rectangle {
   property string text
   property string icon
   property int iconSize: Math.round(ConfigService.font.size * 1.5)
-  property color contentColor: ConfigService.colors.foreground
+  property color contentColor: ThemeService.colors.foreground
   property int maximumContentWidth: 0
   property int horizontalPadding: ConfigService.spacing
   property int verticalPadding: ConfigService.spacing
   property alias acceptedButtons: mouseArea.acceptedButtons
 
-  readonly property color effectiveContentColor: root.enabled ? root.contentColor : ConfigService.colors.on_surface
+  readonly property color effectiveContentColor: root.enabled ? root.contentColor : ThemeService.colors.on_surface
 
   signal clicked(var mouse)
 
   implicitWidth: (root.icon ? iconLoader.implicitWidth : label.width) + root.horizontalPadding
   implicitHeight: (root.icon ? iconLoader.implicitHeight : label.implicitHeight) + root.verticalPadding
-  color: ConfigService.colors.surface
+  color: ThemeService.colors.surface
 
-  border.color: ConfigService.colors.on_surface
+  border.color: ThemeService.colors.on_surface
   border.width: ConfigService.border
 
   MesaText {

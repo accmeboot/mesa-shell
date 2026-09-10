@@ -35,7 +35,7 @@ PanelSection {
     indented: true
     label: "Enabled"
     value: Networking.wifiHardwareEnabled ? "" : "Blocked by rfkill"
-    valueColor: ConfigService.colors.critical
+    valueColor: ThemeService.colors.critical
 
     MesaIndicator {
       Layout.alignment: Qt.AlignVCenter
@@ -51,7 +51,7 @@ PanelSection {
     visible: Networking.wifiEnabled && root.networks.length === 0
     indented: true
     label: "Scanning"
-    labelColor: ConfigService.colors.attention
+    labelColor: ThemeService.colors.attention
   }
 
   Repeater {
@@ -143,7 +143,7 @@ PanelSection {
           default: return entry.modelData.connected ? "Connected" : "";
           }
         }
-        valueColor: entry.modelData.stateChanging ? ConfigService.colors.attention : ConfigService.colors.ok
+        valueColor: entry.modelData.stateChanging ? ThemeService.colors.attention : ThemeService.colors.ok
         interactive: true
         selected: entry.selected
 
@@ -155,9 +155,9 @@ PanelSection {
             id: dot
 
             visible: entry.modelData.connected
-            name: "dot"
+            name: "media-record"
             size: Math.round(ConfigService.font.size * 0.5)
-            color: ConfigService.colors.ok
+            color: ThemeService.colors.ok
           }
         }
 
@@ -166,9 +166,9 @@ PanelSection {
         MesaIcon {
           Layout.alignment: Qt.AlignVCenter
 
-          name: entry.modelData.security === WifiSecurityType.Open || entry.modelData.security === WifiSecurityType.Owe ? "lock-open" : "lock"
+          name: entry.modelData.security === WifiSecurityType.Open || entry.modelData.security === WifiSecurityType.Owe ? "unlock" : "lock"
           size: Math.round(ConfigService.font.size * 1.1)
-          color: ConfigService.colors.on_surface
+          color: ThemeService.colors.on_surface
         }
       }
 
@@ -243,7 +243,7 @@ PanelSection {
         selected: entry.selected
         indented: true
         label: entry.error
-        labelColor: ConfigService.colors.critical
+        labelColor: ThemeService.colors.critical
       }
     }
   }

@@ -19,11 +19,11 @@ Singleton {
   }
 
   function deviceIcon(node: PwNode): string {
-    if (!node || node.isStream) return "speaker";
+    if (!node || node.isStream) return "audio-speakers";
 
     const properties = node.properties ?? {};
     const text = [properties["device.form-factor"], properties["api.bluez5.icon"], properties["device.icon-name"], properties["api.alsa.card.name"], node.description, node.nickname, node.name].join(" ").toLowerCase();
 
-    return root.headphones.test(text) ? "headphones" : "speaker";
+    return root.headphones.test(text) ? "audio-headphones" : "audio-speakers";
   }
 }

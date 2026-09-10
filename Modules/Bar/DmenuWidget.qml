@@ -40,7 +40,7 @@ RowLayout {
   spacing: 0
 
   MesaButton {
-    icon: DmenuService.isOpen ? "cross" : "command"
+    icon: DmenuService.isOpen ? "window-close" : "cm_runterm"
     onClicked: DmenuService.isOpen ? DmenuService.close() : DmenuService.open()
   }
 
@@ -145,12 +145,12 @@ RowLayout {
           border.width: 0
 
           color: delegateRoot.ListView.isCurrentItem
-          ? ConfigService.colors.highlight
-          : ConfigService.colors.background
+          ? ThemeService.colors.highlight
+          : ThemeService.colors.background
 
           contentColor: delegateRoot.ListView.isCurrentItem
-          ? ConfigService.colors.background
-          : ConfigService.colors.foreground
+          ? ThemeService.colors.background
+          : ThemeService.colors.foreground
 
           onClicked: {
             menuList.currentIndex = delegateRoot.index;

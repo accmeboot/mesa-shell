@@ -11,6 +11,8 @@ Singleton {
   readonly property alias font: adapter.font
   readonly property alias spacing: adapter.spacing
   readonly property alias border: adapter.border
+  readonly property alias hooks: adapter.hooks
+  readonly property alias defaultPolarity: adapter.defaultPolarity
 
   property bool settled: false
 
@@ -49,14 +51,27 @@ Singleton {
       id: adapter
 
       property JsonObject colors: JsonObject {
-        property string background: "#1d2021"
-        property string surface: "#3c3836"
-        property string on_surface: "#504945"
-        property string foreground: "#d5c4a1"
-        property string highlight: "#83a598"
-        property string attention: "#fabd2f"
-        property string ok: "#b8bb26"
-        property string critical: "#fb4934"
+        property JsonObject dark: JsonObject {
+          property string background: "#1d2021"
+          property string surface: "#3c3836"
+          property string on_surface: "#504945"
+          property string foreground: "#d5c4a1"
+          property string highlight: "#83a598"
+          property string attention: "#fabd2f"
+          property string ok: "#b8bb26"
+          property string critical: "#fb4934"
+        }
+
+        property JsonObject light: JsonObject {
+          property string background: "#fbf1c7"
+          property string surface: "#ebdbb2"
+          property string on_surface: "#d5c4a1"
+          property string foreground: "#3c3836"
+          property string highlight: "#076678"
+          property string attention: "#b57614"
+          property string ok: "#79740e"
+          property string critical: "#9d0006"
+        }
       }
 
       property JsonObject font: JsonObject {
@@ -65,6 +80,13 @@ Singleton {
       }
 
       property string wallpaper: "assets/sway.png"
+
+      property string defaultPolarity: "dark"
+
+      property JsonObject hooks: JsonObject {
+        property string onDarkThemeSet: ""
+        property string onLightThemeSet: ""
+      }
 
       property int spacing: 10
 

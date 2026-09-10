@@ -9,7 +9,7 @@ import qs.Services
 Rectangle {
   id: root
 
-  color: ConfigService.colors.background
+  color: ThemeService.colors.background
 
   implicitWidth: ramRow.implicitWidth + ConfigService.spacing
   implicitHeight: ramRow.implicitHeight + ConfigService.spacing
@@ -24,7 +24,7 @@ Rectangle {
     anchors.centerIn: parent
 
     MesaIcon {
-      name: "ram"
+      name: "memory"
       size: Math.round(ConfigService.font.size * 1.6)
       color: ColorService.threshold(root.usage, 50, 80)
     }

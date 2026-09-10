@@ -1,13 +1,30 @@
 {
   "colors": {
-    "background": "#262427",
-    "surface": "#3b393c",
-    "on_surface": "#514f52",
-    "foreground": "#fcfcfc",
-    "highlight": "#49cae4",
-    "attention": "#ffca58",
-    "ok": "#bcdf59",
-    "critical": "#ff7272"
+    "dark": {
+      "background": "#262427",
+      "surface": "#3b393c",
+      "on_surface": "#514f52",
+      "foreground": "#fcfcfc",
+      "highlight": "#49cae4",
+      "attention": "#ffca58",
+      "ok": "#bcdf59",
+      "critical": "#ff7272"
+    },
+    "light": {
+      "background": "#fcfcfc",
+      "surface": "#e9e7ea",
+      "on_surface": "#d3d1d4",
+      "foreground": "#262427",
+      "highlight": "#1c8ca8",
+      "attention": "#b8820a",
+      "ok": "#5f8a1c",
+      "critical": "#d43f3f"
+    }
+  },
+  "defaultPolarity": "dark",
+  "hooks": {
+    "onDarkThemeSet": "set-dark-theme",
+    "onLightThemeSet": "set-light-theme"
   },
   "font": {
     "name": "Arimo Nerd Font",

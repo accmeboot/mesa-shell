@@ -7,5 +7,5 @@ Rectangle {
   Layout.fillWidth: true
 
   implicitHeight: ConfigService.border
-  color: ConfigService.colors.on_surface
+  color: ThemeService.colors.on_surface
 }

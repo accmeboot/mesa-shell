@@ -11,8 +11,8 @@ PanelSection {
 
   property var nodes: []
   property PwNode defaultNode: null
-  property string icon: "volume"
-  property string mutedIcon: "volume-mute"
+  property string icon: "audio-volume-high"
+  property string mutedIcon: "audio-volume-muted"
 
   signal nodeSelected(PwNode node)
 

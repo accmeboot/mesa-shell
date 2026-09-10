@@ -27,17 +27,17 @@ RowLayout {
       text: modelData.name
       color: {
         if (modelData.focused) {
-          return ConfigService.colors.highlight
+          return ThemeService.colors.highlight
         }
 
         if (modelData.urgent) {
-          return ConfigService.colors.critical
+          return ThemeService.colors.critical
         }
 
-        return ConfigService.colors.surface
+        return ThemeService.colors.surface
       }
 
-      contentColor: modelData.focused ? ConfigService.colors.background : ConfigService.colors.foreground
+      contentColor: modelData.focused ? ThemeService.colors.background : ThemeService.colors.foreground
 
       onClicked: workspace.modelData.activate()
     }

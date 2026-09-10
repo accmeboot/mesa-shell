@@ -19,15 +19,15 @@ Rectangle {
 
   clip: true
 
-  color: ConfigService.colors.background
+  color: ThemeService.colors.background
 
-  border.color: ConfigService.colors.on_surface
+  border.color: ThemeService.colors.on_surface
   border.width: ConfigService.border
 
   MesaButton {
-    icon: "cross"
-    color: ConfigService.colors.critical
-    contentColor: ConfigService.colors.background
+    icon: "window-close"
+    color: ThemeService.colors.critical
+    contentColor: ThemeService.colors.background
     onClicked: {
         NotificationsService.dismissOrExpireNotification(modelData.id);
     }
@@ -46,7 +46,7 @@ Rectangle {
 
       Layout.alignment: Qt.AlignVCenter
 
-      name: 'notification'
+      name: 'notifications'
       size: Math.round(ConfigService.font.size * 4)
     }
 
@@ -69,11 +69,11 @@ Rectangle {
           color: {
             switch (modelData.urgency) {
               case NotificationUrgency.Critical:
-              return ConfigService.colors.critical;
+              return ThemeService.colors.critical;
               case NotificationUrgency.Normal:
-              return ConfigService.colors.foreground;
+              return ThemeService.colors.foreground;
               default:
-              return ConfigService.colors.foreground;
+              return ThemeService.colors.foreground;
             }
           }
           font.bold: true

@@ -155,18 +155,20 @@ back to the default below.
 ### `colors`
 
 The palette is eight semantic roles rather than a fixed set of hues, so a value
-is chosen by what it signals, not by what colour it is.
+is chosen by what it signals, not by what colour it is. `colors.dark` and
+`colors.light` each hold all eight roles; the shell draws with the set that
+matches the current polarity (see `defaultPolarity`).
 
-| Key | Default | Used for |
-| --- | --- | --- |
-| `background` | `#1d2021` | Bar, panel and menu backgrounds |
-| `surface` | `#3c3836` | Raised fills — buttons, dropdowns, hovered and opened rows, the panel's title and footer bars |
-| `on_surface` | `#504945` | Every border, and text for secondary values (`Unknown`, `Not paired`) or disabled controls |
-| `foreground` | `#d5c4a1` | Primary text and icons |
-| `highlight` | `#83a598` | Accent — focused workspace, the hovered dropdown option, text selection, slider fill |
-| `ok` | `#b8bb26` | Healthy state — connected, paired, enabled, normal threshold band |
-| `attention` | `#fabd2f` | Transitional or warning state — connecting, pairing, scanning, warning threshold band |
-| `critical` | `#fb4934` | Failure or urgent state — disconnected, errors, urgent notifications, critical threshold band |
+| Key | Dark default | Light default | Used for |
+| --- | --- | --- | --- |
+| `background` | `#1d2021` | `#fbf1c7` | Bar, panel and menu backgrounds |
+| `surface` | `#3c3836` | `#ebdbb2` | Raised fills — buttons, dropdowns, hovered and opened rows, the panel's title and footer bars |
+| `on_surface` | `#504945` | `#d5c4a1` | Every border, and text for secondary values (`Unknown`, `Not paired`) or disabled controls |
+| `foreground` | `#d5c4a1` | `#3c3836` | Primary text and icons |
+| `highlight` | `#83a598` | `#076678` | Accent — focused workspace, the hovered dropdown option, text selection, slider fill |
+| `ok` | `#b8bb26` | `#79740e` | Healthy state — connected, paired, enabled, normal threshold band |
+| `attention` | `#fabd2f` | `#b57614` | Transitional or warning state — connecting, pairing, scanning, warning threshold band |
+| `critical` | `#fb4934` | `#9d0006` | Failure or urgent state — disconnected, errors, urgent notifications, critical threshold band |
 
 ### `font`
 
@@ -202,6 +204,26 @@ qs -c mesa-shell ipc call config reload
 Keep an `output * bg <color> solid_color` line in the Sway config as a fallback
 — it covers the frames before the shell maps its surfaces, and is what shows
 whenever the shell is not running.
+
+### `defaultPolarity`
+
+| Key | Type | Default | Used for |
+| --- | --- | --- | --- |
+| `defaultPolarity` | string | `dark` | The palette the shell starts with — `dark` or `light` |
+
+It is read once, when the shell starts. From then on the theme button in the bar
+owns the polarity, and reloading `config.json` does not reset it.
+
+### `hooks`
+
+| Key | Type | Default | Used for |
+| --- | --- | --- | --- |
+| `hooks.onDarkThemeSet` | string | `""` | Shell command run when the theme button switches to dark |
+| `hooks.onLightThemeSet` | string | `""` | Shell command run when the theme button switches to light |
+
+A click switches the palette immediately and then runs the matching hook through
+`sh -c`. While a hook is still running further clicks are ignored. Leave a hook
+empty to only switch the shell's own colours.
 
 ### Metrics
 

@@ -13,7 +13,7 @@ Scope {
 
       screen: modelData
 
-      color: ConfigService.colors.background
+      color: ThemeService.colors.background
 
       WlrLayershell.layer: WlrLayer.Background
       WlrLayershell.namespace: "mesa-wallpaper"

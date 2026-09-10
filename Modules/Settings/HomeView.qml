@@ -43,7 +43,7 @@ ColumnLayout {
     title: "Audio"
     view: "audio"
     value: AudioService.nodeName(Pipewire.defaultAudioSink)
-    valueColor: ConfigService.colors.foreground
+    valueColor: ThemeService.colors.foreground
 
     Repeater {
       model: Pipewire.defaultAudioSink ? [Pipewire.defaultAudioSink] : []
@@ -64,8 +64,8 @@ ColumnLayout {
 
         node: modelData
         showName: false
-        icon: "microphone"
-        mutedIcon: "microphone-off"
+        icon: "audio-input-microphone-high"
+        mutedIcon: "audio-input-microphone-muted"
       }
     }
   }
@@ -74,7 +74,7 @@ ColumnLayout {
     title: "Display"
     view: "display"
     value: I3.focusedMonitor?.name ?? ""
-    valueColor: ConfigService.colors.foreground
+    valueColor: ThemeService.colors.foreground
 
     BrightnessRow {
       visible: BrightnessService.available
@@ -94,7 +94,7 @@ ColumnLayout {
       return "Disconnected";
     }
     valueColor: {
-      const colors = ConfigService.colors;
+      const colors = ThemeService.colors;
 
       if (root.online) return colors.ok;
       if (!root.wifiDevice && !root.wiredDevice) return colors.on_surface;
@@ -126,7 +126,7 @@ ColumnLayout {
       }
     }
     valueColor: {
-      const colors = ConfigService.colors;
+      const colors = ThemeService.colors;
 
       switch (root.adapter?.state) {
       case BluetoothAdapterState.Enabled: return root.connectedDevices.length > 0 ? colors.ok : colors.foreground;
@@ -143,6 +143,6 @@ ColumnLayout {
     title: "System"
     view: "about"
     value: SystemService.hostname || "Unknown"
-    valueColor: SystemService.hostname ? ConfigService.colors.foreground : ConfigService.colors.on_surface
+    valueColor: SystemService.hostname ? ThemeService.colors.foreground : ThemeService.colors.on_surface
   }
 }

@@ -56,7 +56,7 @@ PanelSection {
     visible: root.listed.length === 0
     indented: true
     label: root.scanning ? "Scanning" : "No devices"
-    labelColor: root.scanning ? ConfigService.colors.attention : ConfigService.colors.on_surface
+    labelColor: root.scanning ? ThemeService.colors.attention : ThemeService.colors.on_surface
   }
 
   Repeater {
@@ -87,7 +87,7 @@ PanelSection {
           }
         }
         valueColor: {
-          const colors = ConfigService.colors;
+          const colors = ThemeService.colors;
 
           if (entry.modelData.pairing) return colors.attention;
           if (!entry.modelData.paired) return colors.on_surface;
@@ -111,9 +111,9 @@ PanelSection {
             id: dot
 
             visible: entry.modelData.connected
-            name: "dot"
+            name: "media-record"
             size: Math.round(ConfigService.font.size * 0.5)
-            color: ConfigService.colors.ok
+            color: ThemeService.colors.ok
           }
         }
 
@@ -202,7 +202,7 @@ PanelSection {
           visible: !entry.modelData.paired
           enabled: pairingAgent.registered
           text: entry.modelData.pairing ? "Cancel" : "Pair"
-          contentColor: entry.modelData.pairing ? ConfigService.colors.attention : ConfigService.colors.foreground
+          contentColor: entry.modelData.pairing ? ThemeService.colors.attention : ThemeService.colors.foreground
 
           onClicked: {
             if (entry.modelData.pairing) {

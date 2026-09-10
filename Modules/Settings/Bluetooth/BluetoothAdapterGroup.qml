@@ -53,7 +53,7 @@ PanelSection {
           }
         }
         valueColor: {
-          const colors = ConfigService.colors;
+          const colors = ThemeService.colors;
 
           switch (entry.modelData.state) {
           case BluetoothAdapterState.Enabled: return colors.ok;

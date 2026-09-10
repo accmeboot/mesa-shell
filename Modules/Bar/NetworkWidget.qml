@@ -9,7 +9,7 @@ import qs.Services
 Rectangle {
   id: root
 
-  color: ConfigService.colors.background
+  color: ThemeService.colors.background
 
   implicitWidth: networkRow.implicitWidth + ConfigService.spacing
   implicitHeight: networkRow.implicitHeight + ConfigService.spacing
@@ -34,11 +34,11 @@ Rectangle {
   }
 
   readonly property string icon: {
-    if (!device) return "network-off"
+    if (!device) return "network-wireless-offline"
 
-    if (device.type === DeviceType.Wifi) return connected ? "wifi" : "network-off"
+    if (device.type === DeviceType.Wifi) return connected ? "network-wireless-signal-excellent" : "network-wireless-offline"
 
-    return "ethernet"
+    return "network-wired"
   }
 
   RowLayout {

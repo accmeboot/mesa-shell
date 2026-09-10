@@ -7,7 +7,7 @@ import qs.Services
 
 Singleton {
   function threshold(value: real, warning: real, critical: real): color {
-    const colors = ConfigService.colors;
+    const colors = ThemeService.colors;
 
     if (critical >= warning) {
       if (value > critical) return colors.critical;
@@ -21,6 +21,6 @@ Singleton {
   }
 
   function status(ok: bool): color {
-    return ok ? ConfigService.colors.ok : ConfigService.colors.critical;
+    return ok ? ThemeService.colors.ok : ThemeService.colors.critical;
   }
 }

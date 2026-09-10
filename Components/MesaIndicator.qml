@@ -11,13 +11,13 @@ MesaIcon {
   signal toggled
 
   name: {
-    if (root.radio) return root.checked ? "radio-button" : "radio-button-off";
-    return root.checked ? "checkbox-on" : "checkbox-off";
+    if (root.radio) return root.checked ? "system-suspend-hibernate" : "draw-circle";
+    return root.checked ? "view-task" : "draw-rectangle";
   }
   size: Math.round(root.radio ? ConfigService.font.size * 1.35 : ConfigService.font.size * 1.5)
   color: {
-    if (!root.enabled) return ConfigService.colors.on_surface;
-    return root.checked ? ConfigService.colors.ok : ConfigService.colors.foreground;
+    if (!root.enabled) return ThemeService.colors.on_surface;
+    return root.checked ? ThemeService.colors.ok : ThemeService.colors.foreground;
   }
 
   MouseArea {

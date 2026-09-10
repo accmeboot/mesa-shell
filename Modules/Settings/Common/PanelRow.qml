@@ -8,10 +8,10 @@ Rectangle {
   id: root
 
   property string label
-  property color labelColor: ConfigService.colors.foreground
+  property color labelColor: ThemeService.colors.foreground
   property string sublabel
   property string value
-  property color valueColor: ConfigService.colors.on_surface
+  property color valueColor: ThemeService.colors.on_surface
   property Component leading: null
   property bool indented: false
   property bool chevron: false
@@ -28,7 +28,7 @@ Rectangle {
   Layout.fillWidth: true
 
   implicitHeight: content.implicitHeight + ConfigService.spacing
-  color: root.selected ? ConfigService.colors.surface : "transparent"
+  color: root.selected ? ThemeService.colors.surface : "transparent"
 
   HoverHandler {
     enabled: root.interactive
@@ -86,7 +86,7 @@ Rectangle {
 
         visible: root.sublabel !== ""
         text: root.sublabel
-        color: ConfigService.colors.on_surface
+        color: ThemeService.colors.on_surface
         elide: Text.ElideRight
       }
     }
@@ -112,9 +112,9 @@ Rectangle {
       Layout.alignment: Qt.AlignVCenter
 
       visible: root.chevron
-      name: "arrow-right"
+      name: "pan-end"
       size: Math.round(ConfigService.font.size * 1.2)
-      color: ConfigService.colors.on_surface
+      color: ThemeService.colors.on_surface
     }
   }
 }

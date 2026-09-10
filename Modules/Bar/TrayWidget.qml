@@ -57,7 +57,7 @@ RowLayout {
   }
 
   MesaButton {
-    icon: trayRow.isVisible ? "cross" : "menu"
+    icon: trayRow.isVisible ? "window-close" : "view-more-horizontal"
     onClicked: trayRow.isVisible = !trayRow.isVisible
   }
 }

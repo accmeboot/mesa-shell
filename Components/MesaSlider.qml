@@ -23,13 +23,13 @@ Slider {
       anchors.verticalCenter: parent.verticalCenter
 
       height: root.trackSize
-      color: ConfigService.colors.on_surface
+      color: ThemeService.colors.on_surface
 
       Rectangle {
         width: root.visualPosition * parent.width
         height: parent.height
 
-        color: ConfigService.colors.highlight
+        color: ThemeService.colors.highlight
       }
     }
   }
@@ -42,7 +42,7 @@ Slider {
     implicitHeight: root.handleSize
     radius: width / 2
 
-    color: ConfigService.colors.foreground
+    color: ThemeService.colors.foreground
   }
 
   HoverHandler {

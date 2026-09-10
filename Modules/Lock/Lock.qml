@@ -24,7 +24,7 @@ Scope {
     WlSessionLockSurface {
       id: surface
 
-      color: ConfigService.colors.background
+      color: ThemeService.colors.background
 
       Image {
         anchors.fill: parent
@@ -40,7 +40,7 @@ Scope {
       Rectangle {
         anchors.fill: parent
 
-        color: ConfigService.colors.background
+        color: ThemeService.colors.background
         opacity: 0.6
       }
 
@@ -69,7 +69,7 @@ Scope {
           MesaButton {
             Layout.fillWidth: true
 
-            icon: "exit"
+            icon: "application-exit"
             iconSize: ConfigService.font.size * 3
 
             onClicked: PowerService.exitSession()
@@ -78,7 +78,7 @@ Scope {
           MesaButton {
             Layout.fillWidth: true
 
-            icon: "restart"
+            icon: "system-reboot"
             iconSize: ConfigService.font.size * 3
 
             onClicked: PowerService.reboot()
@@ -87,9 +87,9 @@ Scope {
           MesaButton {
             Layout.fillWidth: true
 
-            icon: "power"
+            icon: "system-shutdown"
             iconSize: ConfigService.font.size * 3
-            contentColor: ConfigService.colors.critical
+            contentColor: ThemeService.colors.critical
 
             onClicked: PowerService.shutdown()
           }
@@ -101,11 +101,20 @@ Scope {
 
         spacing: ConfigService.spacing
 
-        MesaText {
+        RowLayout {
           Layout.alignment: Qt.AlignHCenter
 
-          text: LockService.user
-          font.pointSize: ConfigService.font.size * 2
+          spacing: ConfigService.spacing
+
+          MesaIcon {
+            name: "im-user"
+            size: Math.round(ConfigService.font.size * 2.5)
+          }
+
+          MesaText {
+            text: LockService.user
+            font.pointSize: ConfigService.font.size * 2
+          }
         }
 
         MesaInput {
@@ -124,13 +133,13 @@ Scope {
           text: LockService.authenticating ? "" : LockService.password
 
           borderColor: {
-            if (LockService.failed) return ConfigService.colors.critical;
-            if (LockService.authenticating) return ConfigService.colors.attention;
-            return ConfigService.colors.highlight;
+            if (LockService.failed) return ThemeService.colors.critical;
+            if (LockService.authenticating) return ThemeService.colors.attention;
+            return ThemeService.colors.highlight;
           }
 
           background: Rectangle {
-            color: ConfigService.colors.background
+            color: ThemeService.colors.background
             border.color: input.borderColor
             border.width: ConfigService.border * 2
           }

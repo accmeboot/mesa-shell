@@ -40,8 +40,8 @@ ColumnLayout {
     nodes: root.sources
     defaultNode: Pipewire.defaultAudioSource
 
-    icon: "microphone"
-    mutedIcon: "microphone-off"
+    icon: "audio-input-microphone-high"
+    mutedIcon: "audio-input-microphone-muted"
 
     onNodeSelected: node => Pipewire.preferredDefaultAudioSource = node
   }
@@ -57,7 +57,7 @@ ColumnLayout {
 
     nodes: root.recordings
 
-    icon: "microphone"
-    mutedIcon: "microphone-off"
+    icon: "audio-input-microphone-high"
+    mutedIcon: "audio-input-microphone-muted"
   }
 }

@@ -37,7 +37,7 @@ PanelSection {
       }
     }
     valueColor: {
-      const colors = ConfigService.colors;
+      const colors = ThemeService.colors;
 
       switch (root.device?.state) {
       case UPowerDeviceState.Charging:
@@ -63,20 +63,20 @@ PanelSection {
     visible: root.device?.healthSupported ?? false
     label: "Health"
     value: `${Math.round(root.device?.healthPercentage ?? 0)}%`
-    valueColor: ConfigService.colors.foreground
+    valueColor: ThemeService.colors.foreground
   }
 
   PanelRow {
     visible: root.remaining > 0
     label: root.charging ? "Until full" : "Remaining"
     value: root.formatDuration(root.remaining)
-    valueColor: ConfigService.colors.foreground
+    valueColor: ThemeService.colors.foreground
   }
 
   PanelRow {
     visible: (root.device?.changeRate ?? 0) > 0
     label: "Power draw"
     value: `${root.device.changeRate.toFixed(1)} W`
-    valueColor: ConfigService.colors.foreground
+    valueColor: ThemeService.colors.foreground
   }
 }

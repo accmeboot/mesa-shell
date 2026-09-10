@@ -5,7 +5,7 @@ import qs.Services
 import qs.Components
 
 MesaButton {
-  icon: SettingsService.isOpen ? "cross" : "settings"
+  icon: SettingsService.isOpen ? "window-close" : "settings"
 
   onClicked: SettingsService.toggle()
 }

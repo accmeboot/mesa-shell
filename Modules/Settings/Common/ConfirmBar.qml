@@ -17,7 +17,7 @@ Rectangle {
 
   visible: root.open
   implicitHeight: row.implicitHeight + ConfigService.spacing + ConfigService.border
-  color: ConfigService.colors.background
+  color: ThemeService.colors.background
 
   Rectangle {
     anchors.left: parent.left
@@ -25,7 +25,7 @@ Rectangle {
     anchors.top: parent.top
 
     implicitHeight: ConfigService.border
-    color: ConfigService.colors.on_surface
+    color: ThemeService.colors.on_surface
   }
 
   RowLayout {
@@ -47,17 +47,17 @@ Rectangle {
     }
 
     MesaButton {
-      icon: "cross"
-      color: ConfigService.colors.highlight
-      contentColor: ConfigService.colors.background
+      icon: "window-close"
+      color: ThemeService.colors.highlight
+      contentColor: ThemeService.colors.background
 
       onClicked: root.cancelled()
     }
 
     MesaButton {
-      icon: "check"
-      color: ConfigService.colors.critical
-      contentColor: ConfigService.colors.background
+      icon: "dialog-ok"
+      color: ThemeService.colors.critical
+      contentColor: ThemeService.colors.background
 
       onClicked: root.confirmed()
     }

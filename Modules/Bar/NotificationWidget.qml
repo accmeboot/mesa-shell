@@ -5,7 +5,7 @@ import qs.Services
 import qs.Components
 
 MesaButton {
-  icon: NotificationsService.doNotDisturb ? "notification-off" : "notification"
+  icon: NotificationsService.doNotDisturb ? "notifications-disabled" : "notifications"
 
   onClicked: NotificationsService.toggleDoNotDisturb()
 }

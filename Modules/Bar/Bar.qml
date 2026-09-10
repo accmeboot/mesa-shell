@@ -15,7 +15,7 @@ Scope {
       required property var modelData
       screen: modelData
 
-      color: ConfigService.colors.background
+      color: ThemeService.colors.background
 
       WlrLayershell.keyboardFocus: {
         if (DmenuService.isOpen) return WlrKeyboardFocus.Exclusive;
@@ -58,6 +58,9 @@ Scope {
         RamWidget {}
         BatteryWidget {}
         ClockWidget {}
+        ThemeWidget {
+          Layout.rightMargin: -mainLayout.spacing
+        }
         NotificationWidget {}
       }
     }

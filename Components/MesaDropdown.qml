@@ -28,9 +28,9 @@ ColumnLayout {
     Layout.fillWidth: true
 
     implicitHeight: field.implicitHeight + ConfigService.spacing
-    color: ConfigService.colors.surface
+    color: ThemeService.colors.surface
 
-    border.color: ConfigService.colors.on_surface
+    border.color: ThemeService.colors.on_surface
     border.width: ConfigService.border
 
     HoverHandler {
@@ -58,23 +58,23 @@ ColumnLayout {
         visible: (root.currentOption?.icon ?? "") !== ""
         name: root.currentOption?.icon ?? ""
         size: root.iconSize
-        color: ConfigService.colors.foreground
+        color: ThemeService.colors.foreground
       }
 
       MesaText {
         Layout.fillWidth: true
 
         text: root.currentOption?.text ?? root.placeholder
-        color: root.currentOption ? ConfigService.colors.foreground : ConfigService.colors.on_surface
+        color: root.currentOption ? ThemeService.colors.foreground : ThemeService.colors.on_surface
         elide: Text.ElideRight
       }
 
       MesaIcon {
         Layout.alignment: Qt.AlignVCenter
 
-        name: "arrow-right"
+        name: "pan-end"
         size: root.caretSize
-        color: ConfigService.colors.foreground
+        color: ThemeService.colors.foreground
         rotation: root.expanded ? -90 : 90
       }
     }
@@ -86,9 +86,9 @@ ColumnLayout {
 
     visible: root.expanded
     implicitHeight: list.implicitHeight + border.width * 2
-    color: ConfigService.colors.background
+    color: ThemeService.colors.background
 
-    border.color: ConfigService.colors.on_surface
+    border.color: ThemeService.colors.on_surface
     border.width: ConfigService.border
 
     ColumnLayout {
@@ -113,7 +113,7 @@ ColumnLayout {
 
           implicitHeight: entry.implicitHeight + ConfigService.spacing
           color: {
-            const colors = ConfigService.colors;
+            const colors = ThemeService.colors;
 
             if (hover.hovered) return colors.highlight;
 
@@ -150,14 +150,14 @@ ColumnLayout {
               visible: (option.modelData.icon ?? "") !== ""
               name: option.modelData.icon ?? ""
               size: root.iconSize
-              color: hover.hovered ? ConfigService.colors.background : ConfigService.colors.foreground
+              color: hover.hovered ? ThemeService.colors.background : ThemeService.colors.foreground
             }
 
             MesaText {
               Layout.fillWidth: true
 
               text: option.modelData.text
-              color: hover.hovered ? ConfigService.colors.background : ConfigService.colors.foreground
+              color: hover.hovered ? ThemeService.colors.background : ThemeService.colors.foreground
               elide: Text.ElideRight
             }
           }

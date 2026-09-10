@@ -9,7 +9,7 @@ ColumnLayout {
 
   property string title
   property string value
-  property color valueColor: ConfigService.colors.on_surface
+  property color valueColor: ThemeService.colors.on_surface
   property string view: ""
 
   default property alias content: body.data
@@ -24,7 +24,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     implicitHeight: header.implicitHeight + ConfigService.spacing
-    color: root.navigable && hover.hovered ? ConfigService.colors.surface : "transparent"
+    color: root.navigable && hover.hovered ? ThemeService.colors.surface : "transparent"
 
     HoverHandler {
       id: hover
@@ -72,9 +72,9 @@ ColumnLayout {
         Layout.alignment: Qt.AlignVCenter
 
         visible: root.navigable
-        name: "arrow-right"
+        name: "pan-end"
         size: Math.round(ConfigService.font.size * 1.2)
-        color: ConfigService.colors.foreground
+        color: ThemeService.colors.foreground
       }
     }
   }

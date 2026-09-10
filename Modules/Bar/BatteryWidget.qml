@@ -9,7 +9,7 @@ import qs.Services
 Rectangle {
   id: root
 
-  color: ConfigService.colors.background
+  color: ThemeService.colors.background
 
   implicitWidth: batteryRow.implicitWidth + ConfigService.spacing
   implicitHeight: batteryRow.implicitHeight + ConfigService.spacing
@@ -22,9 +22,9 @@ Rectangle {
   readonly property string icon: {
     switch (device.state) {
     case UPowerDeviceState.Charging:
-      return "battery-charging"
+      return "battery-full-charging"
     case UPowerDeviceState.PendingCharge:
-      return "battery-plugged"
+      return "battery_plugged"
     case UPowerDeviceState.FullyCharged:
       return "battery-full"
     case UPowerDeviceState.Empty:
@@ -32,7 +32,7 @@ Rectangle {
     }
 
     if (percentage >= 90) return "battery-full"
-    if (percentage >= 65) return "battery-high"
+    if (percentage >= 65) return "battery-good"
     if (percentage >= 40) return "battery-medium"
     if (percentage >= 15) return "battery-low"
 

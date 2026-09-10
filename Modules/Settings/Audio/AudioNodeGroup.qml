@@ -10,8 +10,8 @@ PanelSection {
   id: root
 
   property var nodes: []
-  property string icon: "volume"
-  property string mutedIcon: "volume-mute"
+  property string icon: "audio-volume-high"
+  property string mutedIcon: "audio-volume-muted"
 
   visible: root.nodes.length > 0
 

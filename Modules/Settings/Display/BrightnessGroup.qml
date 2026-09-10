@@ -12,6 +12,6 @@ PanelSection {
     visible: !BrightnessService.available
     indented: true
     label: "No backlight device"
-    labelColor: ConfigService.colors.on_surface
+    labelColor: ThemeService.colors.on_surface
   }
 }

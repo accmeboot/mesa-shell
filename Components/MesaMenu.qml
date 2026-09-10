@@ -90,9 +90,9 @@ PopupWindow {
     anchors.fill: parent
     implicitWidth: entries.implicitWidth + border.width * 2
     implicitHeight: entries.implicitHeight + border.width * 2
-    color: ConfigService.colors.background
+    color: ThemeService.colors.background
     border.width: ConfigService.border
-    border.color: ConfigService.colors.on_surface
+    border.color: ThemeService.colors.on_surface
     focus: true
     Keys.onEscapePressed: root.closeAll()
 
@@ -113,16 +113,16 @@ PopupWindow {
 
           readonly property bool highlighted: mouse.containsMouse
           readonly property color foreground: {
-            if (!modelData.enabled) return ConfigService.colors.on_surface;
-            return highlighted ? ConfigService.colors.background : ConfigService.colors.foreground;
+            if (!modelData.enabled) return ThemeService.colors.on_surface;
+            return highlighted ? ThemeService.colors.background : ThemeService.colors.foreground;
           }
 
           Layout.fillWidth: true
           implicitWidth: modelData.isSeparator ? 0 : content.implicitWidth + root.rowPadding * 2
           implicitHeight: modelData.isSeparator ? ConfigService.border : content.implicitHeight + ConfigService.spacing
           color: {
-            if (modelData.isSeparator) return ConfigService.colors.on_surface;
-            return highlighted ? ConfigService.colors.highlight : ConfigService.colors.background;
+            if (modelData.isSeparator) return ThemeService.colors.on_surface;
+            return highlighted ? ThemeService.colors.highlight : ThemeService.colors.background;
           }
 
           RowLayout {
@@ -167,7 +167,7 @@ PopupWindow {
 
             MesaIcon {
               visible: row.modelData.hasChildren
-              name: "arrow-right"
+              name: "pan-end"
               size: root.indicatorSize
               color: row.foreground
             }

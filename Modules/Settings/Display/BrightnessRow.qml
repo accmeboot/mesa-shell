@@ -37,7 +37,7 @@ RowLayout {
 
       anchors.centerIn: parent
 
-      name: "brightness"
+      name: "brightnesssettings"
       size: root.iconSize
     }
   }

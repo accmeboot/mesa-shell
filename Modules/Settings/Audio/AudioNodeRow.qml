@@ -11,8 +11,8 @@ RowLayout {
   required property PwNode node
 
   property bool showName: true
-  property string icon: "volume"
-  property string mutedIcon: "volume-mute"
+  property string icon: "audio-volume-high"
+  property string mutedIcon: "audio-volume-muted"
 
   Layout.fillWidth: true
   Layout.leftMargin: ConfigService.spacing

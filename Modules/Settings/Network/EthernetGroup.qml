@@ -47,7 +47,7 @@ PanelSection {
           }
         }
         valueColor: {
-          const colors = ConfigService.colors;
+          const colors = ThemeService.colors;
 
           if (!entry.modelData.hasLink) return colors.on_surface;
 

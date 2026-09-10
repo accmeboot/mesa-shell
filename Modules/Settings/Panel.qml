@@ -31,9 +31,9 @@ Rectangle {
   }
 
   implicitHeight: layout.implicitHeight + root.border.width * 2
-  color: ConfigService.colors.background
+  color: ThemeService.colors.background
 
-  border.color: ConfigService.colors.on_surface
+  border.color: ThemeService.colors.on_surface
   border.width: ConfigService.border
 
   focus: true
@@ -63,7 +63,7 @@ Rectangle {
       Layout.fillWidth: true
 
       implicitHeight: root.barHeight
-      color: ConfigService.colors.surface
+      color: ThemeService.colors.surface
 
       HoverHandler {
         enabled: !root.onHome
@@ -93,9 +93,9 @@ Rectangle {
           Layout.alignment: Qt.AlignVCenter
 
           visible: !root.onHome
-          name: "arrow-left"
+          name: "pan-start"
           size: Math.round(ConfigService.font.size * 1.2)
-          color: ConfigService.colors.foreground
+          color: ThemeService.colors.foreground
         }
 
         MesaText {
@@ -152,7 +152,7 @@ Rectangle {
       Layout.fillWidth: true
 
       implicitHeight: root.barHeight
-      color: ConfigService.colors.surface
+      color: ThemeService.colors.surface
 
       RowLayout {
         id: actions
@@ -177,7 +177,7 @@ Rectangle {
           Layout.fillWidth: true
           Layout.fillHeight: true
 
-          icon: "suspend"
+          icon: "weather-clear-night"
 
           onClicked: {
             PowerService.suspend();
@@ -189,8 +189,8 @@ Rectangle {
           Layout.fillWidth: true
           Layout.fillHeight: true
 
-          icon: "exit"
-          color: root.pendingAction === "exit" ? ConfigService.colors.on_surface : ConfigService.colors.surface
+          icon: "application-exit"
+          color: root.pendingAction === "exit" ? ThemeService.colors.on_surface : ThemeService.colors.surface
 
           onClicked: root.pendingAction = root.pendingAction === "exit" ? "" : "exit"
         }
@@ -199,8 +199,8 @@ Rectangle {
           Layout.fillWidth: true
           Layout.fillHeight: true
 
-          icon: "restart"
-          color: root.pendingAction === "reboot" ? ConfigService.colors.on_surface : ConfigService.colors.surface
+          icon: "system-reboot"
+          color: root.pendingAction === "reboot" ? ThemeService.colors.on_surface : ThemeService.colors.surface
 
           onClicked: root.pendingAction = root.pendingAction === "reboot" ? "" : "reboot"
         }
@@ -209,9 +209,9 @@ Rectangle {
           Layout.fillWidth: true
           Layout.fillHeight: true
 
-          icon: "power"
-          color: root.pendingAction === "shutdown" ? ConfigService.colors.on_surface : ConfigService.colors.surface
-          contentColor: ConfigService.colors.critical
+          icon: "system-shutdown"
+          color: root.pendingAction === "shutdown" ? ThemeService.colors.on_surface : ThemeService.colors.surface
+          contentColor: ThemeService.colors.critical
 
           onClicked: root.pendingAction = root.pendingAction === "shutdown" ? "" : "shutdown"
         }
