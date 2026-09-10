@@ -22,7 +22,7 @@ Rectangle {
 
     MesaIcon {
       name: "cpu"
-      size: Math.round(ConfigService.font.size * 1.5)
+      size: Math.round(ConfigService.font.size * 1.6)
       color: ColorService.threshold(root.usage, 20, 60)
     }
 

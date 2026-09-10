@@ -45,7 +45,7 @@ Rectangle {
 
     MesaIcon {
       name: root.icon
-      size: Math.round(ConfigService.font.size * 1.5)
+      size: Math.round(ConfigService.font.size * 1.6)
       color: ColorService.threshold(root.percentage, 50, 20)
     }
 
