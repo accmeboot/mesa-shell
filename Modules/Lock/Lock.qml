@@ -41,7 +41,7 @@ Scope {
         anchors.fill: parent
 
         color: ThemeService.colors.background
-        opacity: 0.6
+        opacity: 0.9
       }
 
       RowLayout {
@@ -72,6 +72,9 @@ Scope {
             icon: "application-exit"
             iconSize: ConfigService.font.size * 3
 
+            horizontalPadding: ConfigService.spacing * 3
+            verticalPadding: ConfigService.spacing * 3
+
             onClicked: PowerService.exitSession()
           }
 
@@ -80,6 +83,9 @@ Scope {
 
             icon: "system-reboot"
             iconSize: ConfigService.font.size * 3
+
+            horizontalPadding: ConfigService.spacing * 3
+            verticalPadding: ConfigService.spacing * 3
 
             onClicked: PowerService.reboot()
           }
@@ -90,6 +96,9 @@ Scope {
             icon: "system-shutdown"
             iconSize: ConfigService.font.size * 3
             contentColor: ThemeService.colors.critical
+
+            horizontalPadding: ConfigService.spacing * 3
+            verticalPadding: ConfigService.spacing * 3
 
             onClicked: PowerService.shutdown()
           }

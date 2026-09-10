@@ -24,7 +24,7 @@ Rectangle {
     anchors.centerIn: parent
 
     MesaIcon {
-      name: "media-memory"
+      name: "view-statistics"
       size: Math.round(ConfigService.font.size * 1.5)
       color: ColorService.threshold(root.usage, 50, 80)
     }
