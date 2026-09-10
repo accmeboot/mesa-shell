@@ -13,6 +13,12 @@ Singleton {
   property var notificationsActions: []
   property var notificationsWatchers: []
 
+  property bool doNotDisturb: false
+
+  function toggleDoNotDisturb() {
+    doNotDisturb = !doNotDisturb;
+  }
+
   NotificationServer {
     keepOnReload: false
     imageSupported: true
@@ -75,6 +81,8 @@ Singleton {
   }
 
   function handleNotification(notification) {
+    if (doNotDisturb)
+    return;
     var item = prepareNotificationObject(notification);
 
     notification.tracked = true;

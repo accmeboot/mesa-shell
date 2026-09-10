@@ -62,7 +62,7 @@ Scope {
 
         anchors {
           top: true
-          right: true
+          left: true
         }
 
         Panel {
@@ -71,10 +71,6 @@ Scope {
           anchors.left: parent.left
           anchors.right: parent.right
           anchors.top: parent.top
-
-          // sized from the window's target height instead of its current one, so
-          // growing the panel never squeezes the rows for the frame the compositor
-          // takes to apply the new surface size
           height: window.implicitHeight
         }
       }

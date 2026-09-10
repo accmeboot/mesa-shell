@@ -39,6 +39,10 @@ Scope {
 
         spacing: ConfigService.spacing
 
+        SettingsWidget {
+          Layout.rightMargin: -mainLayout.spacing
+        }
+
         WorkspacesWidget {
           Layout.alignment: Qt.AlignLeft
           screen: modelData
@@ -54,7 +58,7 @@ Scope {
         RamWidget {}
         BatteryWidget {}
         ClockWidget {}
-        SettingsWidget {}
+        NotificationWidget {}
       }
     }
   }
