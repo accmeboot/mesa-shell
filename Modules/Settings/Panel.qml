@@ -189,9 +189,20 @@ Rectangle {
           Layout.fillWidth: true
           Layout.fillHeight: true
 
-          icon: "restart"
+          icon: "exit"
+          color: root.pendingAction === "exit" ? ConfigService.colors.on_surface : ConfigService.colors.surface
 
-          onClicked: root.pendingAction = "reboot"
+          onClicked: root.pendingAction = root.pendingAction === "exit" ? "" : "exit"
+        }
+
+        MesaButton {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+
+          icon: "restart"
+          color: root.pendingAction === "reboot" ? ConfigService.colors.on_surface : ConfigService.colors.surface
+
+          onClicked: root.pendingAction = root.pendingAction === "reboot" ? "" : "reboot"
         }
 
         MesaButton {
@@ -199,31 +210,37 @@ Rectangle {
           Layout.fillHeight: true
 
           icon: "power"
+          color: root.pendingAction === "shutdown" ? ConfigService.colors.on_surface : ConfigService.colors.surface
           contentColor: ConfigService.colors.critical
 
-          onClicked: root.pendingAction = "shutdown"
+          onClicked: root.pendingAction = root.pendingAction === "shutdown" ? "" : "shutdown"
         }
       }
     }
-  }
 
-  ConfirmDialog {
-    anchors.fill: parent
-    anchors.margins: root.border.width
+    ConfirmBar {
+      open: root.pendingAction !== ""
+      message: {
+        switch (root.pendingAction) {
+        case "exit": return "Exit the session?";
+        case "reboot": return "Restart the system?";
+        case "shutdown": return "Shut down the system?";
+        default: return "";
+        }
+      }
 
-    visible: root.pendingAction !== ""
-    message: root.pendingAction === "shutdown" ? "Shut down the system?" : "Restart the system?"
-    confirmLabel: root.pendingAction === "shutdown" ? "Shut down" : "Restart"
-    confirmColor: ConfigService.colors.critical
+      onCancelled: root.pendingAction = ""
 
-    onCancelled: root.pendingAction = ""
+      onConfirmed: {
+        switch (root.pendingAction) {
+        case "exit": PowerService.exitSession(); break;
+        case "reboot": PowerService.reboot(); break;
+        case "shutdown": PowerService.shutdown(); break;
+        }
 
-    onConfirmed: {
-      if (root.pendingAction === "shutdown") PowerService.shutdown();
-      else PowerService.reboot();
-
-      root.pendingAction = "";
-      SettingsService.close();
+        root.pendingAction = "";
+        SettingsService.close();
+      }
     }
   }
 }

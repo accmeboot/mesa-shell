@@ -20,6 +20,11 @@ Singleton {
     root.run("systemctl suspend");
   }
 
+  // sway owns the session, so ending it drops back to the display manager
+  function exitSession(): void {
+    root.run("swaymsg exit");
+  }
+
   function reboot(): void {
     root.run("systemctl reboot");
   }
