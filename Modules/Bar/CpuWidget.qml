@@ -22,12 +22,24 @@ Rectangle {
 
     MesaIcon {
       name: "speedometer"
-      size: Math.round(ConfigService.font.size * 1.6)
+      Layout.alignment: Qt.AlignTop
+      Layout.topMargin: Math.round(label.baselineOffset + glyphs.tightBoundingRect.y + glyphs.tightBoundingRect.height / 2 - size / 2)
+      size: {
+        const base = Math.round(ConfigService.font.size * 1.5)
+        return base + Math.abs(glyphs.tightBoundingRect.height - base) % 2
+      }
       color: ColorService.threshold(root.usage, 20, 60)
     }
 
     MesaText {
+      id: label
       text: usage + "%"
+    }
+
+    TextMetrics {
+      id: glyphs
+      font: label.font
+      text: "0123456789"
     }
   }
 
