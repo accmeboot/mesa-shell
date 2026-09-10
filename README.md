@@ -205,6 +205,17 @@ Keep an `output * bg <color> solid_color` line in the Sway config as a fallback
 — it covers the frames before the shell maps its surfaces, and is what shows
 whenever the shell is not running.
 
+### `dateTimeFormat`
+
+| Key | Type | Default | Used for |
+| --- | --- | --- | --- |
+| `dateTimeFormat` | string | `ddd d MMM HH:mm` | The clock in the bar and on the lockscreen — the default reads `Thu 10 Sep 21:52` |
+
+The string uses the format codes of Qt's `Qt.formatDateTime` — `ddd`/`dddd` for
+the short/long day name, `d`/`dd` for the day, `MMM`/`MMMM` for the short/long
+month name, `HH:mm` for 24-hour time and `h:mm AP` for 12-hour. Day and month
+names follow the system locale.
+
 ### `defaultPolarity`
 
 | Key | Type | Default | Used for |
