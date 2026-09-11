@@ -9,25 +9,34 @@ import qs.Components
 RowLayout {
   id: root
 
-  readonly property bool hasArguments: /\s/.test(searchField.text.trim())
+  readonly property bool choosing: DmenuService.mode === "choose"
+  readonly property bool hasArguments: !choosing && /\s/.test(searchField.text.trim())
 
-  property var filteredApplications: {
+  property var filteredItems: {
     if (hasArguments) {
       return [];
     }
 
+    const source = choosing ? DmenuService.items : DmenuService.applications;
     const query = searchField.text.trim().toLowerCase();
     if (query === "") {
-      return DmenuService.applications;
+      return source;
     }
-    return DmenuService.applications.filter(app => app.toLowerCase().includes(query));
+    return source.filter(item => item.toLowerCase().includes(query));
   }
 
   function submit(): void {
-    const hasSelection = menuList.currentIndex >= 0 && menuList.currentIndex < filteredApplications.length;
+    const hasSelection = menuList.currentIndex >= 0 && menuList.currentIndex < filteredItems.length;
+
+    if (choosing) {
+      if (hasSelection) {
+        DmenuService.resolve(filteredItems[menuList.currentIndex]);
+      }
+      return;
+    }
 
     if (hasSelection) {
-      DmenuService.execute(filteredApplications[menuList.currentIndex]);
+      DmenuService.execute(filteredItems[menuList.currentIndex]);
       return;
     }
 
@@ -104,7 +113,7 @@ RowLayout {
 
       ListView {
         id: menuList
-        model: root.filteredApplications
+        model: root.filteredItems
         orientation: Qt.Horizontal
 
         keyNavigationEnabled: true
@@ -155,7 +164,7 @@ RowLayout {
 
           onClicked: {
             menuList.currentIndex = delegateRoot.index;
-            DmenuService.execute(delegateRoot.modelData);
+            root.submit();
           }
         }
       }
