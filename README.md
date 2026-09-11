@@ -6,15 +6,15 @@ Status bar, notification daemon, quick settings panel and lockscreen for [Quicks
 
 ## Dependencies
 
-- [Quickshell](https://github.com/outfoxxed/quickshell)
-  - UPower: [`Quickshell.Services.UPower`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.UPower/)
-  - PipeWire: [`Quickshell.Services.Pipewire`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.Pipewire/)
-  - NetworkManager: [`Quickshell.Networking`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Networking/)
-  - BlueZ: [`Quickshell.Bluetooth`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Bluetooth/)
-  - PAM: [`Quickshell.Services.Pam`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.Pam/)
-- [`qt6.qt5compat`](https://github.com/qt/qt5compat)
-- [Sway](https://github.com/swaywm/sway)
-- systemd
+- [quickshell](https://github.com/outfoxxed/quickshell)
+  - upower: [`Quickshell.Services.UPower`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.UPower/)
+  - pipewire: [`Quickshell.Services.Pipewire`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.Pipewire/)
+  - networkmanager: [`Quickshell.Networking`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Networking/)
+  - bluez: [`Quickshell.Bluetooth`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Bluetooth/)
+  - pam: [`Quickshell.Services.Pam`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.Pam/)
+- [`qt6-5compat`](https://archlinux.org/packages/extra/x86_64/qt6-5compat/)
+- [sway](https://github.com/swaywm/sway)
+- [systemd](https://github.com/systemd/systemd)
 - [`brightnessctl`](https://github.com/Hummer12007/brightnessctl) (optional)
 - [`socat`](http://www.dest-unreach.org/socat/) (`scripts/mesa-dmenu` only)
 
