@@ -33,6 +33,45 @@ bindsym $mod+d exec qs -c mesa-shell ipc call dmenu toggle
 bindsym $mod+p exec qs -c mesa-shell ipc call settingsWindow toggle
 ```
 
+### NixOS
+
+Flake input:
+
+```nix
+inputs.mesa-shell = {
+  url = "github:accmeboot/mesa-shell";
+  inputs.nixpkgs.follows = "nixpkgs";
+};
+```
+
+Home Manager (`inputs` passed via `extraSpecialArgs`):
+
+```nix
+{ inputs, ... }: {
+  imports = [ inputs.mesa-shell.homeManagerModules.default ];
+
+  programs.mesa-shell = {
+    enable = true;
+    settings = { }; # written to config.json, same keys as below
+  };
+
+  # replaces `exec qs -c mesa-shell -d`
+  programs.quickshell.systemd = {
+    enable = true;
+    target = "sway-session.target";
+  };
+}
+```
+
+NixOS services used by the modules:
+
+```nix
+services.upower.enable = true;
+services.pipewire.enable = true;
+networking.networkmanager.enable = true;
+hardware.bluetooth.enable = true;
+```
+
 ## Modules
 
 - **Bar**: workspaces, mode, launcher, tray, CPU, RAM, battery, network, notifications, theme, clock
@@ -92,6 +131,15 @@ As the xdg-desktop-portal-wlr screen chooser:
 [screencast]
 chooser_type=dmenu
 chooser_cmd=/path/to/mesa-dmenu
+```
+
+On NixOS:
+
+```nix
+xdg.portal.wlr.settings.screencast = {
+  chooser_type = "dmenu";
+  chooser_cmd = lib.getExe inputs.mesa-shell.packages.${pkgs.stdenv.hostPlatform.system}.mesa-dmenu;
+};
 ```
 
 ## License
