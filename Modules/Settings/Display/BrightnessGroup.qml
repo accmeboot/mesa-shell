@@ -3,15 +3,7 @@ import qs.Modules.Settings.Common
 
 PanelSection {
   title: "Brightness"
+  visible: BrightnessService.available
 
-  BrightnessRow {
-    visible: BrightnessService.available
-  }
-
-  PanelRow {
-    visible: !BrightnessService.available
-    indented: true
-    label: "No backlight device"
-    labelColor: ThemeService.colors.on_surface
-  }
+  BrightnessRow {}
 }

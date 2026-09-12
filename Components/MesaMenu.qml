@@ -19,6 +19,8 @@ PopupWindow {
   readonly property int rowPadding: Math.round(ConfigService.spacing / 2)
   readonly property int indicatorSize: Math.round(ConfigService.font.size * 1.5)
   readonly property bool hasIndicators: opener.children.values.some(entry => entry.icon !== "" || entry.buttonType !== QsMenuButtonType.None)
+  readonly property bool hasToggles: opener.children.values.some(entry => entry.buttonType === QsMenuButtonType.CheckBox)
+  readonly property int indicatorWidth: root.hasToggles ? Math.max(root.indicatorSize, toggleMetrics.implicitWidth) : root.indicatorSize
 
   visible: root.shouldShow
   color: "transparent"
@@ -84,6 +86,12 @@ PopupWindow {
 
   Loader { id: submenuLoader }
 
+  MesaIndicator {
+    id: toggleMetrics
+
+    visible: false
+  }
+
   Rectangle {
     id: background
 
@@ -138,7 +146,7 @@ PopupWindow {
 
             Item {
               visible: root.hasIndicators
-              Layout.preferredWidth: root.indicatorSize
+              Layout.preferredWidth: root.indicatorWidth
               Layout.preferredHeight: root.indicatorSize
 
               MesaIndicator {
@@ -149,6 +157,7 @@ PopupWindow {
                 checked: row.modelData.checkState === Qt.Checked
                 radio: row.modelData.buttonType === QsMenuButtonType.RadioButton
                 color: row.foreground
+                backgroundColor: row.color
               }
 
               IconImage {

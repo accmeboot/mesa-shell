@@ -50,9 +50,11 @@ Rectangle {
     anchors.leftMargin: ConfigService.spacing
     anchors.rightMargin: ConfigService.spacing
 
-    spacing: ConfigService.spacing
+    spacing: 0
 
     Item {
+      id: leadingSlot
+
       Layout.alignment: Qt.AlignVCenter
 
       visible: root.leading !== null || root.indented
@@ -69,6 +71,7 @@ Rectangle {
 
     ColumnLayout {
       Layout.fillWidth: true
+      Layout.leftMargin: leadingSlot.visible ? ConfigService.spacing : 0
 
       spacing: 0
 
@@ -93,6 +96,7 @@ Rectangle {
 
     MesaText {
       Layout.alignment: Qt.AlignVCenter
+      Layout.leftMargin: ConfigService.spacing
 
       visible: root.value !== ""
       text: root.value
@@ -104,12 +108,14 @@ Rectangle {
 
       Layout.fillWidth: root.wideTrailing
       Layout.alignment: Qt.AlignVCenter
+      Layout.leftMargin: trailingRow.implicitWidth > 0 ? ConfigService.spacing : 0
 
       spacing: Math.round(ConfigService.spacing / 2)
     }
 
     MesaIcon {
       Layout.alignment: Qt.AlignVCenter
+      Layout.leftMargin: ConfigService.spacing
 
       visible: root.chevron
       name: "pan-end"
