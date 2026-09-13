@@ -9,8 +9,6 @@ import qs.Services
 Rectangle {
   id: root
 
-  color: ThemeService.colors.background
-
   implicitWidth: batteryRow.implicitWidth + ConfigService.spacing
   implicitHeight: batteryRow.implicitHeight + ConfigService.spacing
 
@@ -39,6 +37,8 @@ Rectangle {
     return "battery-empty"
   }
 
+  color: ColorService.threshold(root.percentage, 50, 20)
+
   RowLayout {
     id: batteryRow
     anchors.centerIn: parent
@@ -46,11 +46,12 @@ Rectangle {
     MesaIcon {
       name: root.icon
       size: Math.round(ConfigService.font.size * 1.5)
-      color: ColorService.threshold(root.percentage, 50, 20)
+      color: ThemeService.colors.background
     }
 
     MesaText {
       text: root.percentage + "%"
+      color: ThemeService.colors.background
     }
   }
 }

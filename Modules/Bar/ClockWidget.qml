@@ -6,7 +6,7 @@ import qs.Components
 import qs.Services
 
 Rectangle {
-  color: ThemeService.colors.background
+  color: "transparent"
 
   implicitWidth: clockRow.implicitWidth + ConfigService.spacing
   implicitHeight: clockRow.implicitHeight + ConfigService.spacing

@@ -60,8 +60,6 @@ Scope {
           Layout.fillHeight: true
         }
         NetworkWidget {}
-        CpuWidget {}
-        RamWidget {}
         BatteryWidget {}
         ClockWidget {}
         ThemeWidget {

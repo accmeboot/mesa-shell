@@ -9,7 +9,6 @@ import qs.Services
 Rectangle {
   id: root
 
-  color: ThemeService.colors.background
 
   implicitWidth: networkRow.implicitWidth + ConfigService.spacing
   implicitHeight: networkRow.implicitHeight + ConfigService.spacing
@@ -41,6 +40,8 @@ Rectangle {
     return "network-wired"
   }
 
+  color: ColorService.status(connected)
+
   RowLayout {
     id: networkRow
     anchors.centerIn: parent
@@ -48,7 +49,7 @@ Rectangle {
     MesaIcon {
       name: root.icon
       size: Math.round(ConfigService.font.size * 1.5)
-      color: ColorService.status(root.connected)
+      color: ThemeService.colors.background
     }
 
     MesaText {
@@ -59,6 +60,7 @@ Rectangle {
 
         return root.device.name
       }
+      color: ThemeService.colors.background
     }
   }
 }
