@@ -74,7 +74,7 @@ hardware.bluetooth.enable = true;
 
 ## Modules
 
-- **Bar**: workspaces, mode, launcher, tray, CPU, RAM, battery, network, notifications, theme, clock
+- **Bar**: workspaces, mode, launcher, tray, battery, network, notifications, theme, clock
 - **Notifications**: `org.freedesktop.Notifications` daemon
 - **Settings**: audio, display, network, bluetooth, about, power
 - **Lock**: `ext-session-lock-v1` lockscreen
