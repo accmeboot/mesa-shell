@@ -1,4 +1,5 @@
 import Quickshell
+import Quickshell.Wayland
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.SystemTray
@@ -8,6 +9,8 @@ import qs.Services
 
 RowLayout {
   id: trayRow
+
+  required property var screen
 
   readonly property bool menuOpen: trayMenu.isOpen
 
@@ -54,6 +57,16 @@ RowLayout {
 
   MesaMenu {
     id: trayMenu
+  }
+
+  MesaCatcher {
+    active: trayMenu.isOpen
+    layer: WlrLayer.Overlay
+    namespace: "mesa-tray-catcher"
+    exclude: trayRow
+    excludeScreen: trayRow.screen
+
+    onClicked: trayMenu.close()
   }
 
   MesaButton {

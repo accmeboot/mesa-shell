@@ -3,6 +3,7 @@ import Quickshell.Wayland
 import QtQuick
 
 import qs.Services
+import qs.Components
 
 Scope {
   id: root
@@ -13,66 +14,42 @@ Scope {
     return screens.find(screen => screen.name === SwayService.focusedOutput) ?? screens[0] ?? null;
   }
 
+  MesaCatcher {
+    active: SettingsService.isOpen
+    namespace: "mesa-settings-catcher"
+
+    onClicked: SettingsService.close()
+  }
+
   LazyLoader {
     activeAsync: SettingsService.isOpen
 
-    Scope {
-      Variants {
-        model: Quickshell.screens
+    PanelWindow {
+      id: window
 
-        PanelWindow {
-          required property var modelData
+      screen: root.focusedScreen
+      color: "transparent"
+      exclusiveZone: 0
 
-          screen: modelData
-          color: "transparent"
-          exclusionMode: ExclusionMode.Ignore
+      WlrLayershell.layer: WlrLayer.Overlay
+      WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+      WlrLayershell.namespace: "mesa-settings"
 
-          WlrLayershell.layer: WlrLayer.Top
-          WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-          WlrLayershell.namespace: "mesa-settings-catcher"
+      implicitWidth: Math.round(ConfigService.font.size * 34)
+      implicitHeight: Math.min(panel.implicitHeight, window.screen ? window.screen.height * 0.8 : panel.implicitHeight)
 
-          anchors {
-            top: true
-            bottom: true
-            left: true
-            right: true
-          }
-
-          MouseArea {
-            anchors.fill: parent
-
-            onClicked: SettingsService.close()
-          }
-        }
+      anchors {
+        top: true
+        left: true
       }
 
-      PanelWindow {
-        id: window
+      Panel {
+        id: panel
 
-        screen: root.focusedScreen
-        color: "transparent"
-        exclusiveZone: 0
-
-        WlrLayershell.layer: WlrLayer.Overlay
-        WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
-        WlrLayershell.namespace: "mesa-settings"
-
-        implicitWidth: Math.round(ConfigService.font.size * 34)
-        implicitHeight: Math.min(panel.implicitHeight, window.screen ? window.screen.height * 0.8 : panel.implicitHeight)
-
-        anchors {
-          top: true
-          left: true
-        }
-
-        Panel {
-          id: panel
-
-          anchors.left: parent.left
-          anchors.right: parent.right
-          anchors.top: parent.top
-          height: window.implicitHeight
-        }
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        height: window.implicitHeight
       }
     }
   }

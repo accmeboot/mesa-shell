@@ -58,6 +58,7 @@ Scope {
         TrayWidget {
           id: tray
           Layout.fillHeight: true
+          screen: modelData
         }
         NetworkWidget {}
         BatteryWidget {}

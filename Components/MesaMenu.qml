@@ -28,6 +28,7 @@ PopupWindow {
   anchor.item: root.anchorItem
   anchor.edges: root.submenu ? Edges.Right | Edges.Top : Edges.Bottom | Edges.Left
   anchor.gravity: root.submenu ? Edges.Right | Edges.Bottom : Edges.Bottom | Edges.Right
+  anchor.adjustment: PopupAdjustment.Flip | PopupAdjustment.Slide
   implicitWidth: background.implicitWidth
   implicitHeight: background.implicitHeight
 
