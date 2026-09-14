@@ -37,7 +37,7 @@ Rectangle {
     return "battery-empty"
   }
 
-  color: ColorService.threshold(root.percentage, 50, 20)
+  color: "transparent"
 
   RowLayout {
     id: batteryRow
@@ -46,12 +46,11 @@ Rectangle {
     MesaIcon {
       name: root.icon
       size: Math.round(ConfigService.font.size * 1.5)
-      color: ThemeService.colors.background
+      color: ColorService.threshold(root.percentage, 50, 20)
     }
 
     MesaText {
       text: root.percentage + "%"
-      color: ThemeService.colors.background
     }
   }
 }

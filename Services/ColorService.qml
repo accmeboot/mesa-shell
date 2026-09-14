@@ -21,6 +21,6 @@ Singleton {
   }
 
   function status(ok: bool): color {
-    return ok ? ThemeService.colors.foreground : ThemeService.colors.critical;
+    return ok ? ThemeService.colors.ok : ThemeService.colors.critical;
   }
 }

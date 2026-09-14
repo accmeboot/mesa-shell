@@ -125,6 +125,13 @@ RowLayout {
 
         spacing: 0
 
+        Rectangle {
+          anchors.fill: parent
+          color: "transparent"
+          border.color: ThemeService.colors.on_surface
+          border.width: ConfigService.border
+        }
+
         WheelHandler {
           acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
 

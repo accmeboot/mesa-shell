@@ -40,7 +40,7 @@ Rectangle {
     return "network-wired"
   }
 
-  color: ColorService.status(connected)
+  color: "transparent"
 
   RowLayout {
     id: networkRow
@@ -49,7 +49,7 @@ Rectangle {
     MesaIcon {
       name: root.icon
       size: Math.round(ConfigService.font.size * 1.5)
-      color: ThemeService.colors.background
+      color: ColorService.status(connected)
     }
 
     MesaText {
@@ -60,7 +60,6 @@ Rectangle {
 
         return root.device.name
       }
-      color: ThemeService.colors.background
     }
   }
 }
