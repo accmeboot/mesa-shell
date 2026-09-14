@@ -17,7 +17,7 @@ Singleton {
       if (value < warning) return colors.attention;
     }
 
-    return colors.foreground;
+    return colors.ok;
   }
 
   function status(ok: bool): color {
