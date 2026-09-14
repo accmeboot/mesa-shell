@@ -24,7 +24,6 @@ PopupWindow {
 
   visible: root.shouldShow
   color: "transparent"
-  grabFocus: true
   anchor.item: root.anchorItem
   anchor.edges: root.submenu ? Edges.Right | Edges.Top : Edges.Bottom | Edges.Left
   anchor.gravity: root.submenu ? Edges.Right | Edges.Bottom : Edges.Bottom | Edges.Right
@@ -102,8 +101,6 @@ PopupWindow {
     color: ThemeService.colors.background
     border.width: ConfigService.border
     border.color: ThemeService.colors.on_surface
-    focus: true
-    Keys.onEscapePressed: root.closeAll()
 
     ColumnLayout {
       id: entries

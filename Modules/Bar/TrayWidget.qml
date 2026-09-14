@@ -19,6 +19,9 @@ RowLayout {
   spacing: 0
 
   onIsVisibleChanged: if (!trayRow.isVisible) trayMenu.close()
+  onMenuOpenChanged: if (trayRow.menuOpen) trayRow.forceActiveFocus()
+
+  Keys.onEscapePressed: trayMenu.close()
 
   visible: Boolean(SystemTray.items.values.length)
 
@@ -66,7 +69,7 @@ RowLayout {
     exclude: trayRow
     excludeScreen: trayRow.screen
 
-    onClicked: trayMenu.close()
+    onDismissed: trayMenu.close()
   }
 
   MesaButton {

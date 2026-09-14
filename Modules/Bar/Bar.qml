@@ -17,12 +17,7 @@ Scope {
 
       color: ThemeService.colors.background
 
-      WlrLayershell.keyboardFocus: {
-        if (DmenuService.isOpen) return WlrKeyboardFocus.Exclusive;
-        if (tray.menuOpen) return WlrKeyboardFocus.OnDemand;
-
-        return WlrKeyboardFocus.None;
-      }
+      WlrLayershell.keyboardFocus: dmenu.isOpen || tray.menuOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
       anchors {
         top: true
@@ -42,6 +37,7 @@ Scope {
         SettingsWidget {
           Layout.fillHeight: true
           Layout.rightMargin: -mainLayout.spacing
+          screen: modelData
         }
 
         WorkspacesWidget {
@@ -50,7 +46,9 @@ Scope {
         }
         ModeWidget {}
         DmenuWidget {
+          id: dmenu
           Layout.fillHeight: true
+          screen: modelData
         }
 
         Item { Layout.fillWidth: true }

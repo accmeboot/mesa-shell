@@ -2,6 +2,8 @@ import Quickshell
 import Quickshell.Wayland
 import QtQuick
 
+import qs.Services
+
 Scope {
   id: root
 
@@ -11,7 +13,17 @@ Scope {
   property Item exclude: null
   property var excludeScreen: null
 
-  signal clicked()
+  signal dismissed()
+
+  onActiveChanged: if (root.active) CatcherService.current = root.namespace
+
+  Connections {
+    target: CatcherService
+
+    function onCurrentChanged(): void {
+      if (root.active && CatcherService.current !== root.namespace) root.dismissed();
+    }
+  }
 
   LazyLoader {
     active: root.active
@@ -48,7 +60,7 @@ Scope {
           anchors.fill: parent
           acceptedButtons: Qt.AllButtons
 
-          onClicked: root.clicked()
+          onClicked: root.dismissed()
         }
       }
     }

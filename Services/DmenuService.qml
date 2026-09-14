@@ -12,9 +12,11 @@ Singleton {
   property string mode: "run"
   property var items: []
   property var client: null
+  property string screen: ""
 
-  function open(): void {
+  function open(screen: string): void {
     loadApplications();
+    root.screen = screen;
     isOpen = true;
   }
 
@@ -36,6 +38,7 @@ Singleton {
     }
     client = socket;
     items = lines;
+    screen = SwayService.focusedOutput;
     mode = "choose";
     isOpen = true;
   }
@@ -117,7 +120,7 @@ Singleton {
     target: "dmenu"
 
     function open(): void {
-      root.open();
+      root.open(SwayService.focusedOutput);
     }
 
     function close(): void {
@@ -125,7 +128,7 @@ Singleton {
     }
 
     function toggle(): void {
-      root.isOpen ? root.close() : root.open();
+      root.isOpen ? root.close() : root.open(SwayService.focusedOutput);
     }
   }
 }

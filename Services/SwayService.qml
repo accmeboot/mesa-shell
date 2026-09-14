@@ -7,7 +7,7 @@ import Quickshell.Io
 Singleton {
   id: root
 
-  readonly property string focusedOutput: I3.focusedMonitor?.name ?? ""
+  readonly property string focusedOutput: I3.focusedMonitor?.name ?? Quickshell.screens[0]?.name ?? ""
 
   property string mode: "defulat"
 

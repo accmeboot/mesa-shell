@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
+import Quickshell.Wayland
 
 import qs.Services
 import qs.Components
@@ -9,6 +10,9 @@ import qs.Components
 RowLayout {
   id: root
 
+  required property var screen
+
+  readonly property bool isOpen: DmenuService.isOpen && DmenuService.screen === root.screen.name
   readonly property bool choosing: DmenuService.mode === "choose"
   readonly property bool hasArguments: !choosing && /\s/.test(searchField.text.trim())
 
@@ -64,31 +68,42 @@ RowLayout {
 
   spacing: 0
 
+  MesaCatcher {
+    active: root.isOpen
+    layer: WlrLayer.Overlay
+    namespace: "mesa-dmenu-catcher"
+    exclude: root
+    excludeScreen: root.screen
+
+    onDismissed: DmenuService.close()
+  }
+
   MesaButton {
     Layout.fillHeight: true
-    icon: DmenuService.isOpen ? "window-close" : "cm_runterm"
-    onClicked: DmenuService.isOpen ? DmenuService.close() : DmenuService.open()
+    icon: root.isOpen ? "window-close" : "cm_runterm"
+    onClicked: root.isOpen ? DmenuService.close() : DmenuService.open(root.screen.name)
   }
 
   RowLayout {
     id: menuRow
 
-    visible: DmenuService.isOpen
+    visible: root.isOpen
     spacing: 0
 
     onVisibleChanged: {
-      if (!visible) {
-        searchField.text = "";
-        menuList.currentIndex = 0;
+      if (visible) {
+        searchField.forceActiveFocus();
+        return;
       }
+
+      searchField.text = "";
+      menuList.currentIndex = 0;
     }
     MesaInput {
       id: searchField
 
       Layout.fillHeight: true
       Layout.minimumWidth: 150
-
-      focus: true
 
       onTextChanged: {
         menuList.currentIndex = 0;

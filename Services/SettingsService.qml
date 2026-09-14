@@ -11,8 +11,10 @@ Singleton {
 
   property bool isOpen: false
   property string view: root.home
+  property string screen: ""
 
-  function open(): void {
+  function open(screen: string): void {
+    root.screen = screen;
     root.isOpen = true;
   }
 
@@ -21,9 +23,9 @@ Singleton {
     root.view = root.home;
   }
 
-  function toggle(): void {
+  function toggle(screen: string): void {
     if (root.isOpen) root.close();
-    else root.open();
+    else root.open(screen);
   }
 
   function navigate(view: string): void {
@@ -34,16 +36,16 @@ Singleton {
     root.view = root.home;
   }
 
-  function openView(view: string): void {
+  function openView(view: string, screen: string): void {
     root.navigate(view);
-    root.isOpen = true;
+    root.open(screen);
   }
 
   IpcHandler {
     target: "settingsWindow"
 
     function open(): void {
-      root.open();
+      root.open(SwayService.focusedOutput);
     }
 
     function close(): void {
@@ -51,11 +53,11 @@ Singleton {
     }
 
     function toggle(): void {
-      root.toggle();
+      root.toggle(SwayService.focusedOutput);
     }
 
     function view(name: string): void {
-      root.openView(name);
+      root.openView(name, SwayService.focusedOutput);
     }
   }
 }

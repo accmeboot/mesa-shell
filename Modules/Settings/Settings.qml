@@ -8,17 +8,13 @@ import qs.Components
 Scope {
   id: root
 
-  readonly property var focusedScreen: {
-    const screens = Quickshell.screens;
-
-    return screens.find(screen => screen.name === SwayService.focusedOutput) ?? screens[0] ?? null;
-  }
+  readonly property var screen: Quickshell.screens.find(screen => screen.name === SettingsService.screen) ?? Quickshell.screens[0] ?? null
 
   MesaCatcher {
     active: SettingsService.isOpen
     namespace: "mesa-settings-catcher"
 
-    onClicked: SettingsService.close()
+    onDismissed: SettingsService.close()
   }
 
   LazyLoader {
@@ -27,7 +23,7 @@ Scope {
     PanelWindow {
       id: window
 
-      screen: root.focusedScreen
+      screen: root.screen
       color: "transparent"
       exclusiveZone: 0
 
