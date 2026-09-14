@@ -17,10 +17,10 @@ Singleton {
       if (value < warning) return colors.attention;
     }
 
-    return colors.ok;
+    return colors.foreground;
   }
 
   function status(ok: bool): color {
-    return ok ? ThemeService.colors.ok : ThemeService.colors.critical;
+    return ok ? ThemeService.colors.foreground : ThemeService.colors.critical;
   }
 }
