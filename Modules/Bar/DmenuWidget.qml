@@ -25,6 +25,22 @@ RowLayout {
     return source.filter(item => item.toLowerCase().includes(query));
   }
 
+  function selectNext(): void {
+    if (menuList.currentIndex < 0) {
+      menuList.currentIndex = 0;
+    } else {
+      menuList.incrementCurrentIndex();
+    }
+  }
+
+  function selectPrevious(): void {
+    if (menuList.currentIndex < 0) {
+      menuList.currentIndex = 0;
+    } else {
+      menuList.decrementCurrentIndex();
+    }
+  }
+
   function submit(): void {
     const hasSelection = menuList.currentIndex >= 0 && menuList.currentIndex < filteredItems.length;
 
@@ -81,98 +97,121 @@ RowLayout {
       Keys.onEscapePressed: DmenuService.close()
       Keys.onReturnPressed: root.submit()
       Keys.onEnterPressed: root.submit()
-      Keys.onDownPressed: {
-        menuList.currentIndex = 0;
-      }
-      Keys.onRightPressed: {
-        if (menuList.currentIndex < 0) {
-          menuList.currentIndex = 0;
-        } else {
-          menuList.incrementCurrentIndex();
-        }
-      }
-      Keys.onLeftPressed: {
-        if (menuList.currentIndex < 0) {
-          menuList.currentIndex = 0;
-        } else {
-          menuList.decrementCurrentIndex();
-        }
-      }
+      Keys.onRightPressed: root.selectNext()
+      Keys.onDownPressed: root.selectNext()
+      Keys.onTabPressed: root.selectNext()
+      Keys.onLeftPressed: root.selectPrevious()
+      Keys.onUpPressed: root.selectPrevious()
+      Keys.onBacktabPressed: root.selectPrevious()
     }
 
-    ScrollView {
+    Rectangle {
+      id: listFrame
+
       Layout.fillWidth: true
       Layout.fillHeight: true
+      Layout.maximumWidth: implicitWidth
 
-      clip: true
+      visible: menuList.count > 0
+      implicitWidth: listRow.implicitWidth + border.width * 2
 
-      ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-      ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+      color: "transparent"
+      border.color: ThemeService.colors.on_surface
+      border.width: ConfigService.border
 
-      spacing: 0
+      RowLayout {
+        id: listRow
 
-      ListView {
-        id: menuList
-        model: root.filteredItems
-        orientation: Qt.Horizontal
-
-        keyNavigationEnabled: true
-
-        highlightFollowsCurrentItem: true
-        highlightMoveDuration: 0
-
-        interactive: false
+        anchors.fill: parent
+        anchors.margins: listFrame.border.width
 
         spacing: 0
 
-        Rectangle {
-          anchors.fill: parent
-          color: "transparent"
-          border.color: ThemeService.colors.on_surface
-          border.width: ConfigService.border
+        MesaIcon {
+          Layout.alignment: Qt.AlignVCenter
+
+          name: "pan-start"
+          size: Math.round(ConfigService.font.size * 1.5)
+          color: menuList.atXBeginning ? ThemeService.colors.on_surface : ThemeService.colors.foreground
         }
 
-        WheelHandler {
-          acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+        ScrollView {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+          Layout.preferredWidth: Math.ceil(menuList.contentWidth)
 
-          property int accumulated: 0
+          clip: true
 
-          onWheel: event => {
-            accumulated += event.angleDelta.y !== 0 ? event.angleDelta.y : event.angleDelta.x;
+          ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+          ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-            while (accumulated <= -120) {
-              accumulated += 120;
-              menuList.incrementCurrentIndex();
+          spacing: 0
+
+          ListView {
+            id: menuList
+            model: root.filteredItems
+            orientation: Qt.Horizontal
+
+            keyNavigationEnabled: true
+
+            highlightFollowsCurrentItem: true
+            highlightMoveDuration: 0
+
+            interactive: false
+
+            spacing: 0
+
+            WheelHandler {
+              acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+
+              property int accumulated: 0
+
+              onWheel: event => {
+                accumulated += event.angleDelta.y !== 0 ? event.angleDelta.y : event.angleDelta.x;
+
+                while (accumulated <= -120) {
+                  accumulated += 120;
+                  menuList.incrementCurrentIndex();
+                }
+                while (accumulated >= 120) {
+                  accumulated -= 120;
+                  menuList.decrementCurrentIndex();
+                }
+              }
             }
-            while (accumulated >= 120) {
-              accumulated -= 120;
-              menuList.decrementCurrentIndex();
+
+            delegate: MesaButton {
+              id: delegateRoot
+              required property int index
+              required property string modelData
+
+              anchors.verticalCenter: parent?.verticalCenter
+
+              text: delegateRoot.modelData
+              border.width: 0
+
+              color: delegateRoot.ListView.isCurrentItem
+              ? ThemeService.colors.highlight
+              : ThemeService.colors.background
+
+              contentColor: delegateRoot.ListView.isCurrentItem
+              ? ThemeService.colors.background
+              : ThemeService.colors.foreground
+
+              onClicked: {
+                menuList.currentIndex = delegateRoot.index;
+                root.submit();
+              }
             }
           }
         }
 
-        delegate: MesaButton {
-          id: delegateRoot
-          required property int index
-          required property string modelData
+        MesaIcon {
+          Layout.alignment: Qt.AlignVCenter
 
-          anchors.verticalCenter: parent?.verticalCenter
-
-          text: delegateRoot.modelData
-          border.width: 0
-
-          color: delegateRoot.ListView.isCurrentItem
-          ? ThemeService.colors.highlight
-          : ThemeService.colors.background
-
-          contentColor: delegateRoot.ListView.isCurrentItem
-          ? ThemeService.colors.background
-          : ThemeService.colors.foreground
-
-          onClicked: {
-            menuList.currentIndex = delegateRoot.index;
-            root.submit();
-          }
+          name: "pan-end"
+          size: Math.round(ConfigService.font.size * 1.5)
+          color: menuList.atXEnd ? ThemeService.colors.on_surface : ThemeService.colors.foreground
         }
       }
     }
