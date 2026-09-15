@@ -48,10 +48,13 @@ Scope {
         DmenuWidget {
           id: dmenu
           Layout.fillHeight: true
+          Layout.rightMargin: -mainLayout.spacing
           screen: modelData
         }
 
-        Item { Layout.fillWidth: true }
+        Item {
+          Layout.fillWidth: true
+        }
 
         TrayWidget {
           id: tray
