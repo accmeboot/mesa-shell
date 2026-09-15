@@ -10,7 +10,7 @@ Rectangle {
   id: root
 
 
-  implicitWidth: networkRow.implicitWidth + ConfigService.spacing
+  implicitWidth: networkRow.implicitWidth
   implicitHeight: networkRow.implicitHeight + ConfigService.spacing
 
   property var device: Networking.devices.values.find((d) => d.connected)

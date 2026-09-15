@@ -9,7 +9,7 @@ import qs.Services
 Rectangle {
   id: root
 
-  implicitWidth: batteryRow.implicitWidth + ConfigService.spacing
+  implicitWidth: batteryRow.implicitWidth
   implicitHeight: batteryRow.implicitHeight + ConfigService.spacing
 
   property UPowerDevice device: UPower.displayDevice
