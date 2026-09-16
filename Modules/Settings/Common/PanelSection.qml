@@ -24,11 +24,9 @@ ColumnLayout {
     Layout.fillWidth: true
 
     implicitHeight: header.implicitHeight + ConfigService.spacing
-    color: root.navigable && hover.hovered ? ThemeService.colors.surface : "transparent"
+    color: "transparent"
 
     HoverHandler {
-      id: hover
-
       enabled: root.navigable
       cursorShape: Qt.PointingHandCursor
     }
