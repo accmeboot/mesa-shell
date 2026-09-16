@@ -6,6 +6,19 @@ import QtQuick.Layouts
 
 import qs.Services
 import qs.Components
+import qs.Modules.Bar.Audio
+import qs.Modules.Bar.Battery
+import qs.Modules.Bar.Bluetooth
+import qs.Modules.Bar.Clock
+import qs.Modules.Bar.Display
+import qs.Modules.Bar.Dmenu
+import qs.Modules.Bar.Mode
+import qs.Modules.Bar.Network
+import qs.Modules.Bar.Notification
+import qs.Modules.Bar.Power
+import qs.Modules.Bar.Theme
+import qs.Modules.Bar.Tray
+import qs.Modules.Bar.Workspaces
 
 Scope {
   Variants {
@@ -27,49 +40,67 @@ Scope {
 
       implicitHeight: mainLayout.height
 
+      ClockWidget {
+        id: clock
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+      }
+
       RowLayout {
         id: mainLayout
         anchors.left: parent.left
         anchors.right: parent.right
 
-        spacing: ConfigService.spacing
-
-        SettingsWidget {
-          Layout.fillHeight: true
-          Layout.rightMargin: -mainLayout.spacing
-          screen: modelData
-        }
+        spacing: 0
 
         WorkspacesWidget {
           Layout.alignment: Qt.AlignLeft
           screen: modelData
         }
-        ModeWidget {}
         DmenuWidget {
           id: dmenu
           Layout.fillHeight: true
-          Layout.rightMargin: -mainLayout.spacing
+          maximumRight: clock.x
           screen: modelData
         }
-
-        Item {
-          Layout.fillWidth: true
-        }
+        ModeWidget {}
+        Item { Layout.fillWidth: true }
 
         TrayWidget {
           id: tray
           Layout.fillHeight: true
           screen: modelData
         }
-        NetworkWidget {}
-        BatteryWidget {}
-        ClockWidget {}
+        NetworkWidget {
+          Layout.fillHeight: true
+          screen: modelData
+        }
+        BatteryWidget {
+          Layout.fillHeight: true
+          screen: modelData
+        }
+        AudioWidget {
+          Layout.fillHeight: true
+          screen: modelData
+        }
+        DisplayWidget {
+          Layout.fillHeight: true
+          screen: modelData
+        }
+        BluetoothWidget {
+          Layout.fillHeight: true
+          screen: modelData
+        }
         ThemeWidget {
           Layout.fillHeight: true
-          Layout.rightMargin: -mainLayout.spacing
         }
         NotificationWidget {
           Layout.fillHeight: true
+        }
+        PowerWidget {
+          Layout.fillHeight: true
+          screen: modelData
         }
       }
     }

@@ -15,7 +15,7 @@ Item {
   Image {
     id: icon
     anchors.fill: parent
-    source: `root:/assets/${root.name}.svg`
+    source: root.name === "" ? "" : `root:/assets/${root.name}.svg`
     sourceSize: Qt.size(root.size, root.size)
   }
 

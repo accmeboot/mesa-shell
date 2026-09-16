@@ -1,6 +1,6 @@
 # mesa-shell
 
-Status bar, notification daemon, quick settings panel and lockscreen for [Quickshell](https://github.com/outfoxxed/quickshell), built for Sway.
+Status bar, notification daemon and lockscreen for [Quickshell](https://github.com/outfoxxed/quickshell), built for Sway.
 
 ![mesa-shell](assets/screenshot.png)
 
@@ -30,7 +30,6 @@ Sway config:
 ```
 exec qs -c mesa-shell -d
 bindsym $mod+d exec qs -c mesa-shell ipc call dmenu toggle
-bindsym $mod+p exec qs -c mesa-shell ipc call settingsWindow toggle
 ```
 
 ### NixOS
@@ -74,9 +73,9 @@ hardware.bluetooth.enable = true;
 
 ## Modules
 
-- **Bar**: workspaces, mode, launcher, tray, battery, network, notifications, theme, clock
+- **Bar**: workspaces, mode, launcher, clock, tray, theme and do-not-disturb toggles
+  - audio, network, battery, display, bluetooth and power each open their own panel from the bar
 - **Notifications**: `org.freedesktop.Notifications` daemon
-- **Settings**: audio, display, network, bluetooth, about, power
 - **Lock**: `ext-session-lock-v1` lockscreen
 - **Wallpaper**: background layer
 
@@ -89,7 +88,6 @@ qs -c mesa-shell ipc call <target> <function>
 | Target | Functions |
 | --- | --- |
 | `dmenu` | `open`, `close`, `toggle` |
-| `settingsWindow` | `open`, `close`, `toggle`, `view <audio\|display\|network\|bluetooth\|about>` |
 | `lock` | `lock`, `isLocked` |
 | `config` | `reload` |
 

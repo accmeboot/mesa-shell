@@ -1,0 +1,192 @@
+import QtQuick
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Wayland
+
+import qs.Services
+import qs.Components
+
+RowLayout {
+  id: root
+
+  required property var screen
+
+  readonly property bool isOpen: DmenuService.isOpen && DmenuService.screen === root.screen.name
+  readonly property bool choosing: DmenuService.mode === "choose"
+  readonly property bool hasArguments: !choosing && /\s/.test(searchField.text.trim())
+
+  property int currentIndex: 0
+  property real listWidth: 0
+  property real maximumRight: 0
+
+  property var filteredItems: {
+    if (hasArguments) {
+      return [];
+    }
+
+    const source = choosing ? DmenuService.items : DmenuService.applications;
+    const query = searchField.text.trim().toLowerCase();
+    if (query === "") {
+      return source;
+    }
+    return source.filter(item => item.toLowerCase().includes(query));
+  }
+
+  readonly property var options: root.filteredItems.map(item => ({
+    text: item,
+    value: item
+  }))
+
+  readonly property real anchorLeft: root.x + menuRow.x + searchField.x
+  readonly property real widthLimit: root.maximumRight > 0 ? Math.max(0, root.maximumRight - root.anchorLeft - ConfigService.spacing) : 0
+
+  function selectNext(): void {
+    if (root.currentIndex < 0) {
+      root.currentIndex = 0;
+    } else {
+      root.currentIndex = Math.min(root.filteredItems.length - 1, root.currentIndex + 1);
+    }
+  }
+
+  function selectPrevious(): void {
+    if (root.currentIndex < 0) {
+      root.currentIndex = 0;
+    } else {
+      root.currentIndex = Math.max(0, root.currentIndex - 1);
+    }
+  }
+
+  function submit(): void {
+    const hasSelection = root.currentIndex >= 0 && root.currentIndex < filteredItems.length;
+
+    if (choosing) {
+      if (hasSelection) {
+        DmenuService.resolve(filteredItems[root.currentIndex]);
+      }
+      return;
+    }
+
+    if (hasSelection) {
+      DmenuService.execute(filteredItems[root.currentIndex]);
+      return;
+    }
+
+    const command = searchField.text.trim();
+    if (command !== "") {
+      DmenuService.execute(command);
+    }
+  }
+
+  spacing: 0
+
+  MesaCatcher {
+    active: root.isOpen
+    layer: WlrLayer.Overlay
+    namespace: "mesa-dmenu-catcher"
+    excludeScreen: root.screen
+
+    onDismissed: DmenuService.close()
+  }
+
+  MesaButton {
+    Layout.fillHeight: true
+    icon: "cm_runterm"
+    onClicked: root.isOpen ? DmenuService.close() : DmenuService.open(root.screen.name)
+    horizontalPadding: ConfigService.spacing * 2
+  }
+
+  RowLayout {
+    id: menuRow
+
+    visible: root.isOpen
+    spacing: 0
+
+    onVisibleChanged: {
+      if (visible) {
+        searchField.forceActiveFocus();
+        return;
+      }
+
+      searchField.text = "";
+      root.currentIndex = 0;
+    }
+
+    MesaInput {
+      id: searchField
+
+      Layout.fillHeight: true
+      Layout.minimumWidth: 150
+      Layout.preferredWidth: root.listWidth
+
+      onTextChanged: {
+        root.currentIndex = 0;
+      }
+
+      Keys.onEscapePressed: DmenuService.close()
+      Keys.onReturnPressed: root.submit()
+      Keys.onEnterPressed: root.submit()
+      Keys.onRightPressed: root.selectNext()
+      Keys.onDownPressed: root.selectNext()
+      Keys.onTabPressed: root.selectNext()
+      Keys.onLeftPressed: root.selectPrevious()
+      Keys.onUpPressed: root.selectPrevious()
+      Keys.onBacktabPressed: root.selectPrevious()
+    }
+  }
+
+  LazyLoader {
+    activeAsync: root.isOpen
+
+    PanelWindow {
+      id: window
+
+      screen: root.screen
+      color: "transparent"
+      exclusiveZone: 0
+
+      visible: root.filteredItems.length > 0
+
+      WlrLayershell.layer: WlrLayer.Overlay
+      WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+      WlrLayershell.namespace: "mesa-dmenu"
+
+      readonly property real limit: (root.screen?.width ?? 0) - root.anchorLeft
+
+      implicitWidth: root.listWidth
+      implicitHeight: list.implicitHeight
+
+      Component.onCompleted: {
+        const fit = Math.min(list.implicitWidth, window.limit);
+
+        root.listWidth = root.widthLimit > 0 ? Math.min(fit, root.widthLimit) : fit;
+      }
+
+      anchors {
+        top: true
+        left: true
+      }
+
+      margins.left: root.anchorLeft
+
+      MesaSelectList {
+        id: list
+
+        anchors.fill: parent
+
+        options: root.options
+        currentIndex: root.currentIndex
+        maximumRows: 10
+        showScrollBar: false
+        wheelSelects: true
+        hoverHighlight: false
+
+        onStepped: delta => delta > 0 ? root.selectNext() : root.selectPrevious()
+
+        onSelected: value => {
+          root.currentIndex = root.filteredItems.indexOf(value);
+          root.submit();
+        }
+      }
+    }
+  }
+}

@@ -34,7 +34,6 @@ Item {
   Rectangle {
     anchors.fill: parent
     visible: !root.radio
-    radius: height / 2
     color: root.checked ? root.color : "transparent"
     border.width: ConfigService.border
     border.color: root.color
@@ -44,7 +43,6 @@ Item {
       anchors.verticalCenter: parent.verticalCenter
       width: parent.height - root.knobInset * 2
       height: width
-      radius: width / 2
       color: root.checked ? root.backgroundColor : root.color
     }
   }
