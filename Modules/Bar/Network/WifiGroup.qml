@@ -30,12 +30,14 @@ MesaSection {
     value: Networking.wifiEnabled
   }
 
-  MesaRow {
-    indented: true
-    label: "Enabled"
-    value: Networking.wifiHardwareEnabled ? "" : "Blocked by rfkill"
-    valueColor: ThemeService.colors.critical
+  actions: [
+    MesaText {
+      Layout.alignment: Qt.AlignVCenter
 
+      visible: !Networking.wifiHardwareEnabled
+      text: "Blocked by rfkill"
+      color: ThemeService.colors.critical
+    },
     MesaIndicator {
       Layout.alignment: Qt.AlignVCenter
 
@@ -44,11 +46,10 @@ MesaSection {
 
       onToggled: Networking.wifiEnabled = !Networking.wifiEnabled
     }
-  }
+  ]
 
   MesaRow {
     visible: Networking.wifiEnabled && root.networks.length === 0
-    indented: true
     label: "Scanning"
     labelColor: ThemeService.colors.attention
   }
@@ -146,20 +147,6 @@ MesaSection {
         interactive: true
         selected: entry.selected
 
-        leading: Item {
-          implicitWidth: dot.implicitWidth
-          implicitHeight: dot.implicitHeight
-
-          MesaIcon {
-            id: dot
-
-            visible: entry.modelData.connected
-            name: "media-record"
-            size: Math.round(ConfigService.font.size * 0.5)
-            color: ThemeService.colors.ok
-          }
-        }
-
         onClicked: root.selectedNetwork = entry.selected ? null : entry.modelData
 
         MesaIcon {
@@ -169,13 +156,21 @@ MesaSection {
           size: Math.round(ConfigService.font.size * 1.1)
           color: ThemeService.colors.on_surface
         }
+
+        MesaIcon {
+          Layout.alignment: Qt.AlignVCenter
+
+          name: "pan-end"
+          size: Math.round(ConfigService.font.size * 1.2)
+          color: ThemeService.colors.foreground
+          rotation: entry.selected ? -90 : 90
+        }
       }
 
       MesaRow {
         visible: entry.selected
         selected: true
-        indented: true
-        wideTrailing: true
+        wideTrailing: entry.prompting
 
         MesaInput {
           id: passwordInput
@@ -192,6 +187,7 @@ MesaSection {
           visible: entry.prompting
           echoMode: TextInput.Password
           placeholderText: "Password"
+          backgroundColor: ThemeService.colors.background
           text: root.password
 
           Keys.onEscapePressed: root.promptedNetwork = null
@@ -206,6 +202,7 @@ MesaSection {
         MesaButton {
           Layout.alignment: Qt.AlignVCenter
 
+          visible: !entry.prompting
           enabled: !entry.modelData.stateChanging
           text: {
             switch (entry.modelData.state) {
@@ -214,6 +211,9 @@ MesaSection {
             default: return entry.modelData.connected ? "Disconnect" : "Connect";
             }
           }
+          color: !enabled ? ThemeService.colors.attention : entry.modelData.connected ? ThemeService.colors.critical : ThemeService.colors.highlight
+          contentColor: ThemeService.colors.background
+          disabledContentColor: ThemeService.colors.background
 
           onClicked: entry.activate()
         }
@@ -223,6 +223,8 @@ MesaSection {
 
           visible: entry.modelData.known && !entry.prompting
           text: "Forget"
+          color: ThemeService.colors.critical
+          contentColor: ThemeService.colors.background
 
           onClicked: entry.modelData.forget()
         }
@@ -231,16 +233,30 @@ MesaSection {
           Layout.alignment: Qt.AlignVCenter
 
           visible: entry.prompting
-          text: "Cancel"
+          icon: "window-close"
+          color: ThemeService.colors.critical
+          contentColor: ThemeService.colors.background
 
           onClicked: root.promptedNetwork = null
+        }
+
+        MesaButton {
+          Layout.alignment: Qt.AlignVCenter
+
+          visible: entry.prompting
+          enabled: !entry.modelData.stateChanging
+          icon: "dialog-ok"
+          color: enabled ? ThemeService.colors.highlight : ThemeService.colors.attention
+          contentColor: ThemeService.colors.background
+          disabledContentColor: ThemeService.colors.background
+
+          onClicked: entry.activate()
         }
       }
 
       MesaRow {
         visible: entry.error !== ""
         selected: entry.selected
-        indented: true
         label: entry.error
         labelColor: ThemeService.colors.critical
       }

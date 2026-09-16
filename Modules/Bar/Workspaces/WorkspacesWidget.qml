@@ -22,8 +22,6 @@ RowLayout {
 
       visible: modelData.monitor === root.screen.name
 
-      horizontalPadding: ConfigService.spacing * 2
-
       text: modelData.name
       color: {
         if (modelData.focused) {

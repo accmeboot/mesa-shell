@@ -15,20 +15,19 @@ RowLayout {
   readonly property UPowerDevice device: UPower.displayDevice
   readonly property int percentage: root.device ? Math.round(root.device.percentage * 100) : 0
 
+  readonly property string level: String(Math.floor(root.percentage / 10) * 10).padStart(3, "0")
+
   readonly property string icon: {
-    switch (root.device?.state) {
-    case UPowerDeviceState.Charging: return "battery-full-charging";
-    case UPowerDeviceState.PendingCharge: return "battery_plugged";
-    case UPowerDeviceState.FullyCharged: return "battery-full";
-    case UPowerDeviceState.Empty: return "battery-empty";
+    if (!root.device) return "battery-missing";
+
+    switch (root.device.state) {
+    case UPowerDeviceState.Charging: return `battery-${root.level}-charging`;
+    case UPowerDeviceState.PendingCharge:
+    case UPowerDeviceState.FullyCharged:
+      return "battery-ac-adapter";
+    case UPowerDeviceState.Empty: return "battery-000";
+    default: return `battery-${root.level}`;
     }
-
-    if (root.percentage >= 90) return "battery-full";
-    if (root.percentage >= 65) return "battery-good";
-    if (root.percentage >= 40) return "battery-medium";
-    if (root.percentage >= 15) return "battery-low";
-
-    return "battery-empty";
   }
 
   visible: root.device?.isLaptopBattery ?? false
@@ -44,7 +43,6 @@ RowLayout {
     contentColor: ColorService.threshold(root.percentage, 50, 20)
 
     onClicked: root.isOpen = !root.isOpen
-    horizontalPadding: ConfigService.spacing * 2
   }
 
   MesaPopup {
@@ -52,7 +50,6 @@ RowLayout {
     screen: root.screen
     exclude: root
     namespace: "mesa-battery"
-    anchorRight: root.x + button.x + button.width
 
     content: BatteryPanel {}
 

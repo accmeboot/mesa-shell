@@ -50,7 +50,6 @@ RowLayout {
     contentColor: ColorService.status(root.connected)
 
     onClicked: root.isOpen = !root.isOpen
-    horizontalPadding: ConfigService.spacing * 2
   }
 
   MesaPopup {
@@ -58,7 +57,6 @@ RowLayout {
     screen: root.screen
     exclude: root
     namespace: "mesa-network"
-    anchorRight: root.x + button.x + button.width
     keyboardFocus: WlrKeyboardFocus.OnDemand
 
     content: NetworkPanel {}

@@ -8,5 +8,4 @@ MesaButton {
   icon: NotificationsService.doNotDisturb ? "notifications-disabled" : "notifications"
 
   onClicked: NotificationsService.toggleDoNotDisturb()
-  horizontalPadding: ConfigService.spacing * 2
 }

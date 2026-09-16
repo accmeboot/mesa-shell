@@ -17,7 +17,6 @@ RowLayout {
 
   property int currentIndex: 0
   property real listWidth: 0
-  property real maximumRight: 0
 
   property var filteredItems: {
     if (hasArguments) {
@@ -38,7 +37,6 @@ RowLayout {
   }))
 
   readonly property real anchorLeft: root.x + menuRow.x + searchField.x
-  readonly property real widthLimit: root.maximumRight > 0 ? Math.max(0, root.maximumRight - root.anchorLeft - ConfigService.spacing) : 0
 
   function selectNext(): void {
     if (root.currentIndex < 0) {
@@ -92,11 +90,12 @@ RowLayout {
     Layout.fillHeight: true
     icon: "cm_runterm"
     onClicked: root.isOpen ? DmenuService.close() : DmenuService.open(root.screen.name)
-    horizontalPadding: ConfigService.spacing * 2
   }
 
   RowLayout {
     id: menuRow
+
+    Layout.fillWidth: true
 
     visible: root.isOpen
     spacing: 0
@@ -115,8 +114,10 @@ RowLayout {
       id: searchField
 
       Layout.fillHeight: true
-      Layout.minimumWidth: 150
+      Layout.fillWidth: true
+      Layout.minimumWidth: Math.round(ConfigService.font.size * 6)
       Layout.preferredWidth: root.listWidth
+      Layout.maximumWidth: root.listWidth
 
       onTextChanged: {
         root.currentIndex = 0;
@@ -152,13 +153,11 @@ RowLayout {
 
       readonly property real limit: (root.screen?.width ?? 0) - root.anchorLeft
 
-      implicitWidth: root.listWidth
+      implicitWidth: searchField.width
       implicitHeight: list.implicitHeight
 
       Component.onCompleted: {
-        const fit = Math.min(list.implicitWidth, window.limit);
-
-        root.listWidth = root.widthLimit > 0 ? Math.min(fit, root.widthLimit) : fit;
+        root.listWidth = Math.min(list.implicitWidth, window.limit);
       }
 
       anchors {
@@ -175,7 +174,7 @@ RowLayout {
 
         options: root.options
         currentIndex: root.currentIndex
-        maximumRows: 10
+        maximumRows: 20
         showScrollBar: false
         wheelSelects: true
         hoverHighlight: false

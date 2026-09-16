@@ -35,8 +35,11 @@ RowLayout {
 
       visible: trayRow.isVisible
 
+      Layout.fillWidth: true
+      Layout.maximumWidth: item.implicitWidth
+      Layout.minimumWidth: item.horizontalPadding * 2 + Math.round(ConfigService.font.size * 2)
+
       acceptedButtons: Qt.LeftButton | Qt.RightButton
-      maximumContentWidth: Math.round(ConfigService.font.size * 8)
 
       text: {
         var appName = item.modelData.title || item.modelData.tooltipTitle || item.modelData.id;
@@ -77,6 +80,5 @@ RowLayout {
     Layout.fillHeight: true
     icon: trayRow.isVisible ? "window-close" : "view-more-horizontal"
     onClicked: trayRow.isVisible = !trayRow.isVisible
-    horizontalPadding: ConfigService.spacing * 2
   }
 }

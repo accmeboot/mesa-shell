@@ -16,7 +16,7 @@ Rectangle {
   property bool hoverHighlight: true
 
   readonly property int iconSize: Math.round(ConfigService.font.size * 1.5)
-  readonly property int contentMargin: Math.round(ConfigService.spacing / 2)
+  readonly property int contentMargin: ConfigService.spacing
   readonly property int rowSpacing: Math.round(ConfigService.spacing / 2)
   readonly property int rowHeight: root.iconSize + ConfigService.spacing
   readonly property bool hasIcons: root.options.some(option => (option.icon ?? "") !== "")

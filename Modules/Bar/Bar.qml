@@ -38,7 +38,7 @@ Scope {
         right: true
       }
 
-      implicitHeight: mainLayout.height
+      implicitHeight: Math.max(leftLayout.implicitHeight, rightLayout.implicitHeight)
 
       ClockWidget {
         id: clock
@@ -48,9 +48,12 @@ Scope {
       }
 
       RowLayout {
-        id: mainLayout
+        id: leftLayout
+
         anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.right: clock.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
 
         spacing: 0
 
@@ -61,15 +64,29 @@ Scope {
         DmenuWidget {
           id: dmenu
           Layout.fillHeight: true
-          maximumRight: clock.x
+          Layout.fillWidth: true
           screen: modelData
         }
         ModeWidget {}
+        Item { Layout.fillWidth: true }
+      }
+
+      RowLayout {
+        id: rightLayout
+
+        anchors.left: clock.right
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+
+        spacing: 0
+
         Item { Layout.fillWidth: true }
 
         TrayWidget {
           id: tray
           Layout.fillHeight: true
+          Layout.fillWidth: true
           screen: modelData
         }
         NetworkWidget {

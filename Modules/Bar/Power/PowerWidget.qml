@@ -22,7 +22,6 @@ RowLayout {
     contentColor: ThemeService.colors.critical
 
     onClicked: root.isOpen = !root.isOpen
-    horizontalPadding: ConfigService.spacing * 2
   }
 
   MesaPopup {
@@ -30,7 +29,6 @@ RowLayout {
     screen: root.screen
     exclude: root
     namespace: "mesa-power"
-    anchorRight: root.x + button.x + button.width
 
     content: PowerPanel {
       onRequestClose: root.isOpen = false

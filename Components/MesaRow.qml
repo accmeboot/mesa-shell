@@ -67,8 +67,12 @@ Rectangle {
     }
 
     ColumnLayout {
+      id: labels
+
       Layout.fillWidth: true
       Layout.leftMargin: leadingSlot.visible ? ConfigService.spacing : 0
+
+      visible: !root.wideTrailing || root.label !== "" || root.sublabel !== ""
 
       spacing: 0
 
@@ -92,8 +96,10 @@ Rectangle {
     }
 
     MesaText {
+      id: valueText
+
       Layout.alignment: Qt.AlignVCenter
-      Layout.leftMargin: ConfigService.spacing
+      Layout.leftMargin: labels.visible ? ConfigService.spacing : 0
 
       visible: root.value !== ""
       text: root.value
@@ -105,7 +111,7 @@ Rectangle {
 
       Layout.fillWidth: root.wideTrailing
       Layout.alignment: Qt.AlignVCenter
-      Layout.leftMargin: trailingRow.implicitWidth > 0 ? ConfigService.spacing : 0
+      Layout.leftMargin: trailingRow.implicitWidth > 0 && (labels.visible || valueText.visible) ? ConfigService.spacing : 0
 
       spacing: Math.round(ConfigService.spacing / 2)
     }

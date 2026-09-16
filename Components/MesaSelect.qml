@@ -14,7 +14,7 @@ Rectangle {
   readonly property var currentOption: root.options.find(option => option.value === root.current) ?? null
   readonly property int iconSize: Math.round(ConfigService.font.size * 1.5)
   readonly property int caretSize: Math.round(ConfigService.font.size * 1.2)
-  readonly property int contentMargin: Math.round(ConfigService.spacing / 2)
+  readonly property int contentMargin: ConfigService.spacing
 
   signal toggled()
 

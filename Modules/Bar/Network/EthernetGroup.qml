@@ -62,6 +62,15 @@ MesaSection {
         selected: entry.selected
 
         onClicked: root.selectedDevice = entry.selected ? null : entry.modelData
+
+        MesaIcon {
+          Layout.alignment: Qt.AlignVCenter
+
+          name: "pan-end"
+          size: Math.round(ConfigService.font.size * 1.2)
+          color: ThemeService.colors.foreground
+          rotation: entry.selected ? -90 : 90
+        }
       }
 
       MesaRow {
@@ -105,6 +114,9 @@ MesaSection {
 
           enabled: !(actions.network && actions.network.stateChanging)
           text: entry.modelData.connected ? "Disconnect" : "Connect"
+          color: !enabled ? ThemeService.colors.attention : entry.modelData.connected ? ThemeService.colors.critical : ThemeService.colors.highlight
+          contentColor: ThemeService.colors.background
+          disabledContentColor: ThemeService.colors.background
 
           onClicked: {
             if (entry.modelData.connected) entry.modelData.disconnect();

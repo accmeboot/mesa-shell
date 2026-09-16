@@ -9,6 +9,7 @@ ColumnLayout {
   property string title
 
   default property alias content: body.data
+  property alias actions: headerActions.data
 
   Layout.fillWidth: true
 
@@ -18,10 +19,10 @@ ColumnLayout {
     Layout.fillWidth: true
 
     visible: root.title !== ""
-    implicitHeight: header.implicitHeight + ConfigService.spacing
+    implicitHeight: headerRow.implicitHeight + ConfigService.spacing
 
-    MesaText {
-      id: header
+    RowLayout {
+      id: headerRow
 
       anchors.left: parent.left
       anchors.right: parent.right
@@ -29,10 +30,26 @@ ColumnLayout {
       anchors.leftMargin: ConfigService.spacing
       anchors.rightMargin: ConfigService.spacing
 
-      text: root.title
-      color: ThemeService.colors.attention
-      font.bold: true
-      elide: Text.ElideRight
+      spacing: ConfigService.spacing
+
+      MesaText {
+        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignVCenter
+
+        text: root.title
+        color: ThemeService.colors.attention
+        font.bold: true
+        elide: Text.ElideRight
+      }
+
+      RowLayout {
+        id: headerActions
+
+        Layout.alignment: Qt.AlignVCenter
+
+        visible: headerActions.children.length > 0
+        spacing: Math.round(ConfigService.spacing / 2)
+      }
     }
   }
 

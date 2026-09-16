@@ -70,10 +70,10 @@ Scope {
             Layout.fillWidth: true
 
             icon: "application-exit"
-            iconSize: ConfigService.font.size * 3
+            iconSize: ConfigService.font.size * 2
 
-            horizontalPadding: ConfigService.spacing * 3
-            verticalPadding: ConfigService.spacing * 3
+            horizontalPadding: ConfigService.spacing * 2
+            verticalPadding: ConfigService.spacing * 2
 
             onClicked: PowerService.exitSession()
           }
@@ -82,10 +82,10 @@ Scope {
             Layout.fillWidth: true
 
             icon: "system-reboot"
-            iconSize: ConfigService.font.size * 3
+            iconSize: ConfigService.font.size * 2
 
-            horizontalPadding: ConfigService.spacing * 3
-            verticalPadding: ConfigService.spacing * 3
+            horizontalPadding: ConfigService.spacing * 2
+            verticalPadding: ConfigService.spacing * 2
 
             onClicked: PowerService.reboot()
           }
@@ -94,11 +94,11 @@ Scope {
             Layout.fillWidth: true
 
             icon: "system-shutdown"
-            iconSize: ConfigService.font.size * 3
+            iconSize: ConfigService.font.size * 2
             contentColor: ThemeService.colors.critical
 
-            horizontalPadding: ConfigService.spacing * 3
-            verticalPadding: ConfigService.spacing * 3
+            horizontalPadding: ConfigService.spacing * 2
+            verticalPadding: ConfigService.spacing * 2
 
             onClicked: PowerService.shutdown()
           }
@@ -117,7 +117,7 @@ Scope {
 
           MesaIcon {
             name: "im-user"
-            size: Math.round(ConfigService.font.size * 2.5)
+            size: Math.round(ConfigService.font.size * 2)
           }
 
           MesaText {
@@ -137,7 +137,7 @@ Scope {
           passwordCharacter: "·"
           readOnly: LockService.authenticating
 
-          font.pointSize: ConfigService.font.size * 3
+          font.pointSize: ConfigService.font.size * 2
 
           text: LockService.authenticating ? "" : LockService.password
 

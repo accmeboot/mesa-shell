@@ -18,7 +18,7 @@
             root = ./.;
             fileset = pkgs.lib.fileset.difference
               (pkgs.lib.fileset.unions [ ./shell.qml ./Components ./Modules ./Services ./assets ])
-              ./assets/screenshot.png;
+              ./assets/screenshots;
           };
 
           installPhase = ''

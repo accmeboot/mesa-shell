@@ -11,7 +11,6 @@ Scope {
   property var screen: null
   property Item exclude: null
   property string namespace: "mesa-popup"
-  property real anchorRight: 0
   property int keyboardFocus: WlrKeyboardFocus.None
   property int width: Math.round(ConfigService.font.size * 34)
 
@@ -48,10 +47,8 @@ Scope {
 
       anchors {
         top: true
-        left: true
+        right: true
       }
-
-      margins.left: Math.max(0, Math.min(root.anchorRight - root.width, (root.screen?.width ?? 0) - root.width))
 
       Rectangle {
         id: background

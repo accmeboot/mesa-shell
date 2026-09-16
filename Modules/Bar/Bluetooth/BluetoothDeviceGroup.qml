@@ -53,7 +53,6 @@ MesaSection {
 
   MesaRow {
     visible: root.listed.length === 0
-    indented: true
     label: root.scanning ? "Scanning" : "No devices"
     labelColor: root.scanning ? ThemeService.colors.attention : ThemeService.colors.on_surface
   }
@@ -102,20 +101,6 @@ MesaSection {
         interactive: true
         selected: entry.selected
 
-        leading: Item {
-          implicitWidth: dot.implicitWidth
-          implicitHeight: dot.implicitHeight
-
-          MesaIcon {
-            id: dot
-
-            visible: entry.modelData.connected
-            name: "media-record"
-            size: Math.round(ConfigService.font.size * 0.5)
-            color: ThemeService.colors.ok
-          }
-        }
-
         onClicked: root.selectedDevice = entry.selected ? null : entry.modelData
 
         MesaText {
@@ -125,12 +110,20 @@ MesaSection {
           text: `${Math.round(entry.modelData.battery * 100)}%`
           color: ColorService.threshold(entry.modelData.battery * 100, 30, 15)
         }
+
+        MesaIcon {
+          Layout.alignment: Qt.AlignVCenter
+
+          name: "pan-end"
+          size: Math.round(ConfigService.font.size * 1.2)
+          color: ThemeService.colors.foreground
+          rotation: entry.selected ? -90 : 90
+        }
       }
 
       MesaRow {
         visible: entry.selected
         selected: true
-        indented: true
         label: "Address"
         value: entry.modelData.address
       }
@@ -138,7 +131,6 @@ MesaSection {
       MesaRow {
         visible: entry.selected && entry.modelData.paired
         selected: true
-        indented: true
         label: "Connect automatically"
 
         MesaIndicator {
@@ -153,7 +145,6 @@ MesaSection {
       MesaRow {
         visible: entry.selected && entry.modelData.paired
         selected: true
-        indented: true
         label: "Wake from sleep"
 
         MesaIndicator {
@@ -168,7 +159,6 @@ MesaSection {
       MesaRow {
         visible: entry.selected
         selected: true
-        indented: true
 
         MesaButton {
           Layout.alignment: Qt.AlignVCenter
@@ -176,6 +166,9 @@ MesaSection {
           visible: entry.modelData.paired
           enabled: entry.modelData.state === BluetoothDeviceState.Connected || entry.modelData.state === BluetoothDeviceState.Disconnected
           text: entry.modelData.connected ? "Disconnect" : "Connect"
+          color: !enabled ? ThemeService.colors.attention : entry.modelData.connected ? ThemeService.colors.critical : ThemeService.colors.highlight
+          contentColor: ThemeService.colors.background
+          disabledContentColor: ThemeService.colors.background
 
           onClicked: {
             if (entry.modelData.connected) entry.modelData.disconnect();
@@ -188,6 +181,8 @@ MesaSection {
 
           visible: entry.modelData.paired
           text: "Forget"
+          color: ThemeService.colors.critical
+          contentColor: ThemeService.colors.background
 
           onClicked: {
             if (entry.selected) root.selectedDevice = null;
@@ -201,7 +196,8 @@ MesaSection {
           visible: !entry.modelData.paired
           enabled: pairingAgent.registered
           text: entry.modelData.pairing ? "Cancel" : "Pair"
-          contentColor: entry.modelData.pairing ? ThemeService.colors.attention : ThemeService.colors.foreground
+          color: !enabled ? ThemeService.colors.surface : entry.modelData.pairing ? ThemeService.colors.critical : ThemeService.colors.highlight
+          contentColor: ThemeService.colors.background
 
           onClicked: {
             if (entry.modelData.pairing) {

@@ -2,7 +2,9 @@
 
 Status bar, notification daemon and lockscreen for [Quickshell](https://github.com/outfoxxed/quickshell), built for Sway.
 
-![mesa-shell](assets/screenshot.png)
+![mesa-shell](assets/screenshots/desktop.png)
+
+More screenshots in [`assets/screenshots`](assets/screenshots).
 
 ## Dependencies
 
@@ -78,6 +80,20 @@ hardware.bluetooth.enable = true;
 - **Notifications**: `org.freedesktop.Notifications` daemon
 - **Lock**: `ext-session-lock-v1` lockscreen
 - **Wallpaper**: background layer
+
+### Panels
+
+| Network | Bluetooth |
+| --- | --- |
+| ![Network panel](assets/screenshots/network.png) | ![Bluetooth panel](assets/screenshots/bluetooth.png) |
+| **Audio** | **Display** |
+| ![Audio panel](assets/screenshots/audio.png) | ![Display panel](assets/screenshots/display.png) |
+| **Battery** | **Power** |
+| ![Battery panel](assets/screenshots/battery.png) | ![Power panel](assets/screenshots/power.png) |
+| **Launcher** | **Notification** |
+| ![dmenu launcher](assets/screenshots/dmenu.png) | ![Notification](assets/screenshots/notification.png) |
+| **Tray menu** | **Lock screen** |
+| ![Tray menu](assets/screenshots/tray-menu.png) | ![Lock screen](assets/screenshots/lock.png) |
 
 ## IPC
 

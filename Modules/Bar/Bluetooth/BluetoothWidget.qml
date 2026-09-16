@@ -52,7 +52,6 @@ RowLayout {
     contentColor: root.iconColor
 
     onClicked: root.isOpen = !root.isOpen
-    horizontalPadding: ConfigService.spacing * 2
   }
 
   MesaPopup {
@@ -60,7 +59,6 @@ RowLayout {
     screen: root.screen
     exclude: root
     namespace: "mesa-bluetooth"
-    anchorRight: root.x + button.x + button.width
     keyboardFocus: WlrKeyboardFocus.OnDemand
 
     content: BluetoothPanel {}

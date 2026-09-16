@@ -7,6 +7,7 @@ TextField {
   id: root
 
   property color borderColor: ThemeService.colors.on_surface
+  property color backgroundColor: "transparent"
 
   color: ThemeService.colors.foreground
   font.family: ConfigService.font.name
@@ -21,7 +22,7 @@ TextField {
   rightPadding: ConfigService.spacing
 
   background: Rectangle {
-    color: "transparent"
+    color: root.backgroundColor
     border.color: root.borderColor
     border.width: ConfigService.border
   }

@@ -122,6 +122,8 @@ Rectangle {
 
             maximumContentWidth: actionsFlow.width - ConfigService.spacing * 2
             text: action.modelData.text || "OK" + " (" + action.modelData.identifier + ")"
+            color: ThemeService.colors.highlight
+            contentColor: ThemeService.colors.background
             onClicked: {
               NotificationsService.invokeAction(root.modelData.id, action.modelData.id);
             }

@@ -24,12 +24,12 @@ RowLayout {
     text: "100%"
   }
 
-  // matches MesaButton's footprint so it lines up with the audio rows, but
-  // stays a plain icon because there is nothing here to click
+  // matches MesaButton's height so the row lines up with the audio rows
   Item {
     Layout.alignment: Qt.AlignVCenter
+    Layout.rightMargin: ConfigService.spacing - root.spacing
 
-    implicitWidth: glyph.implicitWidth + ConfigService.spacing
+    implicitWidth: glyph.implicitWidth
     implicitHeight: glyph.implicitHeight + ConfigService.spacing
 
     MesaIcon {

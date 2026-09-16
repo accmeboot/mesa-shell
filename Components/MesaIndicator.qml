@@ -34,16 +34,14 @@ Item {
   Rectangle {
     anchors.fill: parent
     visible: !root.radio
-    color: root.checked ? root.color : "transparent"
-    border.width: ConfigService.border
-    border.color: root.color
+    color: root.color
 
     Rectangle {
       x: root.checked ? parent.width - width - root.knobInset : root.knobInset
       anchors.verticalCenter: parent.verticalCenter
       width: parent.height - root.knobInset * 2
       height: width
-      color: root.checked ? root.backgroundColor : root.color
+      color: root.backgroundColor
     }
   }
 

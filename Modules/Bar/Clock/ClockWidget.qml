@@ -8,7 +8,7 @@ import qs.Services
 Rectangle {
   color: "transparent"
 
-  implicitWidth: clockRow.implicitWidth + ConfigService.spacing
+  implicitWidth: clockRow.implicitWidth + ConfigService.spacing * 2
   implicitHeight: clockRow.implicitHeight + ConfigService.spacing
 
   RowLayout {

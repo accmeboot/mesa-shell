@@ -8,5 +8,4 @@ MesaButton {
   icon: "lighttable"
 
   onClicked: ThemeService.isDark ? ThemeService.light() : ThemeService.dark()
-  horizontalPadding: ConfigService.spacing * 2
 }

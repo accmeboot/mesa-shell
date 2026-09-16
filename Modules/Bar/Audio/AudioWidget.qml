@@ -30,7 +30,6 @@ RowLayout {
     icon: root.icon
 
     onClicked: root.isOpen = !root.isOpen
-    horizontalPadding: ConfigService.spacing * 2
  }
 
   MesaPopup {
@@ -38,7 +37,6 @@ RowLayout {
     screen: root.screen
     exclude: root
     namespace: "mesa-audio"
-    anchorRight: root.x + button.x + button.width
 
     content: AudioPanel {}
 
