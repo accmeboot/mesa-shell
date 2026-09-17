@@ -47,7 +47,7 @@ Item {
 
   MouseArea {
     anchors.fill: parent
-    cursorShape: Qt.PointingHandCursor
+    cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
     onClicked: root.toggled()
   }
 }

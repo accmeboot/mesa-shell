@@ -46,10 +46,6 @@ Slider {
     color: ThemeService.colors.foreground
   }
 
-  HoverHandler {
-    cursorShape: Qt.PointingHandCursor
-  }
-
   // WheelHandler never receives events on this shell's layer-shell windows;
   // MouseArea does, so the wheel is handled here instead.
   MouseArea {
@@ -59,6 +55,7 @@ Slider {
 
     anchors.fill: parent
     acceptedButtons: Qt.NoButton
+    cursorShape: Qt.PointingHandCursor
 
     onWheel: wheel => {
       const previous = root.value;

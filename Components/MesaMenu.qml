@@ -151,6 +151,7 @@ PopupWindow {
                 id: indicator
 
                 anchors.centerIn: parent
+                enabled: row.modelData.enabled
                 visible: row.modelData.buttonType !== QsMenuButtonType.None
                 checked: row.modelData.checkState === Qt.Checked
                 radio: row.modelData.buttonType === QsMenuButtonType.RadioButton

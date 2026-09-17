@@ -33,7 +33,7 @@ Rectangle {
 
     enabled: root.interactive
     hoverEnabled: root.interactive
-    cursorShape: Qt.PointingHandCursor
+    cursorShape: root.interactive ? Qt.PointingHandCursor : Qt.ArrowCursor
 
     onClicked: root.clicked()
   }

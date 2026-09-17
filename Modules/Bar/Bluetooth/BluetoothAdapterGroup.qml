@@ -26,16 +26,9 @@ MesaSection {
     MesaText {
       Layout.alignment: Qt.AlignVCenter
 
-      visible: root.busy || root.blocked
-      text: {
-        switch (root.adapter?.state) {
-        case BluetoothAdapterState.Enabling: return "Enabling";
-        case BluetoothAdapterState.Disabling: return "Disabling";
-        case BluetoothAdapterState.Blocked: return "Blocked by rfkill";
-        default: return "";
-        }
-      }
-      color: root.blocked ? ThemeService.colors.critical : ThemeService.colors.attention
+      visible: root.blocked
+      text: "Blocked by rfkill"
+      color: ThemeService.colors.critical
     },
     MesaIndicator {
       Layout.alignment: Qt.AlignVCenter

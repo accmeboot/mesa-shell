@@ -175,9 +175,6 @@ RowLayout {
         options: root.options
         currentIndex: root.currentIndex
         maximumRows: 20
-        showScrollBar: false
-        wheelSelects: true
-        hoverHighlight: false
 
         onStepped: delta => delta > 0 ? root.selectNext() : root.selectPrevious()
 

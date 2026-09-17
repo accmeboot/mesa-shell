@@ -15,15 +15,9 @@ Item {
   readonly property var playbacks: root.nodes.filter(node => node.isStream && node.isSink && !root.isMonitor(node))
   readonly property var recordings: root.nodes.filter(node => node.isStream && !node.isSink && !root.isMonitor(node))
 
-  property var openRow: null
-
   function isMonitor(node: PwNode): bool {
     const monitor = node.properties["stream.monitor"];
     return monitor === true || monitor === "true";
-  }
-
-  function toggle(row: var): void {
-    root.openRow = root.openRow === row ? null : row;
   }
 
   implicitHeight: column.implicitHeight
@@ -41,41 +35,25 @@ Item {
 
     spacing: ConfigService.gapBig
 
-    MesaSection {
+    AudioDeviceGroup {
       title: "Output"
 
-      visible: root.sinks.length > 0
+      nodes: root.sinks
+      defaultNode: Pipewire.defaultAudioSink
 
-      AudioDeviceRow {
-        id: outputRow
-
-        nodes: root.sinks
-        defaultNode: Pipewire.defaultAudioSink
-        expanded: root.openRow === outputRow
-
-        onToggled: root.toggle(outputRow)
-        onNodeSelected: node => Pipewire.preferredDefaultAudioSink = node
-      }
+      onNodeSelected: node => Pipewire.preferredDefaultAudioSink = node
     }
 
-    MesaSection {
+    AudioDeviceGroup {
       title: "Input"
 
-      visible: root.sources.length > 0
+      nodes: root.sources
+      defaultNode: Pipewire.defaultAudioSource
 
-      AudioDeviceRow {
-        id: inputRow
+      icon: "audio-input-microphone-high"
+      mutedIcon: "audio-input-microphone-muted"
 
-        nodes: root.sources
-        defaultNode: Pipewire.defaultAudioSource
-        expanded: root.openRow === inputRow
-
-        icon: "audio-input-microphone-high"
-        mutedIcon: "audio-input-microphone-muted"
-
-        onToggled: root.toggle(inputRow)
-        onNodeSelected: node => Pipewire.preferredDefaultAudioSource = node
-      }
+      onNodeSelected: node => Pipewire.preferredDefaultAudioSource = node
     }
 
     AudioNodeGroup {
@@ -91,64 +69,6 @@ Item {
 
       icon: "audio-input-microphone-high"
       mutedIcon: "audio-input-microphone-muted"
-    }
-  }
-
-  MouseArea {
-    anchors.fill: parent
-
-    visible: root.openRow !== null
-    acceptedButtons: Qt.AllButtons
-
-    onClicked: root.openRow = null
-  }
-
-  Loader {
-    id: listLoader
-
-    active: root.openRow !== null
-
-    readonly property int anchorTop: root.openRow ? root.openRow.select.mapToItem(root, 0, 0).y : 0
-    readonly property int anchorBottom: root.openRow ? root.openRow.select.mapToItem(root, 0, root.openRow.select.height).y : 0
-    readonly property int spaceBelow: root.height - listLoader.anchorBottom + ConfigService.border
-    readonly property int spaceAbove: listLoader.anchorTop + ConfigService.border
-    readonly property bool flipped: listLoader.spaceBelow < (listLoader.item?.fullHeight ?? 0) && listLoader.spaceAbove > listLoader.spaceBelow
-
-    x: {
-      if (!root.openRow) return 0;
-
-      const origin = root.openRow.select.mapToItem(root, 0, 0);
-      const limit = root.width - listLoader.width - ConfigService.gap;
-
-      return Math.max(ConfigService.gap, Math.min(origin.x, limit));
-    }
-
-    y: {
-      const target = listLoader.flipped
-      ? listLoader.anchorTop - listLoader.height + ConfigService.border
-      : listLoader.anchorBottom - ConfigService.border;
-
-      return Math.max(0, Math.min(target, root.height - listLoader.height));
-    }
-
-    width: {
-      if (!root.openRow) return 0;
-
-      const content = listLoader.item?.implicitWidth ?? 0;
-
-      return Math.min(Math.max(root.openRow.select.width, content), root.width - ConfigService.gap * 2);
-    }
-
-    height: listLoader.item?.implicitHeight ?? 0
-
-    sourceComponent: MesaSelectList {
-      options: root.openRow?.options ?? []
-      maximumHeight: listLoader.flipped ? listLoader.spaceAbove : listLoader.spaceBelow
-
-      onSelected: value => {
-        root.openRow.nodeSelected(value);
-        root.openRow = null;
-      }
     }
   }
 }

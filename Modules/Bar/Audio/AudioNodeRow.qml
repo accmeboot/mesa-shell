@@ -8,7 +8,7 @@ import qs.Components
 MesaRow {
   id: root
 
-  required property PwNode node
+  property PwNode node: null
 
   property bool showName: true
   property string icon: "audio-volume-high"
@@ -26,7 +26,8 @@ MesaRow {
   MesaButton {
     Layout.alignment: Qt.AlignVCenter
 
-    icon: root.node.audio.muted ? root.mutedIcon : root.icon
+    enabled: root.node !== null
+    icon: root.node?.audio?.muted ? root.mutedIcon : root.icon
 
     onClicked: root.node.audio.muted = !root.node.audio.muted
   }
@@ -46,7 +47,8 @@ MesaRow {
     Layout.alignment: Qt.AlignVCenter
     Layout.fillWidth: true
 
-    value: root.node.audio.volume
+    enabled: root.node !== null
+    value: root.node?.audio?.volume ?? 0
 
     onMoved: root.node.audio.volume = volume.value
   }
