@@ -134,12 +134,15 @@ Scope {
           focus: true
           horizontalAlignment: TextInput.AlignHCenter
           echoMode: TextInput.Password
-          passwordCharacter: "·"
+          passwordCharacter: "*"
           readOnly: LockService.authenticating
 
           font.pointSize: ConfigService.font.size * 2
 
           text: LockService.authenticating ? "" : LockService.password
+
+          topPadding: ConfigService.gap
+          bottomPadding: ConfigService.gap
 
           borderColor: {
             if (LockService.failed) return ThemeService.colors.critical;

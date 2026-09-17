@@ -189,6 +189,7 @@ MesaSection {
           visible: entry.prompting
           echoMode: TextInput.Password
           placeholderText: "Password"
+          passwordCharacter: "*"
           backgroundColor: ThemeService.colors.background
           text: root.password
 
