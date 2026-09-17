@@ -7,12 +7,12 @@ Rectangle {
 
   property string text
   property string icon
-  property int iconSize: Math.round(ConfigService.font.size * 1.5)
+  property int iconSize: ConfigService.iconSize
   property color contentColor: ThemeService.colors.foreground
   property color disabledContentColor: ThemeService.colors.on_surface
   property int maximumContentWidth: 0
-  property int horizontalPadding: ConfigService.spacing
-  property int verticalPadding: ConfigService.spacing
+  property int horizontalPadding: ConfigService.gap
+  property int verticalPadding: ConfigService.gap
   property alias acceptedButtons: mouseArea.acceptedButtons
 
   readonly property color effectiveContentColor: root.enabled ? root.contentColor : root.disabledContentColor

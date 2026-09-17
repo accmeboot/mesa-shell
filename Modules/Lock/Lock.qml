@@ -47,9 +47,9 @@ Scope {
       RowLayout {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.margins: ConfigService.spacing * 2
+        anchors.margins: ConfigService.gapBig
 
-        spacing: ConfigService.spacing * 2
+        spacing: ConfigService.gapBig
 
         MesaText {
           Layout.alignment: Qt.AlignVCenter
@@ -70,10 +70,10 @@ Scope {
             Layout.fillWidth: true
 
             icon: "application-exit"
-            iconSize: ConfigService.font.size * 2
+            iconSize: ConfigService.iconSizeLarge
 
-            horizontalPadding: ConfigService.spacing * 2
-            verticalPadding: ConfigService.spacing * 2
+            horizontalPadding: ConfigService.gapBig
+            verticalPadding: ConfigService.gapBig
 
             onClicked: PowerService.exitSession()
           }
@@ -82,10 +82,10 @@ Scope {
             Layout.fillWidth: true
 
             icon: "system-reboot"
-            iconSize: ConfigService.font.size * 2
+            iconSize: ConfigService.iconSizeLarge
 
-            horizontalPadding: ConfigService.spacing * 2
-            verticalPadding: ConfigService.spacing * 2
+            horizontalPadding: ConfigService.gapBig
+            verticalPadding: ConfigService.gapBig
 
             onClicked: PowerService.reboot()
           }
@@ -94,11 +94,11 @@ Scope {
             Layout.fillWidth: true
 
             icon: "system-shutdown"
-            iconSize: ConfigService.font.size * 2
+            iconSize: ConfigService.iconSizeLarge
             contentColor: ThemeService.colors.critical
 
-            horizontalPadding: ConfigService.spacing * 2
-            verticalPadding: ConfigService.spacing * 2
+            horizontalPadding: ConfigService.gapBig
+            verticalPadding: ConfigService.gapBig
 
             onClicked: PowerService.shutdown()
           }
@@ -108,16 +108,16 @@ Scope {
       ColumnLayout {
         anchors.centerIn: parent
 
-        spacing: ConfigService.spacing
+        spacing: ConfigService.gap
 
         RowLayout {
           Layout.alignment: Qt.AlignHCenter
 
-          spacing: ConfigService.spacing
+          spacing: ConfigService.gap
 
           MesaIcon {
             name: "im-user"
-            size: Math.round(ConfigService.font.size * 2)
+            size: ConfigService.iconSizeLarge
           }
 
           MesaText {

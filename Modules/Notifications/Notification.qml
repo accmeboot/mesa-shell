@@ -9,7 +9,7 @@ import qs.Components
 
 Rectangle {
   required property var modelData
-  readonly property int padding: ConfigService.spacing
+  readonly property int padding: ConfigService.gap
   readonly property int inset: root.border.width + root.padding
 
   id: root
@@ -54,12 +54,12 @@ Rectangle {
       id: notificationMainColumn
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignVCenter
-      spacing: ConfigService.spacing
+      spacing: ConfigService.gap
 
       RowLayout {
         id: notificationHeader
         Layout.fillWidth: true
-        spacing: ConfigService.spacing
+        spacing: ConfigService.gap
 
         MesaText {
           Layout.fillWidth: true
@@ -109,7 +109,7 @@ Rectangle {
       Flow {
         id: actionsFlow
         Layout.fillWidth: true
-        spacing: ConfigService.spacing
+        spacing: ConfigService.gap
         visible: Boolean(modelData.actions.count)
 
         Repeater {
@@ -120,7 +120,7 @@ Rectangle {
 
             required property var modelData
 
-            maximumContentWidth: actionsFlow.width - ConfigService.spacing * 2
+            maximumContentWidth: actionsFlow.width - action.horizontalPadding * 2
             text: action.modelData.text || "OK" + " (" + action.modelData.identifier + ")"
             color: ThemeService.colors.highlight
             contentColor: ThemeService.colors.background

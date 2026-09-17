@@ -8,8 +8,9 @@ import qs.Components
 MesaSection {
   id: root
 
-  readonly property var adapters: Bluetooth.adapters.values
-  readonly property alias count: repeater.count
+  readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
+  readonly property bool busy: root.adapter?.state === BluetoothAdapterState.Enabling || root.adapter?.state === BluetoothAdapterState.Disabling
+  readonly property bool blocked: root.adapter?.state === BluetoothAdapterState.Blocked
 
   function formatTimeout(seconds: int): string {
     if (seconds === 0) return "never";
@@ -19,74 +20,50 @@ MesaSection {
   }
 
   title: "Adapter"
-  visible: root.count > 0
+  visible: root.adapter !== null
 
-  Repeater {
-    id: repeater
+  actions: [
+    MesaText {
+      Layout.alignment: Qt.AlignVCenter
 
-    model: root.adapters
-
-    ColumnLayout {
-      id: entry
-
-      required property BluetoothAdapter modelData
-
-      readonly property bool busy: entry.modelData.state === BluetoothAdapterState.Enabling || entry.modelData.state === BluetoothAdapterState.Disabling
-      readonly property bool blocked: entry.modelData.state === BluetoothAdapterState.Blocked
-
-      Layout.fillWidth: true
-
-      spacing: 0
-
-      MesaRow {
-        label: entry.modelData.name || entry.modelData.adapterId
-        sublabel: entry.modelData.adapterId
-        value: {
-          switch (entry.modelData.state) {
-          case BluetoothAdapterState.Enabled: return "Enabled";
-          case BluetoothAdapterState.Disabled: return "Disabled";
-          case BluetoothAdapterState.Enabling: return "Enabling";
-          case BluetoothAdapterState.Disabling: return "Disabling";
-          case BluetoothAdapterState.Blocked: return "Blocked by rfkill";
-          default: return "Unknown";
-          }
-        }
-        valueColor: {
-          const colors = ThemeService.colors;
-
-          switch (entry.modelData.state) {
-          case BluetoothAdapterState.Enabled: return colors.ok;
-          case BluetoothAdapterState.Enabling:
-          case BluetoothAdapterState.Disabling:
-            return colors.attention;
-          case BluetoothAdapterState.Blocked: return colors.critical;
-          default: return colors.on_surface;
-          }
-        }
-
-        MesaIndicator {
-          Layout.alignment: Qt.AlignVCenter
-
-          enabled: !entry.busy && !entry.blocked
-          checked: entry.modelData.enabled
-
-          onToggled: entry.modelData.enabled = !entry.modelData.enabled
+      visible: root.busy || root.blocked
+      text: {
+        switch (root.adapter?.state) {
+        case BluetoothAdapterState.Enabling: return "Enabling";
+        case BluetoothAdapterState.Disabling: return "Disabling";
+        case BluetoothAdapterState.Blocked: return "Blocked by rfkill";
+        default: return "";
         }
       }
+      color: root.blocked ? ThemeService.colors.critical : ThemeService.colors.attention
+    },
+    MesaIndicator {
+      Layout.alignment: Qt.AlignVCenter
 
-      MesaRow {
-        label: "Discoverable"
-        value: entry.modelData.discoverable && entry.modelData.discoverableTimeout > 0 ? `resets after ${root.formatTimeout(entry.modelData.discoverableTimeout)}` : ""
+      enabled: !root.busy && !root.blocked
+      checked: root.adapter?.enabled ?? false
 
-        MesaIndicator {
-          Layout.alignment: Qt.AlignVCenter
+      onToggled: root.adapter.enabled = !root.adapter.enabled
+    }
+  ]
 
-          enabled: entry.modelData.enabled
-          checked: entry.modelData.discoverable
+  MesaRow {
+    label: "Name"
+    value: root.adapter?.name || root.adapter?.adapterId || "Unknown"
+    valueColor: ThemeService.colors.foreground
+  }
 
-          onToggled: entry.modelData.discoverable = !entry.modelData.discoverable
-        }
-      }
+  MesaRow {
+    label: "Discoverable"
+    value: root.adapter?.discoverable && root.adapter.discoverableTimeout > 0 ? `resets after ${root.formatTimeout(root.adapter.discoverableTimeout)}` : ""
+
+    MesaIndicator {
+      Layout.alignment: Qt.AlignVCenter
+
+      enabled: root.adapter?.enabled ?? false
+      checked: root.adapter?.discoverable ?? false
+
+      onToggled: root.adapter.discoverable = !root.adapter.discoverable
     }
   }
 }

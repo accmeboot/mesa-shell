@@ -68,6 +68,8 @@ MesaSection {
       readonly property bool selected: root.selectedDevice === entry.modelData
 
       Layout.fillWidth: true
+      Layout.topMargin: entry.selected ? ConfigService.gapSmall : 0
+      Layout.bottomMargin: entry.selected ? ConfigService.gapSmall : 0
 
       spacing: 0
 
@@ -115,7 +117,7 @@ MesaSection {
           Layout.alignment: Qt.AlignVCenter
 
           name: "pan-end"
-          size: Math.round(ConfigService.font.size * 1.2)
+          size: ConfigService.iconSizeSmall
           color: ThemeService.colors.foreground
           rotation: entry.selected ? -90 : 90
         }

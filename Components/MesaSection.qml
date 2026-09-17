@@ -13,13 +13,13 @@ ColumnLayout {
 
   Layout.fillWidth: true
 
-  spacing: body.visibleChildren.length > 0 ? Math.round(ConfigService.spacing / 2) : 0
+  spacing: body.implicitHeight > 0 ? ConfigService.gapSmall : 0
 
   Item {
     Layout.fillWidth: true
 
     visible: root.title !== ""
-    implicitHeight: headerRow.implicitHeight + ConfigService.spacing
+    implicitHeight: headerRow.implicitHeight + ConfigService.gap
 
     RowLayout {
       id: headerRow
@@ -27,10 +27,10 @@ ColumnLayout {
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.verticalCenter: parent.verticalCenter
-      anchors.leftMargin: ConfigService.spacing
-      anchors.rightMargin: ConfigService.spacing
+      anchors.leftMargin: ConfigService.gap
+      anchors.rightMargin: ConfigService.gap
 
-      spacing: ConfigService.spacing
+      spacing: ConfigService.gap
 
       MesaText {
         Layout.fillWidth: true
@@ -48,7 +48,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignVCenter
 
         visible: headerActions.children.length > 0
-        spacing: Math.round(ConfigService.spacing / 2)
+        spacing: ConfigService.gapSmall
       }
     }
   }
@@ -58,6 +58,6 @@ ColumnLayout {
 
     Layout.fillWidth: true
 
-    spacing: Math.round(ConfigService.spacing / 2)
+    spacing: ConfigService.gapSmall
   }
 }

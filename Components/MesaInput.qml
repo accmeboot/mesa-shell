@@ -18,8 +18,8 @@ TextField {
   selectionColor: ThemeService.colors.highlight
   selectedTextColor: ThemeService.colors.background
 
-  leftPadding: ConfigService.spacing
-  rightPadding: ConfigService.spacing
+  leftPadding: ConfigService.gap
+  rightPadding: ConfigService.gap
 
   background: Rectangle {
     color: root.backgroundColor

@@ -5,7 +5,7 @@ import Quickshell.Services.Pipewire
 import qs.Services
 import qs.Components
 
-RowLayout {
+MesaRow {
   id: root
 
   required property PwNode node
@@ -14,11 +14,7 @@ RowLayout {
   property string icon: "audio-volume-high"
   property string mutedIcon: "audio-volume-muted"
 
-  Layout.fillWidth: true
-  Layout.leftMargin: ConfigService.spacing
-  Layout.rightMargin: ConfigService.spacing
-
-  spacing: Math.round(ConfigService.spacing / 2)
+  wideTrailing: true
 
   TextMetrics {
     id: volumeMetrics
@@ -59,7 +55,7 @@ RowLayout {
     id: percent
 
     Layout.preferredWidth: Math.ceil(volumeMetrics.advanceWidth)
-    Layout.leftMargin: Math.round(ConfigService.spacing / 2)
+    Layout.leftMargin: ConfigService.gap - ConfigService.gapSmall
     Layout.alignment: Qt.AlignVCenter
 
     text: `${Math.round(volume.value * 100)}%`

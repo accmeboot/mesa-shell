@@ -4,16 +4,10 @@ import QtQuick.Layouts
 import qs.Services
 import qs.Components
 
-RowLayout {
+MesaRow {
   id: root
 
-  readonly property int iconSize: Math.round(ConfigService.font.size * 1.5)
-
-  Layout.fillWidth: true
-  Layout.leftMargin: ConfigService.spacing
-  Layout.rightMargin: ConfigService.spacing
-
-  spacing: Math.round(ConfigService.spacing / 2)
+  wideTrailing: true
 
   Component.onCompleted: BrightnessService.refresh()
 
@@ -24,22 +18,12 @@ RowLayout {
     text: "100%"
   }
 
-  // matches MesaButton's height so the row lines up with the audio rows
-  Item {
+  MesaIcon {
     Layout.alignment: Qt.AlignVCenter
-    Layout.rightMargin: ConfigService.spacing - root.spacing
+    Layout.rightMargin: ConfigService.gap - ConfigService.gapSmall
 
-    implicitWidth: glyph.implicitWidth
-    implicitHeight: glyph.implicitHeight + ConfigService.spacing
-
-    MesaIcon {
-      id: glyph
-
-      anchors.centerIn: parent
-
-      name: "brightnesssettings"
-      size: root.iconSize
-    }
+    name: "brightnesssettings"
+    size: ConfigService.iconSize
   }
 
   MesaSlider {
@@ -60,7 +44,7 @@ RowLayout {
     id: percent
 
     Layout.preferredWidth: Math.ceil(brightnessMetrics.advanceWidth)
-    Layout.leftMargin: Math.round(ConfigService.spacing / 2)
+    Layout.leftMargin: ConfigService.gap - ConfigService.gapSmall
     Layout.alignment: Qt.AlignVCenter
 
     text: `${Math.round(brightness.value * 100)}%`

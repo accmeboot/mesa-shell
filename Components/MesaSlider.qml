@@ -9,13 +9,14 @@ Slider {
   readonly property int handleSize: Math.round(ConfigService.font.size * 1.0)
   readonly property int trackSize: Math.max(ConfigService.border, Math.round(root.handleSize / 3))
 
+  padding: 0
   from: 0
   to: 1
   stepSize: 0.01
 
   background: Item {
     implicitWidth: Math.round(ConfigService.font.size * 10)
-    implicitHeight: Math.round(ConfigService.font.size * 1.5)
+    implicitHeight: ConfigService.iconSize
 
     Rectangle {
       anchors.left: parent.left

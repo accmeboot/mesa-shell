@@ -9,8 +9,8 @@ Rectangle {
 
   color: "transparent"
 
-  implicitWidth: label.implicitWidth + ConfigService.spacing * 2
-  implicitHeight: label.implicitHeight + ConfigService.spacing
+  implicitWidth: label.implicitWidth + ConfigService.gap * 2
+  implicitHeight: label.implicitHeight + ConfigService.gap
 
   MesaText {
     id: label

@@ -35,17 +35,13 @@ ColumnLayout {
     root.requestClose();
   }
 
-  spacing: ConfigService.spacing * 2
+  spacing: ConfigService.gapBig
 
   SystemGroup {}
 
   MesaSection {
-    RowLayout {
-      Layout.fillWidth: true
-      Layout.leftMargin: ConfigService.spacing
-      Layout.rightMargin: ConfigService.spacing
-
-      spacing: 0
+    MesaRow {
+      wideTrailing: true
 
       MesaButton {
         Layout.fillWidth: true

@@ -15,10 +15,10 @@ Rectangle {
   property bool wheelSelects: false
   property bool hoverHighlight: true
 
-  readonly property int iconSize: Math.round(ConfigService.font.size * 1.5)
-  readonly property int contentMargin: ConfigService.spacing
-  readonly property int rowSpacing: Math.round(ConfigService.spacing / 2)
-  readonly property int rowHeight: root.iconSize + ConfigService.spacing
+  readonly property int iconSize: ConfigService.iconSize
+  readonly property int contentMargin: ConfigService.gap
+  readonly property int rowSpacing: ConfigService.gapSmall
+  readonly property int rowHeight: root.iconSize + ConfigService.gap
   readonly property bool hasIcons: root.options.some(option => (option.icon ?? "") !== "")
   readonly property bool scrollable: root.options.length > root.visibleRows
   readonly property int scrollWidth: Math.max(ConfigService.border, Math.round(ConfigService.font.size / 3))

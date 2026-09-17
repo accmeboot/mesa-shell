@@ -39,7 +39,7 @@ Item {
     anchors.right: parent.right
     anchors.top: parent.top
 
-    spacing: ConfigService.spacing * 2
+    spacing: ConfigService.gapBig
 
     MesaSection {
       title: "Output"
@@ -118,9 +118,9 @@ Item {
       if (!root.openRow) return 0;
 
       const origin = root.openRow.select.mapToItem(root, 0, 0);
-      const limit = root.width - listLoader.width - ConfigService.spacing;
+      const limit = root.width - listLoader.width - ConfigService.gap;
 
-      return Math.max(ConfigService.spacing, Math.min(origin.x, limit));
+      return Math.max(ConfigService.gap, Math.min(origin.x, limit));
     }
 
     y: {
@@ -136,7 +136,7 @@ Item {
 
       const content = listLoader.item?.implicitWidth ?? 0;
 
-      return Math.min(Math.max(root.openRow.select.width, content), root.width - ConfigService.spacing * 2);
+      return Math.min(Math.max(root.openRow.select.width, content), root.width - ConfigService.gap * 2);
     }
 
     height: listLoader.item?.implicitHeight ?? 0

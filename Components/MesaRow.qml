@@ -25,7 +25,7 @@ Rectangle {
 
   Layout.fillWidth: true
 
-  implicitHeight: content.implicitHeight + ConfigService.spacing
+  implicitHeight: Math.max(content.implicitHeight, ConfigService.controlHeight) + ConfigService.gap
   color: root.selected ? ThemeService.colors.surface : "transparent"
 
   MouseArea {
@@ -44,8 +44,8 @@ Rectangle {
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.verticalCenter: parent.verticalCenter
-    anchors.leftMargin: ConfigService.spacing
-    anchors.rightMargin: ConfigService.spacing
+    anchors.leftMargin: ConfigService.gap
+    anchors.rightMargin: ConfigService.gap
 
     spacing: 0
 
@@ -70,7 +70,7 @@ Rectangle {
       id: labels
 
       Layout.fillWidth: true
-      Layout.leftMargin: leadingSlot.visible ? ConfigService.spacing : 0
+      Layout.leftMargin: leadingSlot.visible ? ConfigService.gap : 0
 
       visible: !root.wideTrailing || root.label !== "" || root.sublabel !== ""
 
@@ -99,7 +99,7 @@ Rectangle {
       id: valueText
 
       Layout.alignment: Qt.AlignVCenter
-      Layout.leftMargin: labels.visible ? ConfigService.spacing : 0
+      Layout.leftMargin: labels.visible ? ConfigService.gap : 0
 
       visible: root.value !== ""
       text: root.value
@@ -111,9 +111,9 @@ Rectangle {
 
       Layout.fillWidth: root.wideTrailing
       Layout.alignment: Qt.AlignVCenter
-      Layout.leftMargin: trailingRow.implicitWidth > 0 && (labels.visible || valueText.visible) ? ConfigService.spacing : 0
+      Layout.leftMargin: trailingRow.implicitWidth > 0 && (labels.visible || valueText.visible) ? ConfigService.gap : 0
 
-      spacing: Math.round(ConfigService.spacing / 2)
+      spacing: ConfigService.gapSmall
     }
   }
 }

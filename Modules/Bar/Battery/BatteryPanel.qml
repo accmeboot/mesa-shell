@@ -21,7 +21,7 @@ ColumnLayout {
     return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
   }
 
-  spacing: ConfigService.spacing * 2
+  spacing: ConfigService.gapBig
 
   MesaSection {
     title: "Battery"

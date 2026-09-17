@@ -12,13 +12,13 @@ Rectangle {
   property bool expanded: false
 
   readonly property var currentOption: root.options.find(option => option.value === root.current) ?? null
-  readonly property int iconSize: Math.round(ConfigService.font.size * 1.5)
-  readonly property int caretSize: Math.round(ConfigService.font.size * 1.2)
-  readonly property int contentMargin: ConfigService.spacing
+  readonly property int iconSize: ConfigService.iconSize
+  readonly property int caretSize: ConfigService.iconSizeSmall
+  readonly property int contentMargin: ConfigService.gap
 
   signal toggled()
 
-  implicitHeight: root.iconSize + ConfigService.spacing
+  implicitHeight: root.iconSize + ConfigService.gap
   color: ThemeService.colors.surface
 
   border.color: ThemeService.colors.on_surface
@@ -42,7 +42,7 @@ Rectangle {
     anchors.leftMargin: root.contentMargin
     anchors.rightMargin: root.contentMargin
 
-    spacing: Math.round(ConfigService.spacing / 2)
+    spacing: ConfigService.gapSmall
 
     MesaIcon {
       Layout.alignment: Qt.AlignVCenter

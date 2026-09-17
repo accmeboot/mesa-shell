@@ -16,8 +16,8 @@ PopupWindow {
 
   readonly property bool isOpen: root.menuHandle !== null
   readonly property bool shouldShow: root.isOpen && opener.children.values.length > 0
-  readonly property int rowPadding: Math.round(ConfigService.spacing / 2)
-  readonly property int indicatorSize: Math.round(ConfigService.font.size * 1.5)
+  readonly property int rowPadding: ConfigService.gapSmall
+  readonly property int indicatorSize: ConfigService.iconSize
   readonly property bool hasIndicators: opener.children.values.some(entry => entry.icon !== "" || entry.buttonType !== QsMenuButtonType.None)
   readonly property bool hasToggles: opener.children.values.some(entry => entry.buttonType === QsMenuButtonType.CheckBox)
   readonly property int indicatorWidth: root.hasToggles ? Math.max(root.indicatorSize, toggleMetrics.implicitWidth) : root.indicatorSize
@@ -125,7 +125,7 @@ PopupWindow {
 
           Layout.fillWidth: true
           implicitWidth: modelData.isSeparator ? 0 : content.implicitWidth + root.rowPadding * 2
-          implicitHeight: modelData.isSeparator ? ConfigService.border : content.implicitHeight + ConfigService.spacing
+          implicitHeight: modelData.isSeparator ? ConfigService.border : content.implicitHeight + ConfigService.gap
           color: {
             if (modelData.isSeparator) return ThemeService.colors.on_surface;
             return highlighted ? ThemeService.colors.highlight : ThemeService.colors.background;
@@ -140,7 +140,7 @@ PopupWindow {
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: root.rowPadding
             anchors.rightMargin: root.rowPadding
-            spacing: ConfigService.spacing
+            spacing: ConfigService.gap
 
             Item {
               visible: root.hasIndicators
