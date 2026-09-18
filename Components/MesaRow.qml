@@ -25,7 +25,7 @@ Rectangle {
 
   Layout.fillWidth: true
 
-  implicitHeight: Math.max(content.implicitHeight, ConfigService.controlHeight) + ConfigService.gap
+  implicitHeight: Math.max(content.implicitHeight + ConfigService.padding * 2, ConfigService.controlHeight)
   color: root.selected ? ThemeService.colors.surface : "transparent"
 
   MouseArea {

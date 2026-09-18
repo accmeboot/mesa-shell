@@ -19,7 +19,7 @@ ColumnLayout {
     Layout.fillWidth: true
 
     visible: root.title !== ""
-    implicitHeight: headerRow.implicitHeight + ConfigService.gap
+    implicitHeight: Math.max(headerRow.implicitHeight + ConfigService.padding * 2, ConfigService.controlHeight)
 
     RowLayout {
       id: headerRow

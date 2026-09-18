@@ -55,7 +55,7 @@ Scope {
 
         anchors.fill: parent
 
-        implicitHeight: body.implicitHeight + ConfigService.gapSmall * 2 + border.width * 2
+        implicitHeight: body.implicitHeight + ConfigService.padding * 2 + border.width * 2
         color: ThemeService.colors.background
 
         border.color: ThemeService.colors.on_surface
@@ -69,7 +69,7 @@ Scope {
           anchors.top: parent.top
           anchors.leftMargin: background.border.width
           anchors.rightMargin: background.border.width
-          anchors.topMargin: background.border.width + ConfigService.gapSmall
+          anchors.topMargin: background.border.width + ConfigService.padding
 
           sourceComponent: root.content
         }
