@@ -33,7 +33,7 @@ MesaRow {
   }
 
   MesaText {
-    Layout.preferredWidth: Math.round(ConfigService.font.size * 14)
+    Layout.preferredWidth: Math.round(ConfigService.font.size * 10)
     Layout.alignment: Qt.AlignVCenter
 
     visible: root.showName
