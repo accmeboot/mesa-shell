@@ -12,7 +12,7 @@ Scope {
   property Item exclude: null
   property string namespace: "mesa-popup"
   property int keyboardFocus: WlrKeyboardFocus.None
-  property int width: Math.round(ConfigService.font.size * 34)
+  property int width: Math.round(ConfigService.font.size * 25.4)
 
   property Component content: null
 
