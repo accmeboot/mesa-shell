@@ -14,7 +14,7 @@ Rectangle {
 
   id: root
 
-  implicitWidth: 400
+  implicitWidth: Math.round(ConfigService.font.size * 34)
   implicitHeight: notificationMainRow.implicitHeight + 2 * root.inset
 
   clip: true

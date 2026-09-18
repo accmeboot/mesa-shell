@@ -10,6 +10,7 @@ RowLayout {
   id: root
 
   required property var screen
+  required property int popupWidth
 
   property bool isOpen: false
 
@@ -57,6 +58,7 @@ RowLayout {
   MesaPopup {
     open: root.isOpen
     screen: root.screen
+    width: root.popupWidth
     exclude: root
     namespace: "mesa-bluetooth"
     keyboardFocus: WlrKeyboardFocus.OnDemand

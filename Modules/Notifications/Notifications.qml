@@ -19,6 +19,7 @@ Scope {
       screen: modelData
 
       color: "transparent"
+      exclusionMode: ExclusionMode.Normal
 
       WlrLayershell.layer: WlrLayer.Top
 
@@ -33,7 +34,6 @@ Scope {
 
       anchors {
         top: true
-        right: true
       }
 
       ColumnLayout {

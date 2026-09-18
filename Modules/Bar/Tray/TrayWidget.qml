@@ -13,6 +13,7 @@ RowLayout {
   required property var screen
 
   readonly property bool menuOpen: trayMenu.isOpen
+  readonly property int collapsedWidth: toggle.implicitWidth
 
   property bool isVisible: false
 
@@ -77,6 +78,8 @@ RowLayout {
   }
 
   MesaButton {
+    id: toggle
+
     Layout.fillHeight: true
     icon: trayRow.isVisible ? "window-close" : "view-more-horizontal"
     onClicked: trayRow.isVisible = !trayRow.isVisible
