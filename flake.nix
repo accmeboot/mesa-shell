@@ -57,7 +57,6 @@
             postBuild = ''
               for bin in quickshell qs; do
                 wrapProgram $out/bin/$bin \
-                  --prefix NIXPKGS_QT6_QML_IMPORT_PATH : ${pkgs.qt6.qt5compat}/${pkgs.qt6.qtbase.qtQmlPrefix} \
                   --suffix PATH : ${lib.makeBinPath [ pkgs.brightnessctl pkgs.bluez ]}
               done
             '';

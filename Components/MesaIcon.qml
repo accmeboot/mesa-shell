@@ -1,5 +1,5 @@
 import QtQuick
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import qs.Services
 
@@ -17,11 +17,24 @@ Item {
     anchors.fill: parent
     source: root.name === "" ? "" : `root:/assets/${root.name}.svg`
     sourceSize: Qt.size(root.size, root.size)
+    visible: false
+    layer.enabled: true
   }
 
-  ColorOverlay {
+  Rectangle {
+    id: fill
     anchors.fill: parent
-    source: icon
     color: root.color
+    visible: false
+    layer.enabled: true
+  }
+
+  MultiEffect {
+    anchors.fill: parent
+    source: fill
+    maskEnabled: true
+    maskSource: icon
+    maskThresholdMin: 0.5
+    maskSpreadAtMin: 1.0
   }
 }

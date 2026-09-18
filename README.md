@@ -14,7 +14,6 @@ More screenshots in [`assets/screenshots`](assets/screenshots).
   - networkmanager: [`Quickshell.Networking`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Networking/)
   - bluez: [`Quickshell.Bluetooth`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Bluetooth/)
   - pam: [`Quickshell.Services.Pam`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.Pam/)
-- [`qt6-5compat`](https://archlinux.org/packages/extra/x86_64/qt6-5compat/)
 - [sway](https://github.com/swaywm/sway)
 - [systemd](https://github.com/systemd/systemd)
 - [`brightnessctl`](https://github.com/Hummer12007/brightnessctl) (optional)
