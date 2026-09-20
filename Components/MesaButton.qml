@@ -27,6 +27,12 @@ Rectangle {
   border.color: ThemeService.colors.on_surface
   border.width: ConfigService.border
 
+  activeFocusOnTab: root.enabled
+
+  Keys.onReturnPressed: root.clicked({ button: Qt.LeftButton })
+  Keys.onEnterPressed: root.clicked({ button: Qt.LeftButton })
+  Keys.onSpacePressed: root.clicked({ button: Qt.LeftButton })
+
   MesaText {
     id: label
     visible: !root.icon
@@ -55,6 +61,11 @@ Rectangle {
     anchors.fill: parent
     hoverEnabled: true
     cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+    onPressed: root.forceActiveFocus(Qt.MouseFocusReason)
     onClicked: mouse => root.clicked(mouse)
+  }
+
+  MesaFocusRing {
+    padding: ConfigService.border * 2
   }
 }

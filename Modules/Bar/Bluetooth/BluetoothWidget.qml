@@ -12,7 +12,7 @@ RowLayout {
   required property var screen
   required property int popupWidth
 
-  property bool isOpen: false
+  readonly property bool isOpen: root.visible && PanelService.current === "bluetooth" && PanelService.screen === root.screen.name
 
   readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
   readonly property var connectedDevices: Bluetooth.devices.values.filter(device => device.connected)
@@ -52,7 +52,7 @@ RowLayout {
     icon: root.icon
     contentColor: root.iconColor
 
-    onClicked: root.isOpen = !root.isOpen
+    onClicked: PanelService.toggle("bluetooth", root.screen.name)
   }
 
   MesaPopup {
@@ -61,10 +61,10 @@ RowLayout {
     width: root.popupWidth
     exclude: root
     namespace: "mesa-bluetooth"
-    keyboardFocus: WlrKeyboardFocus.OnDemand
+    keyboardFocus: WlrKeyboardFocus.Exclusive
 
     content: BluetoothPanel {}
 
-    onDismissed: root.isOpen = false
+    onDismissed: PanelService.close("bluetooth")
   }
 }

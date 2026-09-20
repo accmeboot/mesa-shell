@@ -21,6 +21,12 @@ Item {
   implicitWidth: root.radio ? radioIcon.implicitWidth : root.trackHeight * 2
   implicitHeight: root.radio ? radioIcon.implicitHeight : root.trackHeight
 
+  activeFocusOnTab: root.enabled
+
+  Keys.onReturnPressed: root.toggled()
+  Keys.onEnterPressed: root.toggled()
+  Keys.onSpacePressed: root.toggled()
+
   MesaIcon {
     id: radioIcon
 
@@ -48,6 +54,11 @@ Item {
   MouseArea {
     anchors.fill: parent
     cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+    onPressed: root.forceActiveFocus(Qt.MouseFocusReason)
     onClicked: root.toggled()
+  }
+
+  MesaFocusRing {
+    padding: ConfigService.gapSmall
   }
 }

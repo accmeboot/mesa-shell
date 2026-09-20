@@ -9,10 +9,37 @@ Slider {
   readonly property int handleSize: Math.round(ConfigService.font.size * 1.0)
   readonly property int trackSize: Math.max(ConfigService.border, Math.round(root.handleSize / 3))
 
+  function step(delta: int): void {
+    const previous = root.value;
+
+    delta > 0 ? root.increase() : root.decrease();
+
+    if (root.value !== previous) root.moved();
+  }
+
   padding: 0
   from: 0
   to: 1
   stepSize: 0.01
+  focusPolicy: Qt.StrongFocus
+
+  Keys.onLeftPressed: root.step(-1)
+  Keys.onRightPressed: root.step(1)
+
+  Keys.onPressed: event => {
+    switch (event.key) {
+    case Qt.Key_H:
+      root.step(-1);
+      break;
+    case Qt.Key_L:
+      root.step(1);
+      break;
+    default:
+      return;
+    }
+
+    event.accepted = true;
+  }
 
   background: Item {
     implicitWidth: Math.round(ConfigService.font.size * 10)
@@ -75,4 +102,6 @@ Slider {
       if (root.value !== previous) root.moved();
     }
   }
+
+  MesaFocusRing {}
 }

@@ -1,6 +1,7 @@
 import Quickshell
 import Quickshell.Wayland
 import QtQuick
+import QtQuick.Window
 
 import qs.Services
 
@@ -50,28 +51,70 @@ Scope {
         right: true
       }
 
-      Rectangle {
-        id: background
+      FocusScope {
+        id: scope
+
+        property bool navigable: true
+
+        function focusFirst(): void {
+          scope.forceActiveFocus();
+          scope.nextItemInFocusChain(true).forceActiveFocus(Qt.TabFocusReason);
+        }
+
+        function focusStep(forward: bool): void {
+          const current = scope.Window.activeFocusItem ?? scope;
+
+          current.nextItemInFocusChain(forward).forceActiveFocus(Qt.TabFocusReason);
+        }
 
         anchors.fill: parent
 
-        implicitHeight: body.implicitHeight + ConfigService.padding * 2 + border.width * 2
-        color: ThemeService.colors.background
+        focus: true
 
-        border.color: ThemeService.colors.on_surface
-        border.width: ConfigService.border
+        Keys.onEscapePressed: root.dismissed()
+        Keys.onDownPressed: scope.focusStep(true)
+        Keys.onUpPressed: scope.focusStep(false)
 
-        Loader {
-          id: body
+        Keys.onPressed: event => {
+          switch (event.key) {
+          case Qt.Key_J:
+            scope.focusStep(true);
+            break;
+          case Qt.Key_K:
+            scope.focusStep(false);
+            break;
+          default:
+            return;
+          }
 
-          anchors.left: parent.left
-          anchors.right: parent.right
-          anchors.top: parent.top
-          anchors.leftMargin: background.border.width
-          anchors.rightMargin: background.border.width
-          anchors.topMargin: background.border.width + ConfigService.padding
+          event.accepted = true;
+        }
 
-          sourceComponent: root.content
+        Component.onCompleted: Qt.callLater(scope.focusFirst)
+
+        Rectangle {
+          id: background
+
+          anchors.fill: parent
+
+          implicitHeight: body.implicitHeight + ConfigService.padding * 2 + border.width * 2
+          color: ThemeService.colors.background
+
+          border.color: ThemeService.colors.on_surface
+          border.width: ConfigService.border
+
+          Loader {
+            id: body
+
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.leftMargin: background.border.width
+            anchors.rightMargin: background.border.width
+            anchors.topMargin: background.border.width + ConfigService.padding
+
+            sourceComponent: root.content
+          }
         }
       }
     }

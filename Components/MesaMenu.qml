@@ -13,6 +13,8 @@ PopupWindow {
   property bool submenu: false
   property PopupWindow parentMenu: null
   property Item openRow: null
+  property int currentIndex: -1
+  property bool autoSelect: false
 
   readonly property bool isOpen: root.menuHandle !== null
   readonly property bool shouldShow: root.isOpen && opener.children.values.length > 0
@@ -30,6 +32,8 @@ PopupWindow {
   anchor.adjustment: PopupAdjustment.Flip | PopupAdjustment.Slide
   implicitWidth: background.implicitWidth
   implicitHeight: background.implicitHeight
+
+  onShouldShowChanged: if (root.shouldShow && root.autoSelect) root.selectFirst()
 
   onBackerVisibilityChanged: if (!root.backingWindowVisible && root.shouldShow) root.closeAll()
 
@@ -57,6 +61,76 @@ PopupWindow {
     submenu.menuHandle = root.openRow.modelData;
   }
 
+  function selectFirst(): void {
+    root.currentIndex = -1;
+    root.step(1);
+  }
+
+  function step(delta: int): void {
+    const entries = opener.children.values;
+
+    if (entries.length === 0) return;
+
+    let index = root.currentIndex < 0 ? (delta > 0 ? -1 : 0) : root.currentIndex;
+
+    for (let i = 0; i < entries.length; i++) {
+      index = (index + delta + entries.length) % entries.length;
+
+      const entry = entries[index];
+
+      if (entry.isSeparator || !entry.enabled) continue;
+
+      root.currentIndex = index;
+      return;
+    }
+  }
+
+  function activate(): void {
+    const entry = opener.children.values[root.currentIndex] ?? null;
+
+    if (!entry || entry.isSeparator || !entry.enabled) return;
+
+    if (entry.hasChildren) {
+      root.openSubmenu(root.currentIndex);
+      return;
+    }
+
+    entry.triggered();
+    root.closeAll();
+  }
+
+  function openSubmenu(index: int): void {
+    root.openRow = rows.itemAt(index);
+
+    const submenu = submenuLoader.item;
+
+    if (!submenu) return;
+
+    submenu.autoSelect = true;
+
+    if (submenu.shouldShow) submenu.selectFirst();
+  }
+
+  function enterSubmenu(): void {
+    const entry = opener.children.values[root.currentIndex] ?? null;
+
+    if (!entry || !entry.enabled || !entry.hasChildren) return;
+
+    root.openSubmenu(root.currentIndex);
+  }
+
+  function closeSubmenu(): void {
+    const menu = root.activeMenu();
+
+    if (menu.parentMenu) menu.parentMenu.openRow = null;
+  }
+
+  function activeMenu(): var {
+    const submenu = submenuLoader.item;
+
+    return submenu && submenu.isOpen ? submenu.activeMenu() : root;
+  }
+
   function openAt(item, handle): void {
     const toggle = root.isOpen && root.anchorItem === item;
     root.close();
@@ -69,6 +143,8 @@ PopupWindow {
 
   function close(): void {
     root.openRow = null;
+    root.currentIndex = -1;
+    root.autoSelect = false;
     submenuLoader.source = "";
     root.menuHandle = null;
   }
@@ -110,14 +186,17 @@ PopupWindow {
       spacing: 0
 
       Repeater {
+        id: rows
+
         model: opener.children
 
         Rectangle {
           id: row
 
           required property QsMenuEntry modelData
+          required property int index
 
-          readonly property bool highlighted: mouse.containsMouse
+          readonly property bool highlighted: row.index === root.currentIndex
           readonly property color foreground: {
             if (!modelData.enabled) return ThemeService.colors.on_surface;
             return highlighted ? ThemeService.colors.background : ThemeService.colors.foreground;
@@ -188,7 +267,10 @@ PopupWindow {
             enabled: !row.modelData.isSeparator && row.modelData.enabled
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onEntered: root.openRow = row.modelData.hasChildren ? row : null
+            onEntered: {
+              root.currentIndex = row.index;
+              root.openRow = row.modelData.hasChildren ? row : null;
+            }
             onClicked: {
               if (row.modelData.hasChildren) {
                 root.openRow = row;

@@ -12,7 +12,7 @@ RowLayout {
   required property var screen
   required property int popupWidth
 
-  property bool isOpen: false
+  readonly property bool isOpen: PanelService.current === "network" && PanelService.screen === root.screen.name
 
   readonly property var device: Networking.devices.values.find(device => device.connected)
 
@@ -50,7 +50,7 @@ RowLayout {
     icon: root.icon
     contentColor: ColorService.status(root.connected)
 
-    onClicked: root.isOpen = !root.isOpen
+    onClicked: PanelService.toggle("network", root.screen.name)
   }
 
   MesaPopup {
@@ -59,10 +59,10 @@ RowLayout {
     width: root.popupWidth
     exclude: root
     namespace: "mesa-network"
-    keyboardFocus: WlrKeyboardFocus.OnDemand
+    keyboardFocus: WlrKeyboardFocus.Exclusive
 
     content: NetworkPanel {}
 
-    onDismissed: root.isOpen = false
+    onDismissed: PanelService.close("network")
   }
 }

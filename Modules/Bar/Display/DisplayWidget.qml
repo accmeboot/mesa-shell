@@ -1,3 +1,4 @@
+import Quickshell.Wayland
 import QtQuick
 import QtQuick.Layouts
 
@@ -10,7 +11,7 @@ RowLayout {
   required property var screen
   required property int popupWidth
 
-  property bool isOpen: false
+  readonly property bool isOpen: PanelService.current === "display" && PanelService.screen === root.screen.name
 
   spacing: 0
 
@@ -21,7 +22,7 @@ RowLayout {
 
     icon: "video-display"
 
-    onClicked: root.isOpen = !root.isOpen
+    onClicked: PanelService.toggle("display", root.screen.name)
   }
 
   MesaPopup {
@@ -30,9 +31,10 @@ RowLayout {
     width: root.popupWidth
     exclude: root
     namespace: "mesa-display"
+    keyboardFocus: WlrKeyboardFocus.Exclusive
 
     content: DisplayPanel {}
 
-    onDismissed: root.isOpen = false
+    onDismissed: PanelService.close("display")
   }
 }

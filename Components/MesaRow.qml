@@ -28,6 +28,12 @@ Rectangle {
   implicitHeight: Math.max(content.implicitHeight + ConfigService.padding * 2, ConfigService.controlHeight)
   color: root.selected ? ThemeService.colors.surface : "transparent"
 
+  activeFocusOnTab: root.interactive
+
+  Keys.onReturnPressed: root.clicked()
+  Keys.onEnterPressed: root.clicked()
+  Keys.onSpacePressed: root.clicked()
+
   MouseArea {
     anchors.fill: parent
 
@@ -35,6 +41,7 @@ Rectangle {
     hoverEnabled: root.interactive
     cursorShape: root.interactive ? Qt.PointingHandCursor : Qt.ArrowCursor
 
+    onPressed: root.forceActiveFocus(Qt.MouseFocusReason)
     onClicked: root.clicked()
   }
 
@@ -116,4 +123,6 @@ Rectangle {
       spacing: ConfigService.gapSmall
     }
   }
+
+  MesaFocusRing {}
 }

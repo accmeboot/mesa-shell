@@ -1,3 +1,4 @@
+import Quickshell.Wayland
 import QtQuick
 import QtQuick.Layouts
 
@@ -10,7 +11,7 @@ RowLayout {
   required property var screen
   required property int popupWidth
 
-  property bool isOpen: false
+  readonly property bool isOpen: PanelService.current === "power" && PanelService.screen === root.screen.name
 
   spacing: 0
 
@@ -22,7 +23,7 @@ RowLayout {
     icon: "system-shutdown"
     contentColor: ThemeService.colors.critical
 
-    onClicked: root.isOpen = !root.isOpen
+    onClicked: PanelService.toggle("power", root.screen.name)
   }
 
   MesaPopup {
@@ -31,11 +32,12 @@ RowLayout {
     width: root.popupWidth
     exclude: root
     namespace: "mesa-power"
+    keyboardFocus: WlrKeyboardFocus.Exclusive
 
     content: PowerPanel {
-      onRequestClose: root.isOpen = false
+      onRequestClose: PanelService.close("power")
     }
 
-    onDismissed: root.isOpen = false
+    onDismissed: PanelService.close("power")
   }
 }

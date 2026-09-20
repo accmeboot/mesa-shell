@@ -132,6 +132,25 @@ RowLayout {
       Keys.onLeftPressed: root.selectPrevious()
       Keys.onUpPressed: root.selectPrevious()
       Keys.onBacktabPressed: root.selectPrevious()
+
+      Keys.onPressed: event => {
+        if ((event.modifiers & Qt.ControlModifier) === 0) return;
+
+        switch (event.key) {
+        case Qt.Key_J:
+        case Qt.Key_L:
+          root.selectNext();
+          break;
+        case Qt.Key_K:
+        case Qt.Key_H:
+          root.selectPrevious();
+          break;
+        default:
+          return;
+        }
+
+        event.accepted = true;
+      }
     }
   }
 

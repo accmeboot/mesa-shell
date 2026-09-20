@@ -1,4 +1,5 @@
 import Quickshell.Services.Pipewire
+import Quickshell.Wayland
 import QtQuick
 import QtQuick.Layouts
 
@@ -11,7 +12,7 @@ RowLayout {
   required property var screen
   required property int popupWidth
 
-  property bool isOpen: false
+  readonly property bool isOpen: PanelService.current === "audio" && PanelService.screen === root.screen.name
 
   readonly property PwNode sink: Pipewire.defaultAudioSink
 
@@ -30,7 +31,7 @@ RowLayout {
 
     icon: root.icon
 
-    onClicked: root.isOpen = !root.isOpen
+    onClicked: PanelService.toggle("audio", root.screen.name)
  }
 
   MesaPopup {
@@ -39,9 +40,10 @@ RowLayout {
     width: root.popupWidth
     exclude: root
     namespace: "mesa-audio"
+    keyboardFocus: WlrKeyboardFocus.Exclusive
 
     content: AudioPanel {}
 
-    onDismissed: root.isOpen = false
+    onDismissed: PanelService.close("audio")
   }
 }

@@ -26,4 +26,6 @@ TextField {
     border.color: root.borderColor
     border.width: ConfigService.border
   }
+
+  MesaFocusRing {}
 }

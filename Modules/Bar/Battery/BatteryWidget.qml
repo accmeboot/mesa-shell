@@ -1,4 +1,5 @@
 import Quickshell.Services.UPower
+import Quickshell.Wayland
 import QtQuick
 import QtQuick.Layouts
 
@@ -11,7 +12,7 @@ RowLayout {
   required property var screen
   required property int popupWidth
 
-  property bool isOpen: false
+  readonly property bool isOpen: root.visible && PanelService.current === "battery" && PanelService.screen === root.screen.name
 
   readonly property UPowerDevice device: UPower.displayDevice
   readonly property int percentage: root.device ? Math.round(root.device.percentage * 100) : 0
@@ -43,7 +44,7 @@ RowLayout {
     icon: root.icon
     contentColor: ColorService.threshold(root.percentage, 50, 20)
 
-    onClicked: root.isOpen = !root.isOpen
+    onClicked: PanelService.toggle("battery", root.screen.name)
   }
 
   MesaPopup {
@@ -52,9 +53,10 @@ RowLayout {
     width: root.popupWidth
     exclude: root
     namespace: "mesa-battery"
+    keyboardFocus: WlrKeyboardFocus.Exclusive
 
     content: BatteryPanel {}
 
-    onDismissed: root.isOpen = false
+    onDismissed: PanelService.close("battery")
   }
 }

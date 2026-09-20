@@ -31,6 +31,12 @@ Sway config:
 ```
 exec qs -c mesa-shell -d
 bindsym $mod+d exec qs -c mesa-shell ipc call dmenu toggle
+bindsym $mod+p exec qs -c mesa-shell ipc call panel toggle audio
+bindsym $mod+n exec qs -c mesa-shell ipc call panel toggle network
+bindsym $mod+c exec qs -c mesa-shell ipc call panel toggle bluetooth
+bindsym $mod+m exec qs -c mesa-shell ipc call panel toggle display
+bindsym $mod+t exec qs -c mesa-shell ipc call panel toggle tray
+bindsym $mod+q exec qs -c mesa-shell ipc call panel toggle power
 ```
 
 ### NixOS
@@ -102,9 +108,52 @@ qs -c mesa-shell ipc call <target> <function>
 
 | Target | Functions |
 | --- | --- |
+| `panel` | `open <name>`, `close`, `toggle <name>` |
 | `dmenu` | `open`, `close`, `toggle` |
 | `lock` | `lock`, `isLocked` |
 | `config` | `reload` |
+
+Panel names: `audio`, `network`, `bluetooth`, `display`, `battery`, `power`, `tray`. A panel opens on the focused output, and opening one closes any other.
+
+```bash
+qs -c mesa-shell ipc call panel toggle audio
+```
+
+## Keyboard navigation
+
+An open panel takes keyboard focus and selects its first interactive element, drawn as a ring in the highlight colour. Selection follows the mouse too: clicking a control moves the ring to it.
+
+| Key | Action |
+| --- | --- |
+| `Down`, `j` | next element |
+| `Up`, `k` | previous element |
+| `Left`, `h` | decrease (sliders) |
+| `Right`, `l` | increase (sliders) |
+| `Enter`, `Space` | activate |
+| `Escape` | close the panel |
+
+### Tray menus
+
+`panel toggle tray` expands the tray if it is collapsed and opens the first menu.
+
+| Key | Action |
+| --- | --- |
+| `Down`, `j` | next entry |
+| `Up`, `k` | previous entry |
+| `l` | open submenu |
+| `h` | back to the parent menu |
+| `Shift+l`, `Shift+h` | next, previous tray menu |
+| `Enter`, `Space` | activate entry |
+| `Escape` | close the menu |
+
+### Launcher
+
+| Key | Action |
+| --- | --- |
+| `Down`, `Right`, `Tab`, `Ctrl+j`, `Ctrl+l` | next item |
+| `Up`, `Left`, `Shift+Tab`, `Ctrl+k`, `Ctrl+h` | previous item |
+| `Enter` | run the selection, or the typed command |
+| `Escape` | close |
 
 ## Config
 
