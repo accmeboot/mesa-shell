@@ -8,6 +8,8 @@ Item {
   property Item target: root.parent
   property bool active: root.target?.activeFocus ?? false
   property int padding: 0
+  property int horizontalPadding: root.padding
+  property int verticalPadding: root.padding
 
   function navigable(): bool {
     for (let item = root.target; item; item = item.parent) {
@@ -18,16 +20,21 @@ Item {
   }
 
   anchors.fill: root.target
-  anchors.margins: -root.padding
+  anchors.leftMargin: -root.horizontalPadding
+  anchors.rightMargin: -root.horizontalPadding
+  anchors.topMargin: -root.verticalPadding
+  anchors.bottomMargin: -root.verticalPadding
 
   visible: root.active && root.navigable()
 
   Rectangle {
     anchors.left: parent.left
-    anchors.right: parent.right
+    anchors.top: parent.top
     anchors.bottom: parent.bottom
+    anchors.right: parent.right
 
-    height: ConfigService.border * 2
-    color: ThemeService.colors.highlight
+    color: "transparent"
+    border.width: ConfigService.border
+    border.color: ThemeService.colors.highlight
   }
 }

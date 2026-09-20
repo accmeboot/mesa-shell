@@ -130,6 +130,7 @@ Rectangle {
   MesaFocusRing {
     target: content
     active: root.activeFocus
-    padding: ConfigService.border * 2
+    horizontalPadding: ConfigService.border * 2
+    verticalPadding: Math.max(0, Math.floor((root.height - content.height) / 2))
   }
 }
