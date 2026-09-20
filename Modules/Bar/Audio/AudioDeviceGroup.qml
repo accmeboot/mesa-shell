@@ -26,12 +26,9 @@ MesaSection {
       required property PwNode modelData
 
       readonly property bool current: device.modelData === root.defaultNode
-      readonly property color contentColor: device.current ? ThemeService.colors.background : ThemeService.colors.foreground
 
       label: AudioService.nodeName(device.modelData)
-      labelColor: device.contentColor
-      color: device.current ? ThemeService.colors.highlight : "transparent"
-      interactive: !device.current
+      interactive: true
 
       onClicked: root.nodeSelected(device.modelData)
 
@@ -40,7 +37,7 @@ MesaSection {
 
         name: AudioService.deviceIcon(device.modelData)
         size: ConfigService.iconSize
-        color: device.contentColor
+        color: device.current ? ThemeService.colors.highlight : ThemeService.colors.foreground
       }
     }
   }

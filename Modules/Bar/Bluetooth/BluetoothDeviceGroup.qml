@@ -67,18 +67,12 @@ MesaSection {
   Repeater {
     model: listedModel
 
-    ColumnLayout {
+    MesaExpander {
       id: entry
 
       required property BluetoothDevice modelData
 
-      readonly property bool selected: root.selectedDevice === entry.modelData
-
-      Layout.fillWidth: true
-      Layout.topMargin: entry.selected ? ConfigService.gapSmall : 0
-      Layout.bottomMargin: entry.selected ? ConfigService.gapSmall : 0
-
-      spacing: 0
+      expanded: root.selectedDevice === entry.modelData
 
       MesaRow {
         label: entry.modelData.name
@@ -108,9 +102,9 @@ MesaSection {
           }
         }
         interactive: true
-        selected: entry.selected
+        selected: entry.expanded
 
-        onClicked: root.selectedDevice = entry.selected ? null : entry.modelData
+        onClicked: root.selectedDevice = entry.expanded ? null : entry.modelData
 
         MesaText {
           Layout.alignment: Qt.AlignVCenter
@@ -120,25 +114,21 @@ MesaSection {
           color: ColorService.threshold(entry.modelData.battery * 100, 30, 15)
         }
 
-        MesaIcon {
-          Layout.alignment: Qt.AlignVCenter
-
-          name: "pan-end"
-          size: ConfigService.iconSizeSmall
-          color: ThemeService.colors.foreground
-          rotation: entry.selected ? -90 : 90
+        MesaChevron {
+          expanded: entry.expanded
         }
       }
 
       MesaRow {
-        visible: entry.selected
+        visible: entry.expanded
         selected: true
         label: "Address"
         value: entry.modelData.address
+        valueColor: ThemeService.colors.on_surface
       }
 
       MesaRow {
-        visible: entry.selected && entry.modelData.paired
+        visible: entry.expanded && entry.modelData.paired
         selected: true
         label: "Connect automatically"
 
@@ -152,7 +142,7 @@ MesaSection {
       }
 
       MesaRow {
-        visible: entry.selected && entry.modelData.paired
+        visible: entry.expanded && entry.modelData.paired
         selected: true
         label: "Wake from sleep"
 
@@ -166,7 +156,7 @@ MesaSection {
       }
 
       MesaRow {
-        visible: entry.selected
+        visible: entry.expanded
         selected: true
 
         MesaButton {
@@ -175,9 +165,7 @@ MesaSection {
           visible: entry.modelData.paired
           enabled: entry.modelData.state === BluetoothDeviceState.Connected || entry.modelData.state === BluetoothDeviceState.Disconnected
           text: entry.modelData.connected ? "Disconnect" : "Connect"
-          color: !enabled ? ThemeService.colors.attention : entry.modelData.connected ? ThemeService.colors.critical : ThemeService.colors.highlight
-          contentColor: ThemeService.colors.background
-          disabledContentColor: ThemeService.colors.background
+          accent: entry.modelData.connected ? ThemeService.colors.critical : ThemeService.colors.highlight
 
           onClicked: {
             if (entry.modelData.connected) entry.modelData.disconnect();
@@ -190,11 +178,10 @@ MesaSection {
 
           visible: entry.modelData.paired
           text: "Forget"
-          color: ThemeService.colors.critical
-          contentColor: ThemeService.colors.background
+          accent: ThemeService.colors.critical
 
           onClicked: {
-            if (entry.selected) root.selectedDevice = null;
+            if (entry.expanded) root.selectedDevice = null;
             entry.modelData.forget();
           }
         }
@@ -205,8 +192,7 @@ MesaSection {
           visible: !entry.modelData.paired
           enabled: pairingAgent.registered
           text: entry.modelData.pairing ? "Cancel" : "Pair"
-          color: !enabled ? ThemeService.colors.surface : entry.modelData.pairing ? ThemeService.colors.critical : ThemeService.colors.highlight
-          contentColor: ThemeService.colors.background
+          accent: entry.modelData.pairing ? ThemeService.colors.critical : ThemeService.colors.highlight
 
           onClicked: {
             if (entry.modelData.pairing) {

@@ -6,6 +6,7 @@ Item {
   id: root
 
   property Item target: root.parent
+  property bool active: root.target?.activeFocus ?? false
   property int padding: 0
 
   readonly property int armLength: Math.max(ConfigService.border * 2, Math.round(Math.min(ConfigService.gap, root.width / 3, root.height / 3)))
@@ -21,7 +22,7 @@ Item {
   anchors.fill: root.target
   anchors.margins: -root.padding
 
-  visible: (root.target?.activeFocus ?? false) && root.navigable()
+  visible: root.active && root.navigable()
 
   Repeater {
     model: [[0, 0], [1, 0], [0, 1], [1, 1]]

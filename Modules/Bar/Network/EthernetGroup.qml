@@ -28,18 +28,12 @@ MesaSection {
 
     model: devicesModel
 
-    ColumnLayout {
+    MesaExpander {
       id: entry
 
       required property WiredDevice modelData
 
-      readonly property bool selected: root.selectedDevice === entry.modelData
-
-      Layout.fillWidth: true
-      Layout.topMargin: entry.selected ? ConfigService.gapSmall : 0
-      Layout.bottomMargin: entry.selected ? ConfigService.gapSmall : 0
-
-      spacing: 0
+      expanded: root.selectedDevice === entry.modelData
 
       MesaRow {
         label: entry.modelData.name
@@ -68,36 +62,34 @@ MesaSection {
           }
         }
         interactive: true
-        selected: entry.selected
+        selected: entry.expanded
 
-        onClicked: root.selectedDevice = entry.selected ? null : entry.modelData
+        onClicked: root.selectedDevice = entry.expanded ? null : entry.modelData
 
-        MesaIcon {
-          Layout.alignment: Qt.AlignVCenter
-
-          name: "pan-end"
-          size: ConfigService.iconSizeSmall
-          color: ThemeService.colors.foreground
-          rotation: entry.selected ? -90 : 90
+        MesaChevron {
+          expanded: entry.expanded
         }
       }
 
       MesaRow {
-        visible: entry.selected
+        visible: entry.expanded
         selected: true
         label: "MAC"
-        value: entry.modelData.address || "Unknown"
+        value: entry.modelData.address
+        fallback: "Unknown"
+        valueColor: ThemeService.colors.on_surface
       }
 
       MesaRow {
-        visible: entry.selected && entry.modelData.hasLink && entry.modelData.linkSpeed > 0
+        visible: entry.expanded && entry.modelData.hasLink && entry.modelData.linkSpeed > 0
         selected: true
         label: "Link"
         value: `${entry.modelData.linkSpeed} Mbps`
+        valueColor: ThemeService.colors.on_surface
       }
 
       MesaRow {
-        visible: entry.selected
+        visible: entry.expanded
         selected: true
         label: "Autoconnect"
 
@@ -115,7 +107,7 @@ MesaSection {
 
         readonly property Network network: entry.modelData.network
 
-        visible: entry.selected && (entry.modelData.connected || actions.network !== null)
+        visible: entry.expanded && (entry.modelData.connected || actions.network !== null)
         selected: true
 
         MesaButton {
@@ -123,9 +115,7 @@ MesaSection {
 
           enabled: !(actions.network && actions.network.stateChanging)
           text: entry.modelData.connected ? "Disconnect" : "Connect"
-          color: !enabled ? ThemeService.colors.attention : entry.modelData.connected ? ThemeService.colors.critical : ThemeService.colors.highlight
-          contentColor: ThemeService.colors.background
-          disabledContentColor: ThemeService.colors.background
+          accent: entry.modelData.connected ? ThemeService.colors.critical : ThemeService.colors.highlight
 
           onClicked: {
             if (entry.modelData.connected) entry.modelData.disconnect();

@@ -8,13 +8,15 @@ Rectangle {
   property string text
   property string icon
   property int iconSize: ConfigService.iconSize
-  property color contentColor: ThemeService.colors.foreground
-  property color disabledContentColor: ThemeService.colors.on_surface
+  property color accent: "transparent"
+  property color contentColor: root.accented ? ThemeService.colors.background : ThemeService.colors.foreground
+  property color disabledContentColor: root.accented ? ThemeService.colors.background : ThemeService.colors.on_surface
   property int maximumContentWidth: 0
   property int horizontalPadding: ConfigService.gap
   property int verticalPadding: ConfigService.gap
   property alias acceptedButtons: mouseArea.acceptedButtons
 
+  readonly property bool accented: root.accent.a > 0
   readonly property color effectiveContentColor: root.enabled ? root.contentColor : root.disabledContentColor
   readonly property real contentWidth: Math.ceil(root.maximumContentWidth > 0 ? Math.min(label.implicitWidth, root.maximumContentWidth) : label.implicitWidth)
 
@@ -22,7 +24,7 @@ Rectangle {
 
   implicitWidth: (root.icon ? iconLoader.implicitWidth : root.contentWidth) + root.horizontalPadding * 2
   implicitHeight: (root.icon ? iconLoader.implicitHeight : label.implicitHeight) + root.verticalPadding
-  color: ThemeService.colors.surface
+  color: root.accented ? (root.enabled ? root.accent : ThemeService.colors.attention) : ThemeService.colors.surface
 
   border.color: ThemeService.colors.on_surface
   border.width: ConfigService.border

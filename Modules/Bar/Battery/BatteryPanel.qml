@@ -1,11 +1,9 @@
-import QtQuick
-import QtQuick.Layouts
 import Quickshell.Services.UPower
 
 import qs.Services
 import qs.Components
 
-ColumnLayout {
+MesaPanel {
   id: root
 
   readonly property UPowerDevice device: UPower.displayDevice
@@ -20,8 +18,6 @@ ColumnLayout {
 
     return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
   }
-
-  spacing: ConfigService.gapBig
 
   MesaSection {
     title: "Battery"
@@ -69,21 +65,18 @@ ColumnLayout {
       visible: root.device?.healthSupported ?? false
       label: "Health"
       value: `${Math.round(root.device?.healthPercentage ?? 0)}%`
-      valueColor: ThemeService.colors.foreground
     }
 
     MesaRow {
       visible: root.remaining > 0
       label: root.charging ? "Until full" : "Remaining"
       value: root.formatDuration(root.remaining)
-      valueColor: ThemeService.colors.foreground
     }
 
     MesaRow {
       visible: (root.device?.changeRate ?? 0) > 0
       label: "Power draw"
       value: `${root.device.changeRate.toFixed(1)} W`
-      valueColor: ThemeService.colors.foreground
     }
   }
 }

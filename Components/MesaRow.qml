@@ -10,7 +10,8 @@ Rectangle {
   property color labelColor: ThemeService.colors.foreground
   property string sublabel
   property string value
-  property color valueColor: ThemeService.colors.on_surface
+  property string fallback
+  property color valueColor: ThemeService.colors.foreground
   property Component leading: null
   property bool indented: false
   property bool interactive: false
@@ -18,6 +19,8 @@ Rectangle {
   property bool wideTrailing: false
 
   default property alias trailing: trailingRow.data
+
+  readonly property bool hasValue: root.value !== ""
 
   readonly property int leadingSize: Math.round(ConfigService.font.size * 0.5)
 
@@ -108,9 +111,9 @@ Rectangle {
       Layout.alignment: Qt.AlignVCenter
       Layout.leftMargin: labels.visible ? ConfigService.gap : 0
 
-      visible: root.value !== ""
-      text: root.value
-      color: root.valueColor
+      visible: root.hasValue || root.fallback !== ""
+      text: root.hasValue ? root.value : root.fallback
+      color: root.hasValue ? root.valueColor : ThemeService.colors.on_surface
     }
 
     RowLayout {
@@ -124,5 +127,9 @@ Rectangle {
     }
   }
 
-  MesaFocusRing {}
+  MesaFocusRing {
+    target: content
+    active: root.activeFocus
+    padding: ConfigService.border * 2
+  }
 }

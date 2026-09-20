@@ -64,14 +64,13 @@ MesaSection {
   Repeater {
     model: networksModel
 
-    ColumnLayout {
+    MesaExpander {
       id: entry
 
       required property WifiNetwork modelData
 
       property string error: ""
 
-      readonly property bool selected: root.selectedNetwork === entry.modelData
       readonly property bool prompting: root.promptedNetwork === entry.modelData
       readonly property bool needsPassword: !entry.modelData.known && entry.modelData.security !== WifiSecurityType.Open && entry.modelData.security !== WifiSecurityType.Owe
 
@@ -98,14 +97,10 @@ MesaSection {
         network.connect();
       }
 
-      Layout.fillWidth: true
-      Layout.topMargin: entry.selected ? ConfigService.gapSmall : 0
-      Layout.bottomMargin: entry.selected ? ConfigService.gapSmall : 0
+      expanded: root.selectedNetwork === entry.modelData
 
-      spacing: 0
-
-      onSelectedChanged: {
-        if (!entry.selected) entry.error = "";
+      onExpandedChanged: {
+        if (!entry.expanded) entry.error = "";
       }
 
       Connections {
@@ -154,9 +149,9 @@ MesaSection {
         }
         valueColor: entry.modelData.stateChanging ? ThemeService.colors.attention : ThemeService.colors.ok
         interactive: true
-        selected: entry.selected
+        selected: entry.expanded
 
-        onClicked: root.selectedNetwork = entry.selected ? null : entry.modelData
+        onClicked: root.selectedNetwork = entry.expanded ? null : entry.modelData
 
         MesaIcon {
           Layout.alignment: Qt.AlignVCenter
@@ -166,18 +161,13 @@ MesaSection {
           color: ThemeService.colors.on_surface
         }
 
-        MesaIcon {
-          Layout.alignment: Qt.AlignVCenter
-
-          name: "pan-end"
-          size: ConfigService.iconSizeSmall
-          color: ThemeService.colors.foreground
-          rotation: entry.selected ? -90 : 90
+        MesaChevron {
+          expanded: entry.expanded
         }
       }
 
       MesaRow {
-        visible: entry.selected
+        visible: entry.expanded
         selected: true
         wideTrailing: entry.prompting
 
@@ -221,9 +211,7 @@ MesaSection {
             default: return entry.modelData.connected ? "Disconnect" : "Connect";
             }
           }
-          color: !enabled ? ThemeService.colors.attention : entry.modelData.connected ? ThemeService.colors.critical : ThemeService.colors.highlight
-          contentColor: ThemeService.colors.background
-          disabledContentColor: ThemeService.colors.background
+          accent: entry.modelData.connected ? ThemeService.colors.critical : ThemeService.colors.highlight
 
           onClicked: entry.activate()
         }
@@ -233,8 +221,7 @@ MesaSection {
 
           visible: entry.modelData.known && !entry.prompting
           text: "Forget"
-          color: ThemeService.colors.critical
-          contentColor: ThemeService.colors.background
+          accent: ThemeService.colors.critical
 
           onClicked: entry.modelData.forget()
         }
@@ -244,8 +231,7 @@ MesaSection {
 
           visible: entry.prompting
           icon: "window-close"
-          color: ThemeService.colors.critical
-          contentColor: ThemeService.colors.background
+          accent: ThemeService.colors.critical
 
           onClicked: root.promptedNetwork = null
         }
@@ -256,9 +242,7 @@ MesaSection {
           visible: entry.prompting
           enabled: !entry.modelData.stateChanging
           icon: "dialog-ok"
-          color: enabled ? ThemeService.colors.highlight : ThemeService.colors.attention
-          contentColor: ThemeService.colors.background
-          disabledContentColor: ThemeService.colors.background
+          accent: ThemeService.colors.highlight
 
           onClicked: entry.activate()
         }
@@ -266,7 +250,7 @@ MesaSection {
 
       MesaRow {
         visible: entry.error !== ""
-        selected: entry.selected
+        selected: entry.expanded
         label: entry.error
         labelColor: ThemeService.colors.critical
       }

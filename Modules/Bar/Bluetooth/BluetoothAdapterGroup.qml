@@ -42,13 +42,14 @@ MesaSection {
 
   MesaRow {
     label: "Name"
-    value: root.adapter?.name || root.adapter?.adapterId || "Unknown"
-    valueColor: ThemeService.colors.foreground
+    value: root.adapter?.name || root.adapter?.adapterId || ""
+    fallback: "Unknown"
   }
 
   MesaRow {
     label: "Discoverable"
     value: root.adapter?.discoverable && root.adapter.discoverableTimeout > 0 ? `resets after ${root.formatTimeout(root.adapter.discoverableTimeout)}` : ""
+    valueColor: ThemeService.colors.on_surface
 
     MesaIndicator {
       Layout.alignment: Qt.AlignVCenter

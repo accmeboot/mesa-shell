@@ -1,18 +1,10 @@
 import Quickshell.Networking
-import Quickshell.Wayland
-import QtQuick
-import QtQuick.Layouts
 
 import qs.Services
 import qs.Components
 
-RowLayout {
+MesaPanelWidget {
   id: root
-
-  required property var screen
-  required property int popupWidth
-
-  readonly property bool isOpen: PanelService.current === "network" && PanelService.screen === root.screen.name
 
   readonly property var device: Networking.devices.values.find(device => device.connected)
 
@@ -32,37 +24,15 @@ RowLayout {
     return true;
   }
 
-  readonly property string icon: {
+  panel: "network"
+  icon: {
     if (!root.device) return "network-wireless-offline";
 
     if (root.device.type === DeviceType.Wifi) return root.connected ? "network-wireless-signal-excellent" : "network-wireless-offline";
 
     return "network-wired";
   }
+  iconColor: ColorService.status(root.connected)
 
-  spacing: 0
-
-  MesaButton {
-    id: button
-
-    Layout.fillHeight: true
-
-    icon: root.icon
-    contentColor: ColorService.status(root.connected)
-
-    onClicked: PanelService.toggle("network", root.screen.name)
-  }
-
-  MesaPopup {
-    open: root.isOpen
-    screen: root.screen
-    width: root.popupWidth
-    exclude: root
-    namespace: "mesa-network"
-    keyboardFocus: WlrKeyboardFocus.Exclusive
-
-    content: NetworkPanel {}
-
-    onDismissed: PanelService.close("network")
-  }
+  content: NetworkPanel {}
 }

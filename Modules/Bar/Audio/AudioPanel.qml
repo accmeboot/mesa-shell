@@ -1,11 +1,8 @@
-import QtQuick
-import QtQuick.Layouts
 import Quickshell.Services.Pipewire
 
-import qs.Services
 import qs.Components
 
-Item {
+MesaPanel {
   id: root
 
   readonly property var nodes: Pipewire.nodes.values.filter(node => node.audio)
@@ -20,55 +17,43 @@ Item {
     return monitor === true || monitor === "true";
   }
 
-  implicitHeight: column.implicitHeight
-
   PwObjectTracker {
     objects: root.nodes
   }
 
-  ColumnLayout {
-    id: column
+  AudioDeviceGroup {
+    title: "Output"
 
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: parent.top
+    nodes: root.sinks
+    defaultNode: Pipewire.defaultAudioSink
 
-    spacing: ConfigService.gapBig
+    onNodeSelected: node => Pipewire.preferredDefaultAudioSink = node
+  }
 
-    AudioDeviceGroup {
-      title: "Output"
+  AudioDeviceGroup {
+    title: "Input"
 
-      nodes: root.sinks
-      defaultNode: Pipewire.defaultAudioSink
+    nodes: root.sources
+    defaultNode: Pipewire.defaultAudioSource
 
-      onNodeSelected: node => Pipewire.preferredDefaultAudioSink = node
-    }
+    icon: "audio-input-microphone-high"
+    mutedIcon: "audio-input-microphone-muted"
 
-    AudioDeviceGroup {
-      title: "Input"
+    onNodeSelected: node => Pipewire.preferredDefaultAudioSource = node
+  }
 
-      nodes: root.sources
-      defaultNode: Pipewire.defaultAudioSource
+  AudioNodeGroup {
+    title: "Playback"
 
-      icon: "audio-input-microphone-high"
-      mutedIcon: "audio-input-microphone-muted"
+    nodes: root.playbacks
+  }
 
-      onNodeSelected: node => Pipewire.preferredDefaultAudioSource = node
-    }
+  AudioNodeGroup {
+    title: "Recording"
 
-    AudioNodeGroup {
-      title: "Playback"
+    nodes: root.recordings
 
-      nodes: root.playbacks
-    }
-
-    AudioNodeGroup {
-      title: "Recording"
-
-      nodes: root.recordings
-
-      icon: "audio-input-microphone-high"
-      mutedIcon: "audio-input-microphone-muted"
-    }
+    icon: "audio-input-microphone-high"
+    mutedIcon: "audio-input-microphone-muted"
   }
 }

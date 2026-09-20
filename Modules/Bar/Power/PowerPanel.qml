@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import qs.Services
 import qs.Components
 
-ColumnLayout {
+MesaPanel {
   id: root
 
   property string pendingAction: ""
@@ -34,8 +34,6 @@ ColumnLayout {
     root.pendingAction = "";
     root.requestClose();
   }
-
-  spacing: ConfigService.gapBig
 
   SystemGroup {}
 
@@ -102,8 +100,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignVCenter
 
         icon: "window-close"
-        color: ThemeService.colors.highlight
-        contentColor: ThemeService.colors.background
+        accent: ThemeService.colors.highlight
 
         onClicked: root.pendingAction = ""
       }
@@ -112,8 +109,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignVCenter
 
         icon: "dialog-ok"
-        color: ThemeService.colors.critical
-        contentColor: ThemeService.colors.background
+        accent: ThemeService.colors.critical
 
         onClicked: root.confirm()
       }
