@@ -37,6 +37,10 @@ bindsym $mod+c exec qs -c mesa-shell ipc call panel toggle bluetooth
 bindsym $mod+m exec qs -c mesa-shell ipc call panel toggle display
 bindsym $mod+t exec qs -c mesa-shell ipc call panel toggle tray
 bindsym $mod+q exec qs -c mesa-shell ipc call panel toggle power
+bindsym $mod+grave exec qs -c mesa-shell ipc call theme toggle
+bindsym $mod+backslash exec qs -c mesa-shell ipc call notifications toggle
+bindsym $mod+bracketleft exec qs -c mesa-shell ipc call notifications dismissLast
+bindsym $mod+bracketright exec qs -c mesa-shell ipc call notifications dismissAll
 ```
 
 ### NixOS
@@ -111,9 +115,11 @@ qs -c mesa-shell ipc call <target> <function>
 | `panel` | `open <name>`, `close`, `toggle <name>` |
 | `dmenu` | `open`, `close`, `toggle` |
 | `lock` | `lock`, `isLocked` |
+| `theme` | `toggle`, `isDark` |
+| `notifications` | `toggle`, `isDoNotDisturb`, `dismissLast`, `dismissAll` |
 | `config` | `reload` |
 
-Panel names: `audio`, `network`, `bluetooth`, `display`, `battery`, `power`, `tray`. A panel opens on the focused output, and opening one closes any other.
+Panel names: `audio`, `network`, `bluetooth`, `display`, `battery`, `power`, `tray`.
 
 ```bash
 qs -c mesa-shell ipc call panel toggle audio

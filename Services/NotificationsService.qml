@@ -2,6 +2,7 @@ pragma Singleton
 pragma ComponentBehavior: Bound
 
 import Quickshell
+import Quickshell.Io
 import QtQuick
 import Quickshell.Services.Notifications
 
@@ -17,6 +18,26 @@ Singleton {
 
   function toggleDoNotDisturb() {
     doNotDisturb = !doNotDisturb;
+  }
+
+  IpcHandler {
+    target: "notifications"
+
+    function toggle(): void {
+      root.toggleDoNotDisturb();
+    }
+
+    function isDoNotDisturb(): bool {
+      return root.doNotDisturb;
+    }
+
+    function dismissLast(): void {
+      root.dismissLast();
+    }
+
+    function dismissAll(): void {
+      root.dismissAll();
+    }
   }
 
   NotificationServer {
@@ -156,6 +177,19 @@ Singleton {
 
         removeNotification(notificationId);
       }
+    }
+  }
+
+  function dismissLast() {
+    if (activeList.count === 0)
+    return;
+
+    dismissOrExpireNotification(activeList.get(0).id);
+  }
+
+  function dismissAll() {
+    for (var i = activeList.count - 1; i >= 0; --i) {
+      dismissOrExpireNotification(activeList.get(i).id);
     }
   }
 

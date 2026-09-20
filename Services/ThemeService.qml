@@ -33,6 +33,22 @@ Singleton {
     root.run(ConfigService.hooks.onLightThemeSet);
   }
 
+  function toggle(): void {
+    root.isDark ? root.light() : root.dark();
+  }
+
+  IpcHandler {
+    target: "theme"
+
+    function toggle(): void {
+      root.toggle();
+    }
+
+    function isDark(): bool {
+      return root.isDark;
+    }
+  }
+
   Connections {
     target: ConfigService
 

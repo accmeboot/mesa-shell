@@ -7,5 +7,5 @@ import qs.Components
 MesaButton {
   icon: "lighttable"
 
-  onClicked: ThemeService.isDark ? ThemeService.light() : ThemeService.dark()
+  onClicked: ThemeService.toggle()
 }
