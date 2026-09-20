@@ -43,7 +43,7 @@ Slider {
 
   background: Item {
     implicitWidth: Math.round(ConfigService.font.size * 10)
-    implicitHeight: ConfigService.iconSize
+    implicitHeight: ConfigService.controlHeight
 
     Rectangle {
       anchors.left: parent.left
@@ -103,5 +103,7 @@ Slider {
     }
   }
 
-  MesaFocusRing {}
+  MesaFocusRing {
+    padding: ConfigService.border * 2
+  }
 }
