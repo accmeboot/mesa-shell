@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import Quickshell.Bluetooth
 
 import qs.Services
@@ -57,8 +58,14 @@ MesaSection {
     labelColor: root.scanning ? ThemeService.colors.attention : ThemeService.colors.on_surface
   }
 
+  ScriptModel {
+    id: listedModel
+
+    values: root.listed
+  }
+
   Repeater {
-    model: root.listed
+    model: listedModel
 
     ColumnLayout {
       id: entry

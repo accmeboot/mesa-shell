@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import Quickshell.Networking
 
 import qs.Services
@@ -16,10 +17,16 @@ MesaSection {
   title: "Ethernet"
   visible: root.count > 0
 
+  ScriptModel {
+    id: devicesModel
+
+    values: root.devices
+  }
+
   Repeater {
     id: repeater
 
-    model: root.devices
+    model: devicesModel
 
     ColumnLayout {
       id: entry

@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import Quickshell.Networking
 
 import qs.Services
@@ -54,8 +55,14 @@ MesaSection {
     labelColor: ThemeService.colors.attention
   }
 
+  ScriptModel {
+    id: networksModel
+
+    values: root.networks
+  }
+
   Repeater {
-    model: root.networks
+    model: networksModel
 
     ColumnLayout {
       id: entry
