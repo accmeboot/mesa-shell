@@ -127,16 +127,32 @@ qs -c mesa-shell ipc call panel toggle audio
 
 ## Keyboard navigation
 
-An open panel takes keyboard focus and selects its first interactive element, drawn as a ring in the highlight colour. Selection follows the mouse too: clicking a control moves the ring to it.
+An open panel takes keyboard focus and selects its first interactive element, drawn as a fill in the highlight colour. Selection follows the mouse too: hovering an interactive row selects it, and opens that row's menu if it has one.
+
+Panels are built from rows. A row either acts on its own or opens a menu, and `Down`/`Up` move between rows until a menu is open, at which point they move within it.
 
 | Key | Action |
 | --- | --- |
-| `Down`, `j` | next element |
-| `Up`, `k` | previous element |
-| `Left`, `h` | decrease (sliders) |
-| `Right`, `l` | increase (sliders) |
-| `Enter`, `Space` | activate |
+| `Down`, `j` | next row, or next entry while a menu is open |
+| `Up`, `k` | previous row, or previous entry while a menu is open |
+| `Right`, `l` | open the selected row's menu |
+| `Left`, `h` | close the open menu |
+| `Shift+Right`, `Shift+l` | increase the open menu's slider |
+| `Shift+Left`, `Shift+h` | decrease the open menu's slider |
+| `Enter`, `Space` | activate the selection |
 | `Escape` | close the panel |
+
+Sliders live inside menus, except for brightness, which sits directly in its panel. That one takes the selection itself, and `Left`/`h` and `Right`/`l` then decrease and increase it. Either kind moves in 1% steps.
+
+### Menu text entry
+
+A menu entry can be a text field, such as the Wi-Fi password prompt. While one is selected, printable keys type into it, so `h`, `j`, `k` and `l` insert characters rather than navigating. The arrow keys still navigate.
+
+| Key | Action |
+| --- | --- |
+| `Backspace` | delete the last character |
+| `Ctrl+Backspace`, `Ctrl+u` | clear the field |
+| `Enter` | submit, once the field is not empty |
 
 ### Tray menus
 
@@ -148,7 +164,8 @@ An open panel takes keyboard focus and selects its first interactive element, dr
 | `Up`, `k` | previous entry |
 | `l` | open submenu |
 | `h` | back to the parent menu |
-| `Shift+l`, `Shift+h` | next, previous tray menu |
+| `Shift+l`, `Shift+Right` | next tray menu |
+| `Shift+h`, `Shift+Left` | previous tray menu |
 | `Enter`, `Space` | activate entry |
 | `Escape` | close the menu |
 
@@ -165,18 +182,20 @@ An open panel takes keyboard focus and selects its first interactive element, dr
 
 `config.json` next to `shell.qml`, see `config.example.json`. Every key is optional.
 
+The default palette is [gruvbox](https://github.com/morhetz/gruvbox) hard: `gruvbox-dark-hard` and `gruvbox-light-hard`.
+
 | Key | Default | Notes |
 | --- | --- | --- |
-| `colors.{dark,light}.background` | `#1d2021` / `#fbf1c7` | |
+| `colors.{dark,light}.background` | `#1d2021` / `#f9f5d7` | |
 | `colors.{dark,light}.surface` | `#3c3836` / `#ebdbb2` | |
 | `colors.{dark,light}.on_surface` | `#504945` / `#d5c4a1` | |
-| `colors.{dark,light}.foreground` | `#d5c4a1` / `#3c3836` | |
+| `colors.{dark,light}.foreground` | `#ebdbb2` / `#3c3836` | |
 | `colors.{dark,light}.highlight` | `#83a598` / `#076678` | |
 | `colors.{dark,light}.ok` | `#b8bb26` / `#79740e` | |
 | `colors.{dark,light}.attention` | `#fabd2f` / `#b57614` | |
 | `colors.{dark,light}.critical` | `#fb4934` / `#9d0006` | |
-| `font.name` | `JetBrainsMono Nerd Font` | |
-| `font.size` | `12` | |
+| `font.name` | `""` | `""` uses the fontconfig default |
+| `font.size` | `""` | pt, `""` uses the fontconfig default |
 | `wallpaper` | `assets/sway.png` | `""` for none |
 | `dateTimeFormat` | `ddd d MMM HH:mm` | `Qt.formatDateTime` |
 | `defaultPolarity` | `dark` | `dark` or `light` |

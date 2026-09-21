@@ -179,6 +179,7 @@ PopupWindow {
           readonly property bool isSlider: row.modelData.slider ?? false
           readonly property bool isHeader: row.modelData.isHeader ?? false
           readonly property bool isInput: row.modelData.isInput ?? false
+          readonly property real value: row.modelData.value ?? 0
           readonly property color contentColor: row.foreground
           readonly property color surfaceColor: row.color
           readonly property color foreground: {
@@ -321,7 +322,7 @@ PopupWindow {
 
               visible: row.isSlider
               enabled: row.modelData.enabled
-              value: row.modelData.value
+              value: row.value
 
               onMoved: row.modelData.adjusted(value)
             }
@@ -330,7 +331,7 @@ PopupWindow {
               Layout.preferredWidth: Math.ceil(valueMetrics.advanceWidth)
 
               visible: row.isSlider
-              text: `${Math.round(row.modelData.value * 100)}%`
+              text: `${Math.round(row.value * 100)}%`
               color: row.foreground
               horizontalAlignment: Text.AlignRight
             }

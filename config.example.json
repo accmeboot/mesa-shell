@@ -1,24 +1,24 @@
 {
   "colors": {
     "dark": {
-      "background": "#262427",
-      "surface": "#3b393c",
-      "on_surface": "#514f52",
-      "foreground": "#fcfcfc",
-      "highlight": "#49cae4",
-      "attention": "#ffca58",
-      "ok": "#bcdf59",
-      "critical": "#ff7272"
+      "background": "#1d2021",
+      "surface": "#3c3836",
+      "on_surface": "#504945",
+      "foreground": "#ebdbb2",
+      "highlight": "#83a598",
+      "attention": "#fabd2f",
+      "ok": "#b8bb26",
+      "critical": "#fb4934"
     },
     "light": {
-      "background": "#fcfcfc",
-      "surface": "#e9e7ea",
-      "on_surface": "#d3d1d4",
-      "foreground": "#262427",
-      "highlight": "#1c8ca8",
-      "attention": "#b8820a",
-      "ok": "#5f8a1c",
-      "critical": "#d43f3f"
+      "background": "#f9f5d7",
+      "surface": "#ebdbb2",
+      "on_surface": "#d5c4a1",
+      "foreground": "#3c3836",
+      "highlight": "#076678",
+      "attention": "#b57614",
+      "ok": "#79740e",
+      "critical": "#9d0006"
     }
   },
   "defaultPolarity": "dark",
@@ -27,8 +27,8 @@
     "onLightThemeSet": "set-light-theme"
   },
   "font": {
-    "name": "Arimo Nerd Font",
-    "size": 12
+    "name": "",
+    "size": ""
   },
   "wallpaper": "assets/sway.png",
   "dateTimeFormat": "ddd d MMM HH:mm",
