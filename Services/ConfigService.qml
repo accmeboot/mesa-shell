@@ -15,14 +15,13 @@ Singleton {
   readonly property alias defaultPolarity: adapter.defaultPolarity
   readonly property alias dateTimeFormat: adapter.dateTimeFormat
 
-  readonly property int gapSmall: Math.round(root.spacing / 2)
-  readonly property int gap: root.spacing
-  readonly property int gapBig: root.spacing * 2
+  readonly property int spaceSm: Math.round(root.spacing / 2)
+  readonly property int spaceMd: root.spacing
+  readonly property int spaceLg: root.spacing * 2
   readonly property int iconSize: Math.round(root.font.size * 1.5)
   readonly property int iconSizeSmall: Math.round(root.font.size * 1.2)
   readonly property int iconSizeLarge: Math.round(root.font.size * 2)
-  readonly property int controlHeight: root.iconSize + root.gap
-  readonly property int padding: root.gapSmall
+  readonly property int controlHeight: root.iconSize + root.spaceMd
 
   property bool settled: false
 

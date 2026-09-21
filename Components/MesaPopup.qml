@@ -11,13 +11,31 @@ Scope {
   property bool open: false
   property var screen: null
   property Item exclude: null
+  property Item anchorItem: null
   property string namespace: "mesa-popup"
   property int keyboardFocus: WlrKeyboardFocus.None
-  property int width: Math.round(ConfigService.font.size * 25.4)
+  readonly property int minimumWidth: Math.round(ConfigService.font.size * 25)
+  readonly property int maximumWidth: Math.max(root.minimumWidth, Math.round((root.screen?.width ?? 0) / 3))
+
+  readonly property real anchorRight: {
+    const item = root.anchorItem;
+
+    if (!item) return 0;
+
+    let edge = item.width;
+
+    for (let node = item; node; node = node.parent) {
+      edge += node.x;
+    }
+
+    return edge;
+  }
 
   property Component content: null
 
   signal dismissed()
+
+  onOpenChanged: if (!root.open) MenuService.close()
 
   MesaCatcher {
     active: root.open
@@ -43,7 +61,7 @@ Scope {
       WlrLayershell.keyboardFocus: root.keyboardFocus
       WlrLayershell.namespace: root.namespace
 
-      implicitWidth: root.width
+      implicitWidth: Math.max(root.minimumWidth, Math.min(root.maximumWidth, background.implicitWidth))
       implicitHeight: background.implicitHeight
 
       anchors {
@@ -51,10 +69,19 @@ Scope {
         right: true
       }
 
+      margins.right: {
+        const available = root.screen?.width ?? 0;
+
+        if (!root.anchorItem || available === 0) return 0;
+
+        const desired = available - root.anchorRight;
+        const furthest = Math.max(0, available - root.maximumWidth);
+
+        return Math.round(Math.max(0, Math.min(desired, furthest)));
+      }
+
       FocusScope {
         id: scope
-
-        property bool navigable: true
 
         function focusFirst(): void {
           scope.forceActiveFocus();
@@ -67,21 +94,52 @@ Scope {
           current.nextItemInFocusChain(forward).forceActiveFocus(Qt.TabFocusReason);
         }
 
+        function openMenu(): void {
+          if (MenuService.isOpen) return;
+
+          const item = scope.Window.activeFocusItem;
+
+          if (item && item.openMenu) item.openMenu();
+        }
+
+        function horizontal(event, delta: int): void {
+          if (event.modifiers & Qt.ShiftModifier) {
+            if (MenuService.isOpen) MenuService.current.adjust(delta);
+            return;
+          }
+
+          if (delta > 0) scope.openMenu();
+          else MenuService.close();
+        }
+
         anchors.fill: parent
 
         focus: true
 
         Keys.onEscapePressed: root.dismissed()
-        Keys.onDownPressed: scope.focusStep(true)
-        Keys.onUpPressed: scope.focusStep(false)
+
+        Keys.onDownPressed: MenuService.isOpen ? MenuService.current.step(1) : scope.focusStep(true)
+        Keys.onUpPressed: MenuService.isOpen ? MenuService.current.step(-1) : scope.focusStep(false)
+        Keys.onRightPressed: event => scope.horizontal(event, 1)
+        Keys.onLeftPressed: event => scope.horizontal(event, -1)
+        Keys.onReturnPressed: if (MenuService.isOpen) MenuService.current.activate()
+        Keys.onEnterPressed: if (MenuService.isOpen) MenuService.current.activate()
 
         Keys.onPressed: event => {
+          const menu = MenuService.current;
+
           switch (event.key) {
           case Qt.Key_J:
-            scope.focusStep(true);
+            menu ? menu.step(1) : scope.focusStep(true);
             break;
           case Qt.Key_K:
-            scope.focusStep(false);
+            menu ? menu.step(-1) : scope.focusStep(false);
+            break;
+          case Qt.Key_L:
+            scope.horizontal(event, 1);
+            break;
+          case Qt.Key_H:
+            scope.horizontal(event, -1);
             break;
           default:
             return;
@@ -97,7 +155,8 @@ Scope {
 
           anchors.fill: parent
 
-          implicitHeight: body.implicitHeight + ConfigService.padding * 2 + border.width * 2
+          implicitWidth: body.implicitWidth + border.width * 2
+          implicitHeight: body.implicitHeight + border.width * 2
           color: ThemeService.colors.background
 
           border.color: ThemeService.colors.on_surface
@@ -111,7 +170,7 @@ Scope {
             anchors.top: parent.top
             anchors.leftMargin: background.border.width
             anchors.rightMargin: background.border.width
-            anchors.topMargin: background.border.width + ConfigService.padding
+            anchors.topMargin: background.border.width
 
             sourceComponent: root.content
           }

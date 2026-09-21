@@ -30,16 +30,6 @@ Scope {
       required property var modelData
       screen: modelData
 
-      readonly property int gridUnit: power.implicitWidth
-
-      readonly property int rightContentWidth: {
-        const widgets = [tray, network, battery, audio, display, bluetooth, theme, notification, power];
-
-        return widgets.reduce((total, widget) => total + (widget.visible ? (widget.collapsedWidth ?? widget.implicitWidth) : 0), 0);
-      }
-
-      readonly property int popupWidth: Math.max(panel.rightContentWidth, panel.gridUnit * 8)
-
       color: ThemeService.colors.background
 
       WlrLayershell.keyboardFocus: dmenu.isOpen || tray.menuOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
@@ -105,31 +95,26 @@ Scope {
           id: network
           Layout.fillHeight: true
           screen: modelData
-          popupWidth: panel.popupWidth
         }
         BatteryWidget {
           id: battery
           Layout.fillHeight: true
           screen: modelData
-          popupWidth: panel.popupWidth
         }
         AudioWidget {
           id: audio
           Layout.fillHeight: true
           screen: modelData
-          popupWidth: panel.popupWidth
         }
         DisplayWidget {
           id: display
           Layout.fillHeight: true
           screen: modelData
-          popupWidth: panel.popupWidth
         }
         BluetoothWidget {
           id: bluetooth
           Layout.fillHeight: true
           screen: modelData
-          popupWidth: panel.popupWidth
         }
         ThemeWidget {
           id: theme
@@ -143,7 +128,6 @@ Scope {
           id: power
           Layout.fillHeight: true
           screen: modelData
-          popupWidth: panel.popupWidth
         }
       }
     }

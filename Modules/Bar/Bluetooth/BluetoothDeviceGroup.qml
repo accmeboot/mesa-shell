@@ -20,7 +20,6 @@ MesaSection {
   readonly property var listed: root.scanning ? root.paired.concat(root.available) : root.paired
   readonly property bool scanning: root.adapter !== null && root.adapter.discovering
 
-  property BluetoothDevice selectedDevice: null
   property BluetoothDevice pairingDevice: null
 
   title: "Devices"
@@ -67,142 +66,119 @@ MesaSection {
   Repeater {
     model: listedModel
 
-    MesaExpander {
-      id: entry
+    MesaRow {
+      id: deviceRow
 
       required property BluetoothDevice modelData
 
-      expanded: root.selectedDevice === entry.modelData
+      readonly property BluetoothDevice device: deviceRow.modelData
 
-      MesaRow {
-        label: entry.modelData.name
-        value: {
-          if (entry.modelData.pairing) return "Pairing";
-          if (!entry.modelData.paired) return "Not paired";
+      label: deviceRow.device.name
+      value: {
+        if (deviceRow.device.pairing) return "Pairing";
+        if (!deviceRow.device.paired) return "Not paired";
 
-          switch (entry.modelData.state) {
-          case BluetoothDeviceState.Connected: return "Connected";
-          case BluetoothDeviceState.Connecting: return "Connecting";
-          case BluetoothDeviceState.Disconnecting: return "Disconnecting";
-          default: return "Disconnected";
-          }
-        }
-        valueColor: {
-          const colors = ThemeService.colors;
-
-          if (entry.modelData.pairing) return colors.attention;
-          if (!entry.modelData.paired) return colors.on_surface;
-
-          switch (entry.modelData.state) {
-          case BluetoothDeviceState.Connected: return colors.ok;
-          case BluetoothDeviceState.Connecting:
-          case BluetoothDeviceState.Disconnecting:
-            return colors.attention;
-          default: return colors.on_surface;
-          }
-        }
-        interactive: true
-        selected: entry.expanded
-
-        onClicked: root.selectedDevice = entry.expanded ? null : entry.modelData
-
-        MesaText {
-          Layout.alignment: Qt.AlignVCenter
-
-          visible: entry.modelData.connected && entry.modelData.batteryAvailable
-          text: `${Math.round(entry.modelData.battery * 100)}%`
-          color: ColorService.threshold(entry.modelData.battery * 100, 30, 15)
-        }
-
-        MesaChevron {
-          expanded: entry.expanded
+        switch (deviceRow.device.state) {
+        case BluetoothDeviceState.Connected: return "Connected";
+        case BluetoothDeviceState.Connecting: return "Connecting";
+        case BluetoothDeviceState.Disconnecting: return "Disconnecting";
+        default: return "Disconnected";
         }
       }
+      valueColor: {
+        const colors = ThemeService.colors;
 
-      MesaRow {
-        visible: entry.expanded
-        selected: true
-        label: "Address"
-        value: entry.modelData.address
-        valueColor: ThemeService.colors.on_surface
-      }
+        if (deviceRow.device.pairing) return colors.attention;
+        if (!deviceRow.device.paired) return colors.on_surface;
 
-      MesaRow {
-        visible: entry.expanded && entry.modelData.paired
-        selected: true
-        label: "Connect automatically"
-
-        MesaIndicator {
-          Layout.alignment: Qt.AlignVCenter
-
-          checked: entry.modelData.trusted
-
-          onToggled: entry.modelData.trusted = !entry.modelData.trusted
+        switch (deviceRow.device.state) {
+        case BluetoothDeviceState.Connected: return colors.ok;
+        case BluetoothDeviceState.Connecting:
+        case BluetoothDeviceState.Disconnecting:
+          return colors.attention;
+        default: return colors.on_surface;
         }
       }
+      interactive: true
+      menu: deviceMenu
 
-      MesaRow {
-        visible: entry.expanded && entry.modelData.paired
-        selected: true
-        label: "Wake from sleep"
+      MesaText {
+        Layout.alignment: Qt.AlignVCenter
 
-        MesaIndicator {
-          Layout.alignment: Qt.AlignVCenter
-
-          checked: entry.modelData.wakeAllowed
-
-          onToggled: entry.modelData.wakeAllowed = !entry.modelData.wakeAllowed
-        }
+        visible: deviceRow.device.connected && deviceRow.device.batteryAvailable
+        text: `${Math.round(deviceRow.device.battery * 100)}%`
+        color: deviceRow.tone(ColorService.threshold(deviceRow.device.battery * 100, 30, 15))
       }
 
-      MesaRow {
-        visible: entry.expanded
-        selected: true
+      MesaChevron {}
 
-        MesaButton {
-          Layout.alignment: Qt.AlignVCenter
+      MesaRowMenu {
+        id: deviceMenu
 
-          visible: entry.modelData.paired
-          enabled: entry.modelData.state === BluetoothDeviceState.Connected || entry.modelData.state === BluetoothDeviceState.Disconnected
-          text: entry.modelData.connected ? "Disconnect" : "Connect"
-          accent: entry.modelData.connected ? ThemeService.colors.critical : ThemeService.colors.highlight
+        MesaMenuEntry {
+          text: `Address   ${deviceRow.device.address}`
+          enabled: false
+        }
 
-          onClicked: {
-            if (entry.modelData.connected) entry.modelData.disconnect();
-            else entry.modelData.connect();
+        MesaMenuEntry {
+          isSeparator: true
+        }
+
+        MesaMenuEntry {
+          visible: deviceRow.device.paired
+          text: "Connect automatically"
+          checkable: true
+          checked: deviceRow.device.trusted
+
+          onTriggered: deviceRow.device.trusted = !deviceRow.device.trusted
+        }
+
+        MesaMenuEntry {
+          visible: deviceRow.device.paired
+          text: "Wake from sleep"
+          checkable: true
+          checked: deviceRow.device.wakeAllowed
+
+          onTriggered: deviceRow.device.wakeAllowed = !deviceRow.device.wakeAllowed
+        }
+
+        MesaMenuEntry {
+          visible: deviceRow.device.paired
+          isSeparator: true
+        }
+
+        MesaMenuEntry {
+          visible: deviceRow.device.paired
+          enabled: deviceRow.device.state === BluetoothDeviceState.Connected || deviceRow.device.state === BluetoothDeviceState.Disconnected
+          text: deviceRow.device.connected ? "Disconnect" : "Connect"
+
+          onTriggered: {
+            if (deviceRow.device.connected) deviceRow.device.disconnect();
+            else deviceRow.device.connect();
           }
         }
 
-        MesaButton {
-          Layout.alignment: Qt.AlignVCenter
-
-          visible: entry.modelData.paired
+        MesaMenuEntry {
+          visible: deviceRow.device.paired
           text: "Forget"
-          accent: ThemeService.colors.critical
 
-          onClicked: {
-            if (entry.expanded) root.selectedDevice = null;
-            entry.modelData.forget();
-          }
+          onTriggered: deviceRow.device.forget()
         }
 
-        MesaButton {
-          Layout.alignment: Qt.AlignVCenter
-
-          visible: !entry.modelData.paired
+        MesaMenuEntry {
+          visible: !deviceRow.device.paired
           enabled: pairingAgent.registered
-          text: entry.modelData.pairing ? "Cancel" : "Pair"
-          accent: entry.modelData.pairing ? ThemeService.colors.critical : ThemeService.colors.highlight
+          text: deviceRow.device.pairing ? "Cancel pairing" : "Pair"
 
-          onClicked: {
-            if (entry.modelData.pairing) {
-              entry.modelData.cancelPair();
+          onTriggered: {
+            if (deviceRow.device.pairing) {
+              deviceRow.device.cancelPair();
               root.pairingDevice = null;
               return;
             }
 
-            root.pairingDevice = entry.modelData;
-            entry.modelData.pair();
+            root.pairingDevice = deviceRow.device;
+            deviceRow.device.pair();
           }
         }
       }

@@ -47,9 +47,9 @@ Scope {
       RowLayout {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.margins: ConfigService.gapBig
+        anchors.margins: ConfigService.spaceLg
 
-        spacing: ConfigService.gapBig
+        spacing: ConfigService.spaceLg
 
         MesaText {
           Layout.alignment: Qt.AlignVCenter
@@ -72,8 +72,8 @@ Scope {
             icon: "application-exit"
             iconSize: ConfigService.iconSizeLarge
 
-            horizontalPadding: ConfigService.gapBig
-            verticalPadding: ConfigService.gapBig
+            horizontalPadding: ConfigService.spaceLg
+            verticalPadding: ConfigService.spaceLg
 
             onClicked: PowerService.exitSession()
           }
@@ -84,8 +84,8 @@ Scope {
             icon: "system-reboot"
             iconSize: ConfigService.iconSizeLarge
 
-            horizontalPadding: ConfigService.gapBig
-            verticalPadding: ConfigService.gapBig
+            horizontalPadding: ConfigService.spaceLg
+            verticalPadding: ConfigService.spaceLg
 
             onClicked: PowerService.reboot()
           }
@@ -97,8 +97,8 @@ Scope {
             iconSize: ConfigService.iconSizeLarge
             contentColor: ThemeService.colors.critical
 
-            horizontalPadding: ConfigService.gapBig
-            verticalPadding: ConfigService.gapBig
+            horizontalPadding: ConfigService.spaceLg
+            verticalPadding: ConfigService.spaceLg
 
             onClicked: PowerService.shutdown()
           }
@@ -108,12 +108,12 @@ Scope {
       ColumnLayout {
         anchors.centerIn: parent
 
-        spacing: ConfigService.gap
+        spacing: ConfigService.spaceMd
 
         RowLayout {
           Layout.alignment: Qt.AlignHCenter
 
-          spacing: ConfigService.gap
+          spacing: ConfigService.spaceMd
 
           MesaIcon {
             name: "im-user"
@@ -141,8 +141,8 @@ Scope {
 
           text: LockService.authenticating ? "" : LockService.password
 
-          topPadding: ConfigService.gap
-          bottomPadding: ConfigService.gap
+          topPadding: ConfigService.spaceMd
+          bottomPadding: ConfigService.spaceMd
 
           borderColor: {
             if (LockService.failed) return ThemeService.colors.critical;

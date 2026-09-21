@@ -9,7 +9,7 @@ Rectangle {
   property int currentIndex: -1
   property int maximumRows: 4
 
-  readonly property int contentMargin: ConfigService.gap
+  readonly property int contentMargin: ConfigService.spaceMd
   readonly property int rowHeight: ConfigService.controlHeight
 
   signal selected(var value)

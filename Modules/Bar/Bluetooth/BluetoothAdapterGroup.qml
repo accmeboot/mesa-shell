@@ -22,23 +22,24 @@ MesaSection {
   title: "Adapter"
   visible: root.adapter !== null
 
-  actions: [
-    MesaText {
-      Layout.alignment: Qt.AlignVCenter
+  MesaRow {
+    label: "Enabled"
+    value: root.blocked ? "Blocked by rfkill" : ""
+    valueColor: ThemeService.colors.critical
+    interactive: !root.busy && !root.blocked
 
-      visible: root.blocked
-      text: "Blocked by rfkill"
-      color: ThemeService.colors.critical
-    },
+    onClicked: root.adapter.enabled = !root.adapter.enabled
+
     MesaIndicator {
       Layout.alignment: Qt.AlignVCenter
 
+      activeFocusOnTab: false
       enabled: !root.busy && !root.blocked
       checked: root.adapter?.enabled ?? false
 
       onToggled: root.adapter.enabled = !root.adapter.enabled
     }
-  ]
+  }
 
   MesaRow {
     label: "Name"
@@ -50,10 +51,14 @@ MesaSection {
     label: "Discoverable"
     value: root.adapter?.discoverable && root.adapter.discoverableTimeout > 0 ? `resets after ${root.formatTimeout(root.adapter.discoverableTimeout)}` : ""
     valueColor: ThemeService.colors.on_surface
+    interactive: root.adapter?.enabled ?? false
+
+    onClicked: root.adapter.discoverable = !root.adapter.discoverable
 
     MesaIndicator {
       Layout.alignment: Qt.AlignVCenter
 
+      activeFocusOnTab: false
       enabled: root.adapter?.enabled ?? false
       checked: root.adapter?.discoverable ?? false
 

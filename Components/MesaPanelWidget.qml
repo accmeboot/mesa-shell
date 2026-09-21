@@ -8,7 +8,6 @@ RowLayout {
   id: root
 
   required property var screen
-  required property int popupWidth
   required property string panel
 
   property string icon
@@ -20,6 +19,8 @@ RowLayout {
   spacing: 0
 
   MesaButton {
+    id: button
+
     Layout.fillHeight: true
 
     icon: root.icon
@@ -31,7 +32,7 @@ RowLayout {
   MesaPopup {
     open: root.isOpen
     screen: root.screen
-    width: root.popupWidth
+    anchorItem: button
     exclude: root
     namespace: `mesa-${root.panel}`
     keyboardFocus: WlrKeyboardFocus.Exclusive

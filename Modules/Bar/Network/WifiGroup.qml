@@ -12,16 +12,11 @@ MesaSection {
   readonly property WifiDevice device: Networking.devices.values.find(device => device.type === DeviceType.Wifi) || null
   readonly property var networks: root.device && Networking.wifiEnabled ? root.device.networks.values : []
 
-  property WifiNetwork selectedNetwork: null
   property WifiNetwork promptedNetwork: null
   property string password: ""
 
   title: "Wi-Fi"
   visible: root.device !== null
-
-  onSelectedNetworkChanged: {
-    if (root.selectedNetwork !== root.promptedNetwork) root.promptedNetwork = null;
-  }
 
   onPromptedNetworkChanged: root.password = ""
 
@@ -31,23 +26,24 @@ MesaSection {
     value: Networking.wifiEnabled
   }
 
-  actions: [
-    MesaText {
-      Layout.alignment: Qt.AlignVCenter
+  MesaRow {
+    label: "Enabled"
+    value: !Networking.wifiHardwareEnabled ? "Blocked by rfkill" : ""
+    valueColor: ThemeService.colors.critical
+    interactive: Networking.wifiHardwareEnabled
 
-      visible: !Networking.wifiHardwareEnabled
-      text: "Blocked by rfkill"
-      color: ThemeService.colors.critical
-    },
+    onClicked: Networking.wifiEnabled = !Networking.wifiEnabled
+
     MesaIndicator {
       Layout.alignment: Qt.AlignVCenter
 
+      activeFocusOnTab: false
       enabled: Networking.wifiHardwareEnabled
       checked: Networking.wifiEnabled
 
       onToggled: Networking.wifiEnabled = !Networking.wifiEnabled
     }
-  ]
+  }
 
   MesaRow {
     visible: Networking.wifiEnabled && root.networks.length === 0
@@ -64,47 +60,44 @@ MesaSection {
   Repeater {
     model: networksModel
 
-    MesaExpander {
+    ColumnLayout {
       id: entry
 
       required property WifiNetwork modelData
 
       property string error: ""
 
-      readonly property bool prompting: root.promptedNetwork === entry.modelData
-      readonly property bool needsPassword: !entry.modelData.known && entry.modelData.security !== WifiSecurityType.Open && entry.modelData.security !== WifiSecurityType.Owe
+      readonly property WifiNetwork network: entry.modelData
+      readonly property bool prompting: root.promptedNetwork === entry.network
+      readonly property bool needsPassword: !entry.network.known && entry.network.security !== WifiSecurityType.Open && entry.network.security !== WifiSecurityType.Owe
 
       function activate(): void {
-        const network = entry.modelData;
-
         entry.error = "";
 
-        if (network.connected) {
-          network.disconnect();
+        if (entry.network.connected) {
+          entry.network.disconnect();
           return;
         }
 
         if (entry.prompting) {
-          network.connectWithPsk(root.password);
+          entry.network.connectWithPsk(root.password);
           return;
         }
 
         if (entry.needsPassword) {
-          root.promptedNetwork = network;
+          root.promptedNetwork = entry.network;
           return;
         }
 
-        network.connect();
+        entry.network.connect();
       }
 
-      expanded: root.selectedNetwork === entry.modelData
+      Layout.fillWidth: true
 
-      onExpandedChanged: {
-        if (!entry.expanded) entry.error = "";
-      }
+      spacing: 0
 
       Connections {
-        target: entry.modelData
+        target: entry.network
 
         function onConnectionFailed(reason: int): void {
           switch (reason) {
@@ -126,12 +119,11 @@ MesaSection {
 
           if (!entry.needsPassword) return;
 
-          root.selectedNetwork = entry.modelData;
-          root.promptedNetwork = entry.modelData;
+          root.promptedNetwork = entry.network;
         }
 
         function onConnectedChanged(): void {
-          if (!entry.modelData.connected) return;
+          if (!entry.network.connected) return;
 
           entry.error = "";
           if (entry.prompting) root.promptedNetwork = null;
@@ -139,37 +131,58 @@ MesaSection {
       }
 
       MesaRow {
-        label: entry.modelData.name
+        id: networkRow
+
+        label: entry.network.name
         value: {
-          switch (entry.modelData.state) {
+          switch (entry.network.state) {
           case ConnectionState.Connecting: return "Connecting";
           case ConnectionState.Disconnecting: return "Disconnecting";
-          default: return entry.modelData.connected ? "Connected" : "";
+          default: return entry.network.connected ? "Connected" : "";
           }
         }
-        valueColor: entry.modelData.stateChanging ? ThemeService.colors.attention : ThemeService.colors.ok
+        valueColor: entry.network.stateChanging ? ThemeService.colors.attention : ThemeService.colors.ok
         interactive: true
-        selected: entry.expanded
-
-        onClicked: root.selectedNetwork = entry.expanded ? null : entry.modelData
+        menu: networkMenu
 
         MesaIcon {
           Layout.alignment: Qt.AlignVCenter
 
-          name: entry.modelData.security === WifiSecurityType.Open || entry.modelData.security === WifiSecurityType.Owe ? "unlock" : "lock"
-          size: ConfigService.iconSizeSmall
-          color: ThemeService.colors.on_surface
+          name: entry.network.security === WifiSecurityType.Open || entry.network.security === WifiSecurityType.Owe ? "unlock" : "lock"
+          size: ConfigService.iconSize
+          color: networkRow.mutedColor
         }
 
-        MesaChevron {
-          expanded: entry.expanded
+        MesaChevron {}
+
+        MesaRowMenu {
+          id: networkMenu
+
+          MesaMenuEntry {
+            enabled: !entry.network.stateChanging
+            text: {
+              switch (entry.network.state) {
+              case ConnectionState.Connecting: return "Connecting";
+              case ConnectionState.Disconnecting: return "Disconnecting";
+              default: return entry.network.connected ? "Disconnect" : "Connect";
+              }
+            }
+
+            onTriggered: entry.activate()
+          }
+
+          MesaMenuEntry {
+            visible: entry.network.known
+            text: "Forget"
+
+            onTriggered: entry.network.forget()
+          }
         }
       }
 
       MesaRow {
-        visible: entry.expanded
-        selected: true
-        wideTrailing: entry.prompting
+        visible: entry.prompting
+        wideTrailing: true
 
         MesaInput {
           id: passwordInput
@@ -202,36 +215,8 @@ MesaSection {
         MesaButton {
           Layout.alignment: Qt.AlignVCenter
 
-          visible: !entry.prompting
-          enabled: !entry.modelData.stateChanging
-          text: {
-            switch (entry.modelData.state) {
-            case ConnectionState.Connecting: return "Connecting";
-            case ConnectionState.Disconnecting: return "Disconnecting";
-            default: return entry.modelData.connected ? "Disconnect" : "Connect";
-            }
-          }
-          accent: entry.modelData.connected ? ThemeService.colors.critical : ThemeService.colors.highlight
-
-          onClicked: entry.activate()
-        }
-
-        MesaButton {
-          Layout.alignment: Qt.AlignVCenter
-
-          visible: entry.modelData.known && !entry.prompting
-          text: "Forget"
-          accent: ThemeService.colors.critical
-
-          onClicked: entry.modelData.forget()
-        }
-
-        MesaButton {
-          Layout.alignment: Qt.AlignVCenter
-
-          visible: entry.prompting
+          flat: true
           icon: "window-close"
-          accent: ThemeService.colors.critical
 
           onClicked: root.promptedNetwork = null
         }
@@ -239,10 +224,9 @@ MesaSection {
         MesaButton {
           Layout.alignment: Qt.AlignVCenter
 
-          visible: entry.prompting
-          enabled: !entry.modelData.stateChanging
+          flat: true
+          enabled: !entry.network.stateChanging
           icon: "dialog-ok"
-          accent: ThemeService.colors.highlight
 
           onClicked: entry.activate()
         }
@@ -250,7 +234,6 @@ MesaSection {
 
       MesaRow {
         visible: entry.error !== ""
-        selected: entry.expanded
         label: entry.error
         labelColor: ThemeService.colors.critical
       }

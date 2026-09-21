@@ -20,7 +20,7 @@ MesaRow {
 
   MesaIcon {
     Layout.alignment: Qt.AlignVCenter
-    Layout.rightMargin: ConfigService.gap - ConfigService.gapSmall
+    Layout.rightMargin: ConfigService.spaceMd - ConfigService.spaceSm
 
     name: "brightnesssettings"
     size: ConfigService.iconSize
@@ -44,7 +44,7 @@ MesaRow {
     id: percent
 
     Layout.preferredWidth: Math.ceil(brightnessMetrics.advanceWidth)
-    Layout.leftMargin: ConfigService.gap - ConfigService.gapSmall
+    Layout.leftMargin: ConfigService.spaceMd - ConfigService.spaceSm
     Layout.alignment: Qt.AlignVCenter
 
     text: `${Math.round(brightness.value * 100)}%`

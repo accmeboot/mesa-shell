@@ -18,8 +18,8 @@ TextField {
   selectionColor: ThemeService.colors.highlight
   selectedTextColor: ThemeService.colors.background
 
-  leftPadding: ConfigService.gap
-  rightPadding: ConfigService.gap
+  leftPadding: ConfigService.spaceMd
+  rightPadding: ConfigService.spaceMd
 
   background: Rectangle {
     color: root.backgroundColor
@@ -27,5 +27,4 @@ TextField {
     border.width: ConfigService.border
   }
 
-  MesaFocusRing {}
 }

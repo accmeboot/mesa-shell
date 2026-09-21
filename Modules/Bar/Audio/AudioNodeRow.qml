@@ -9,58 +9,76 @@ MesaRow {
   id: root
 
   property PwNode node: null
+  property bool selectable: false
+  property bool current: false
 
-  property bool showName: true
-  property string icon: "audio-volume-high"
-  property string mutedIcon: "audio-volume-muted"
+  readonly property real volume: root.node?.audio?.volume ?? 0
+  readonly property bool muted: root.node?.audio?.muted ?? false
+  readonly property bool output: root.node?.isSink ?? true
 
-  wideTrailing: true
+  signal selected()
 
-  TextMetrics {
-    id: volumeMetrics
+  label: AudioService.nodeName(root.node)
+  interactive: true
+  leading: root.selectable ? defaultIndicator : null
+  menu: nodeMenu
 
-    font: percent.font
-    text: "100%"
+  Component {
+    id: defaultIndicator
+
+    MesaIndicator {
+      radio: true
+      activeFocusOnTab: false
+      checked: root.current
+    }
   }
 
-  MesaButton {
+  MesaIcon {
     Layout.alignment: Qt.AlignVCenter
 
-    enabled: root.node !== null
-    icon: root.node?.audio?.muted ? root.mutedIcon : root.icon
+    name: {
+      if (root.output) return root.muted ? "audio-volume-muted" : "audio-volume-high";
 
-    onClicked: root.node.audio.muted = !root.node.audio.muted
+      return root.muted ? "audio-input-microphone-muted" : "audio-input-microphone-high";
+    }
+    size: ConfigService.iconSize
+    color: root.contentColor
   }
 
-  MesaText {
-    Layout.preferredWidth: Math.round(ConfigService.font.size * 10)
-    Layout.alignment: Qt.AlignVCenter
+  MesaChevron {}
 
-    visible: root.showName
-    text: AudioService.nodeName(root.node)
-    elide: Text.ElideRight
-  }
+  MesaRowMenu {
+    id: nodeMenu
 
-  MesaSlider {
-    id: volume
+    MesaMenuEntry {
+      visible: root.selectable
+      text: "Set as default"
+      enabled: !root.current
 
-    Layout.alignment: Qt.AlignVCenter
-    Layout.fillWidth: true
+      onTriggered: root.selected()
+    }
 
-    enabled: root.node !== null
-    value: root.node?.audio?.volume ?? 0
+    MesaMenuEntry {
+      visible: root.selectable
+      isSeparator: true
+    }
 
-    onMoved: root.node.audio.volume = volume.value
-  }
+    MesaMenuEntry {
+      text: "Mute"
+      checkable: true
+      checked: root.muted
+      enabled: root.node !== null
 
-  MesaText {
-    id: percent
+      onTriggered: root.node.audio.muted = !root.node.audio.muted
+    }
 
-    Layout.preferredWidth: Math.ceil(volumeMetrics.advanceWidth)
-    Layout.leftMargin: ConfigService.gap - ConfigService.gapSmall
-    Layout.alignment: Qt.AlignVCenter
+    MesaMenuEntry {
+      text: "Volume"
+      slider: true
+      value: root.volume
+      enabled: root.node !== null
 
-    text: `${Math.round(volume.value * 100)}%`
-    horizontalAlignment: Text.AlignRight
+      onAdjusted: value => root.node.audio.volume = value
+    }
   }
 }

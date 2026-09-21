@@ -13,7 +13,6 @@ RowLayout {
   required property var screen
 
   readonly property bool menuOpen: trayMenu.isOpen
-  readonly property int collapsedWidth: toggle.implicitWidth
   readonly property bool ipcOpen: PanelService.current === "tray" && PanelService.screen === trayRow.screen.name
 
   property bool isVisible: false

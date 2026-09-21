@@ -6,8 +6,18 @@ import qs.Services
 Slider {
   id: root
 
+  readonly property var row: {
+    for (let item = root.parent; item; item = item.parent) {
+      if (item.surfaceColor !== undefined) return item;
+    }
+
+    return null;
+  }
+
+  readonly property bool inverted: root.row?.highlighted ?? false
+
   readonly property int handleSize: Math.round(ConfigService.font.size * 1.0)
-  readonly property int trackSize: Math.max(ConfigService.border, Math.round(root.handleSize / 3))
+  readonly property int trackSize: Math.max(ConfigService.border, Math.round(root.handleSize / 6))
 
   function step(delta: int): void {
     const previous = root.value;
@@ -51,13 +61,13 @@ Slider {
       anchors.verticalCenter: parent.verticalCenter
 
       height: root.trackSize
-      color: ThemeService.colors.on_surface
+      color: root.inverted ? Qt.alpha(root.row.contentColor, 0.4) : ThemeService.colors.on_surface
 
       Rectangle {
         width: root.visualPosition * parent.width
         height: parent.height
 
-        color: ThemeService.colors.highlight
+        color: root.inverted ? root.row.contentColor : ThemeService.colors.highlight
       }
     }
   }
@@ -66,11 +76,10 @@ Slider {
     x: root.leftPadding + root.visualPosition * (root.availableWidth - width)
     y: root.topPadding + Math.round((root.availableHeight - height) / 2)
 
-    implicitWidth: root.handleSize
+    implicitWidth: Math.max(ConfigService.border * 2, Math.round(root.handleSize * (root.activeFocus ? 1.0 : 0.6)))
     implicitHeight: root.handleSize
-    radius: width / 2
 
-    color: ThemeService.colors.foreground
+    color: root.inverted ? root.row.contentColor : ThemeService.colors.foreground
   }
 
   // WheelHandler never receives events on this shell's layer-shell windows;
@@ -103,7 +112,4 @@ Slider {
     }
   }
 
-  MesaFocusRing {
-    padding: ConfigService.border * 2
-  }
 }

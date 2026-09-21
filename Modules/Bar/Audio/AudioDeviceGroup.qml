@@ -1,8 +1,6 @@
 import QtQuick
-import QtQuick.Layouts
 import Quickshell.Services.Pipewire
 
-import qs.Services
 import qs.Components
 
 MesaSection {
@@ -10,8 +8,6 @@ MesaSection {
 
   property var nodes: []
   property PwNode defaultNode: null
-  property string icon: "audio-volume-high"
-  property string mutedIcon: "audio-volume-muted"
 
   signal nodeSelected(PwNode node)
 
@@ -20,32 +16,14 @@ MesaSection {
   Repeater {
     model: root.nodes
 
-    MesaRow {
-      id: device
-
+    AudioNodeRow {
       required property PwNode modelData
 
-      readonly property bool current: device.modelData === root.defaultNode
+      node: modelData
+      selectable: true
+      current: modelData === root.defaultNode
 
-      label: AudioService.nodeName(device.modelData)
-      interactive: true
-
-      onClicked: root.nodeSelected(device.modelData)
-
-      MesaIcon {
-        Layout.alignment: Qt.AlignVCenter
-
-        name: AudioService.deviceIcon(device.modelData)
-        size: ConfigService.iconSize
-        color: device.current ? ThemeService.colors.highlight : ThemeService.colors.foreground
-      }
+      onSelected: root.nodeSelected(modelData)
     }
-  }
-
-  AudioNodeRow {
-    node: root.defaultNode
-    showName: false
-    icon: root.icon
-    mutedIcon: root.mutedIcon
   }
 }

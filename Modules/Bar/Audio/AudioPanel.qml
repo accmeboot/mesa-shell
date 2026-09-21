@@ -36,9 +36,6 @@ MesaPanel {
     nodes: root.sources
     defaultNode: Pipewire.defaultAudioSource
 
-    icon: "audio-input-microphone-high"
-    mutedIcon: "audio-input-microphone-muted"
-
     onNodeSelected: node => Pipewire.preferredDefaultAudioSource = node
   }
 
@@ -52,8 +49,5 @@ MesaPanel {
     title: "Recording"
 
     nodes: root.recordings
-
-    icon: "audio-input-microphone-high"
-    mutedIcon: "audio-input-microphone-muted"
   }
 }

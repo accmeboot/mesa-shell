@@ -24,6 +24,12 @@ MesaPanel {
     root.pendingAction = root.pendingAction === action ? "" : action;
   }
 
+  function run(action: var): void {
+    root.pendingAction = "";
+    action();
+    root.requestClose();
+  }
+
   function confirm(): void {
     switch (root.pendingAction) {
     case "exit": PowerService.exitSession(); break;
@@ -38,69 +44,94 @@ MesaPanel {
   SystemGroup {}
 
   MesaSection {
+    title: "Session"
+
     MesaRow {
-      wideTrailing: true
+      id: lockRow
 
-      MesaButton {
-        Layout.fillWidth: true
+      label: "Lock"
+      interactive: true
 
-        icon: "lock"
-
-        onClicked: {
-          LockService.lock();
-          root.requestClose();
-        }
+      leading: MesaIcon {
+        name: "lock"
+        size: ConfigService.iconSizeSmall
+        color: lockRow.contentColor
       }
 
-      MesaButton {
-        Layout.fillWidth: true
+      onClicked: root.run(() => LockService.lock())
+    }
 
-        icon: "weather-clear-night"
+    MesaRow {
+      id: suspendRow
 
-        onClicked: {
-          PowerService.suspend();
-          root.requestClose();
-        }
+      label: "Suspend"
+      interactive: true
+
+      leading: MesaIcon {
+        name: "weather-clear-night"
+        size: ConfigService.iconSizeSmall
+        color: suspendRow.contentColor
       }
 
-      MesaButton {
-        Layout.fillWidth: true
+      onClicked: root.run(() => PowerService.suspend())
+    }
 
-        icon: "application-exit"
-        color: root.pendingAction === "exit" ? ThemeService.colors.on_surface : ThemeService.colors.surface
+    MesaRow {
+      id: exitRow
 
-        onClicked: root.arm("exit")
+      label: "Log out"
+      interactive: true
+
+      leading: MesaIcon {
+        name: "application-exit"
+        size: ConfigService.iconSizeSmall
+        color: exitRow.contentColor
       }
 
-      MesaButton {
-        Layout.fillWidth: true
+      onClicked: root.arm("exit")
+    }
 
-        icon: "system-reboot"
-        color: root.pendingAction === "reboot" ? ThemeService.colors.on_surface : ThemeService.colors.surface
+    MesaRow {
+      id: rebootRow
 
-        onClicked: root.arm("reboot")
+      label: "Restart"
+      interactive: true
+
+      leading: MesaIcon {
+        name: "system-reboot"
+        size: ConfigService.iconSizeSmall
+        color: rebootRow.contentColor
       }
 
-      MesaButton {
-        Layout.fillWidth: true
+      onClicked: root.arm("reboot")
+    }
 
-        icon: "system-shutdown"
-        color: root.pendingAction === "shutdown" ? ThemeService.colors.on_surface : ThemeService.colors.surface
-        contentColor: ThemeService.colors.critical
+    MesaRow {
+      id: shutdownRow
 
-        onClicked: root.arm("shutdown")
+      label: "Shut down"
+      labelColor: ThemeService.colors.critical
+      interactive: true
+
+      leading: MesaIcon {
+        name: "system-shutdown"
+        size: ConfigService.iconSizeSmall
+        color: shutdownRow.highlighted ? shutdownRow.contentColor : ThemeService.colors.critical
       }
+
+      onClicked: root.arm("shutdown")
     }
 
     MesaRow {
       visible: root.pendingAction !== ""
       label: root.message
+      labelColor: ThemeService.colors.attention
 
       MesaButton {
         Layout.alignment: Qt.AlignVCenter
 
+        flat: true
         icon: "window-close"
-        accent: ThemeService.colors.highlight
 
         onClicked: root.pendingAction = ""
       }
@@ -108,8 +139,9 @@ MesaPanel {
       MesaButton {
         Layout.alignment: Qt.AlignVCenter
 
+        flat: true
         icon: "dialog-ok"
-        accent: ThemeService.colors.critical
+        contentColor: ThemeService.colors.critical
 
         onClicked: root.confirm()
       }

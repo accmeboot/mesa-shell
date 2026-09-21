@@ -7,11 +7,20 @@ Item {
 
   property bool checked: false
   property bool radio: false
+  readonly property var row: {
+    for (let item = root.parent; item; item = item.parent) {
+      if (item.surfaceColor !== undefined) return item;
+    }
+
+    return null;
+  }
+
   property color color: {
     if (!root.enabled) return ThemeService.colors.on_surface;
-    return root.checked ? ThemeService.colors.ok : ThemeService.colors.foreground;
+
+    return root.row ? root.row.contentColor : ThemeService.colors.foreground;
   }
-  property color backgroundColor: ThemeService.colors.background
+  property color backgroundColor: root.row ? root.row.surfaceColor : ThemeService.colors.background
 
   readonly property int trackHeight: Math.round(ConfigService.font.size * 1.25)
   readonly property int knobInset: Math.max(ConfigService.border * 2, Math.round(root.trackHeight / 6))
@@ -58,7 +67,4 @@ Item {
     onClicked: root.toggled()
   }
 
-  MesaFocusRing {
-    padding: ConfigService.gapSmall
-  }
 }

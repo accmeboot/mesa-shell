@@ -9,7 +9,7 @@ import qs.Components
 
 Rectangle {
   required property var modelData
-  readonly property int padding: ConfigService.gap
+  readonly property int padding: ConfigService.spaceMd
   readonly property int inset: root.border.width + root.padding
 
   id: root
@@ -54,12 +54,12 @@ Rectangle {
       id: notificationMainColumn
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignVCenter
-      spacing: ConfigService.gap
+      spacing: ConfigService.spaceMd
 
       RowLayout {
         id: notificationHeader
         Layout.fillWidth: true
-        spacing: ConfigService.gap
+        spacing: ConfigService.spaceMd
 
         MesaText {
           Layout.fillWidth: true
@@ -109,7 +109,7 @@ Rectangle {
       Flow {
         id: actionsFlow
         Layout.fillWidth: true
-        spacing: ConfigService.gap
+        spacing: ConfigService.spaceMd
         visible: Boolean(modelData.actions.count)
 
         Repeater {

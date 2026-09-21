@@ -12,8 +12,6 @@ MesaSection {
   readonly property var devices: Networking.devices.values.filter(device => device.type === DeviceType.Wired)
   readonly property alias count: repeater.count
 
-  property WiredDevice selectedDevice: null
-
   title: "Ethernet"
   visible: root.count > 0
 
@@ -28,98 +26,85 @@ MesaSection {
 
     model: devicesModel
 
-    MesaExpander {
-      id: entry
+    MesaRow {
+      id: deviceRow
 
       required property WiredDevice modelData
 
-      expanded: root.selectedDevice === entry.modelData
+      readonly property WiredDevice device: deviceRow.modelData
+      readonly property Network network: deviceRow.device.network
 
-      MesaRow {
-        label: entry.modelData.name
-        value: {
-          if (!entry.modelData.hasLink) return "No cable";
+      label: deviceRow.device.name
+      value: {
+        if (!deviceRow.device.hasLink) return "No cable";
 
-          switch (entry.modelData.state) {
-          case ConnectionState.Connected: return "Connected";
-          case ConnectionState.Connecting: return "Connecting";
-          case ConnectionState.Disconnecting: return "Disconnecting";
-          case ConnectionState.Disconnected: return "Disconnected";
-          default: return "Unknown";
-          }
-        }
-        valueColor: {
-          const colors = ThemeService.colors;
-
-          if (!entry.modelData.hasLink) return colors.on_surface;
-
-          switch (entry.modelData.state) {
-          case ConnectionState.Connecting:
-          case ConnectionState.Disconnecting:
-            return colors.attention;
-          default:
-            return ColorService.status(entry.modelData.connected);
-          }
-        }
-        interactive: true
-        selected: entry.expanded
-
-        onClicked: root.selectedDevice = entry.expanded ? null : entry.modelData
-
-        MesaChevron {
-          expanded: entry.expanded
+        switch (deviceRow.device.state) {
+        case ConnectionState.Connected: return "Connected";
+        case ConnectionState.Connecting: return "Connecting";
+        case ConnectionState.Disconnecting: return "Disconnecting";
+        case ConnectionState.Disconnected: return "Disconnected";
+        default: return "Unknown";
         }
       }
+      valueColor: {
+        const colors = ThemeService.colors;
 
-      MesaRow {
-        visible: entry.expanded
-        selected: true
-        label: "MAC"
-        value: entry.modelData.address
-        fallback: "Unknown"
-        valueColor: ThemeService.colors.on_surface
-      }
+        if (!deviceRow.device.hasLink) return colors.on_surface;
 
-      MesaRow {
-        visible: entry.expanded && entry.modelData.hasLink && entry.modelData.linkSpeed > 0
-        selected: true
-        label: "Link"
-        value: `${entry.modelData.linkSpeed} Mbps`
-        valueColor: ThemeService.colors.on_surface
-      }
-
-      MesaRow {
-        visible: entry.expanded
-        selected: true
-        label: "Autoconnect"
-
-        MesaIndicator {
-          Layout.alignment: Qt.AlignVCenter
-
-          checked: entry.modelData.autoconnect
-
-          onToggled: entry.modelData.autoconnect = !entry.modelData.autoconnect
+        switch (deviceRow.device.state) {
+        case ConnectionState.Connecting:
+        case ConnectionState.Disconnecting:
+          return colors.attention;
+        default:
+          return ColorService.status(deviceRow.device.connected);
         }
       }
+      interactive: true
+      menu: deviceMenu
 
-      MesaRow {
-        id: actions
+      MesaText {
+        Layout.alignment: Qt.AlignVCenter
 
-        readonly property Network network: entry.modelData.network
+        visible: deviceRow.device.hasLink && deviceRow.device.linkSpeed > 0
+        text: `${deviceRow.device.linkSpeed} Mbps`
+        color: deviceRow.mutedColor
+      }
 
-        visible: entry.expanded && (entry.modelData.connected || actions.network !== null)
-        selected: true
+      MesaChevron {}
 
-        MesaButton {
-          Layout.alignment: Qt.AlignVCenter
+      MesaRowMenu {
+        id: deviceMenu
 
-          enabled: !(actions.network && actions.network.stateChanging)
-          text: entry.modelData.connected ? "Disconnect" : "Connect"
-          accent: entry.modelData.connected ? ThemeService.colors.critical : ThemeService.colors.highlight
+        MesaMenuEntry {
+          text: `MAC   ${deviceRow.device.address || "Unknown"}`
+          enabled: false
+        }
 
-          onClicked: {
-            if (entry.modelData.connected) entry.modelData.disconnect();
-            else actions.network.connect();
+        MesaMenuEntry {
+          isSeparator: true
+        }
+
+        MesaMenuEntry {
+          text: "Autoconnect"
+          checkable: true
+          checked: deviceRow.device.autoconnect
+
+          onTriggered: deviceRow.device.autoconnect = !deviceRow.device.autoconnect
+        }
+
+        MesaMenuEntry {
+          visible: deviceRow.device.connected || deviceRow.network !== null
+          isSeparator: true
+        }
+
+        MesaMenuEntry {
+          visible: deviceRow.device.connected || deviceRow.network !== null
+          enabled: !(deviceRow.network && deviceRow.network.stateChanging)
+          text: deviceRow.device.connected ? "Disconnect" : "Connect"
+
+          onTriggered: {
+            if (deviceRow.device.connected) deviceRow.device.disconnect();
+            else deviceRow.network.connect();
           }
         }
       }

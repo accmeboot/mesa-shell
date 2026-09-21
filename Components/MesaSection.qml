@@ -9,17 +9,18 @@ ColumnLayout {
   property string title
 
   default property alias content: body.data
-  property alias actions: headerActions.data
 
   Layout.fillWidth: true
 
-  spacing: body.implicitHeight > 0 ? ConfigService.gapSmall : 0
+  spacing: 0
 
-  Item {
+  Rectangle {
     Layout.fillWidth: true
 
     visible: root.title !== ""
-    implicitHeight: Math.max(headerRow.implicitHeight + ConfigService.padding * 2, ConfigService.controlHeight)
+    implicitWidth: headerRow.implicitWidth + ConfigService.spaceMd * 2
+    implicitHeight: headerRow.implicitHeight + ConfigService.spaceSm * 2
+    color: ThemeService.colors.surface
 
     RowLayout {
       id: headerRow
@@ -27,28 +28,21 @@ ColumnLayout {
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.verticalCenter: parent.verticalCenter
-      anchors.leftMargin: ConfigService.gap
-      anchors.rightMargin: ConfigService.gap
+      anchors.leftMargin: ConfigService.spaceMd
+      anchors.rightMargin: ConfigService.spaceMd
 
-      spacing: ConfigService.gap
+      spacing: ConfigService.spaceMd
 
       MesaText {
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignVCenter
 
         text: root.title
-        color: ThemeService.colors.attention
-        font.bold: true
+        color: ThemeService.colors.foreground
+        font.capitalization: Font.AllUppercase
+        font.letterSpacing: 1
+        font.pointSize: Math.max(1, ConfigService.font.size - 1)
         elide: Text.ElideRight
-      }
-
-      RowLayout {
-        id: headerActions
-
-        Layout.alignment: Qt.AlignVCenter
-
-        visible: headerActions.children.length > 0
-        spacing: ConfigService.gapSmall
       }
     }
   }
@@ -58,6 +52,6 @@ ColumnLayout {
 
     Layout.fillWidth: true
 
-    spacing: ConfigService.gapSmall
+    spacing: 0
   }
 }
