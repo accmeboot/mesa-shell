@@ -30,7 +30,7 @@ MesaPanelWidget {
     case BluetoothAdapterState.Disabling:
       return colors.attention;
     case BluetoothAdapterState.Blocked: return colors.critical;
-    default: return colors.on_surface;
+    default: return colors.foreground;
     }
   }
 
