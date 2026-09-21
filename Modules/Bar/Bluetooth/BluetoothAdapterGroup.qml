@@ -42,12 +42,6 @@ MesaSection {
   }
 
   MesaRow {
-    label: "Name"
-    value: root.adapter?.name || root.adapter?.adapterId || ""
-    fallback: "Unknown"
-  }
-
-  MesaRow {
     label: "Discoverable"
     value: root.adapter?.discoverable && root.adapter.discoverableTimeout > 0 ? `resets after ${root.formatTimeout(root.adapter.discoverableTimeout)}` : ""
     valueColor: ThemeService.colors.on_surface
@@ -64,5 +58,11 @@ MesaSection {
 
       onToggled: root.adapter.discoverable = !root.adapter.discoverable
     }
+  }
+
+  MesaRow {
+    label: "Name"
+    value: root.adapter?.name || root.adapter?.adapterId || ""
+    fallback: "Unknown"
   }
 }

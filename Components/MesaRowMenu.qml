@@ -38,6 +38,10 @@ Scope {
     root.open = false;
     surface.currentIndex = -1;
 
+    for (const entry of root.entries) {
+      if (entry.isInput) entry.text = "";
+    }
+
     MenuService.release(root);
   }
 
@@ -51,6 +55,10 @@ Scope {
 
   function adjust(delta: int): void {
     surface.adjust(delta);
+  }
+
+  function type(event: var): bool {
+    return surface.type(event);
   }
 
   MesaMenuSurface {

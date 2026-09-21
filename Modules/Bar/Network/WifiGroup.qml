@@ -12,13 +12,8 @@ MesaSection {
   readonly property WifiDevice device: Networking.devices.values.find(device => device.type === DeviceType.Wifi) || null
   readonly property var networks: root.device && Networking.wifiEnabled ? root.device.networks.values : []
 
-  property WifiNetwork promptedNetwork: null
-  property string password: ""
-
   title: "Wi-Fi"
   visible: root.device !== null
-
-  onPromptedNetworkChanged: root.password = ""
 
   Binding {
     target: root.device
@@ -68,7 +63,6 @@ MesaSection {
       property string error: ""
 
       readonly property WifiNetwork network: entry.modelData
-      readonly property bool prompting: root.promptedNetwork === entry.network
       readonly property bool needsPassword: !entry.network.known && entry.network.security !== WifiSecurityType.Open && entry.network.security !== WifiSecurityType.Owe
 
       function activate(): void {
@@ -79,17 +73,14 @@ MesaSection {
           return;
         }
 
-        if (entry.prompting) {
-          entry.network.connectWithPsk(root.password);
-          return;
-        }
-
-        if (entry.needsPassword) {
-          root.promptedNetwork = entry.network;
-          return;
-        }
-
         entry.network.connect();
+      }
+
+      function connectWithPassword(): void {
+        if (passwordEntry.text === "") return;
+
+        entry.error = "";
+        entry.network.connectWithPsk(passwordEntry.text);
       }
 
       Layout.fillWidth: true
@@ -116,17 +107,10 @@ MesaSection {
           default:
             entry.error = "Connection failed";
           }
-
-          if (!entry.needsPassword) return;
-
-          root.promptedNetwork = entry.network;
         }
 
         function onConnectedChanged(): void {
-          if (!entry.network.connected) return;
-
-          entry.error = "";
-          if (entry.prompting) root.promptedNetwork = null;
+          if (entry.network.connected) entry.error = "";
         }
       }
 
@@ -159,6 +143,32 @@ MesaSection {
           id: networkMenu
 
           MesaMenuEntry {
+            id: passwordEntry
+
+            visible: entry.needsPassword
+            enabled: !entry.network.stateChanging
+            isInput: true
+            secret: true
+            placeholder: "Password"
+
+            onTriggered: entry.connectWithPassword()
+          }
+
+          MesaMenuEntry {
+            visible: entry.needsPassword
+            enabled: !entry.network.stateChanging && passwordEntry.text !== ""
+            text: "Confirm"
+
+            onTriggered: entry.connectWithPassword()
+          }
+
+          MesaMenuEntry {
+            visible: entry.needsPassword
+            text: "Cancel"
+          }
+
+          MesaMenuEntry {
+            visible: !entry.needsPassword
             enabled: !entry.network.stateChanging
             text: {
               switch (entry.network.state) {
@@ -177,58 +187,6 @@ MesaSection {
 
             onTriggered: entry.network.forget()
           }
-        }
-      }
-
-      MesaRow {
-        visible: entry.prompting
-        wideTrailing: true
-
-        MesaInput {
-          id: passwordInput
-
-          function restoreFocus(): void {
-            if (!passwordInput.visible) return;
-
-            passwordInput.forceActiveFocus();
-            passwordInput.cursorPosition = passwordInput.text.length;
-          }
-
-          Layout.fillWidth: true
-
-          visible: entry.prompting
-          echoMode: TextInput.Password
-          placeholderText: "Password"
-          passwordCharacter: "*"
-          backgroundColor: ThemeService.colors.background
-          text: root.password
-
-          Keys.onEscapePressed: root.promptedNetwork = null
-
-          onTextEdited: root.password = passwordInput.text
-          onAccepted: entry.activate()
-          onVisibleChanged: passwordInput.restoreFocus()
-
-          Component.onCompleted: Qt.callLater(passwordInput.restoreFocus)
-        }
-
-        MesaButton {
-          Layout.alignment: Qt.AlignVCenter
-
-          flat: true
-          icon: "window-close"
-
-          onClicked: root.promptedNetwork = null
-        }
-
-        MesaButton {
-          Layout.alignment: Qt.AlignVCenter
-
-          flat: true
-          enabled: !entry.network.stateChanging
-          icon: "dialog-ok"
-
-          onClicked: entry.activate()
         }
       }
 

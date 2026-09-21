@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Layouts
 
 import qs.Services
 import qs.Components
@@ -7,38 +6,28 @@ import qs.Components
 MesaPanel {
   id: root
 
-  property string pendingAction: ""
-
-  readonly property string message: {
-    switch (root.pendingAction) {
-    case "exit": return "Exit the session?";
-    case "reboot": return "Restart the system?";
-    case "shutdown": return "Shut down the system?";
-    default: return "";
-    }
-  }
-
   signal requestClose()
 
-  function arm(action: string): void {
-    root.pendingAction = root.pendingAction === action ? "" : action;
-  }
-
   function run(action: var): void {
-    root.pendingAction = "";
     action();
     root.requestClose();
   }
 
-  function confirm(): void {
-    switch (root.pendingAction) {
-    case "exit": PowerService.exitSession(); break;
-    case "reboot": PowerService.reboot(); break;
-    case "shutdown": PowerService.shutdown(); break;
+  component ConfirmMenu: MesaRowMenu {
+    id: confirmMenu
+
+    signal confirmed()
+
+    MesaMenuEntry {
+      isHeader: true
+      text: "Are you sure?"
     }
 
-    root.pendingAction = "";
-    root.requestClose();
+    MesaMenuEntry {
+      text: "Confirm"
+
+      onTriggered: confirmMenu.confirmed()
+    }
   }
 
   SystemGroup {}
@@ -88,7 +77,15 @@ MesaPanel {
         color: exitRow.contentColor
       }
 
-      onClicked: root.arm("exit")
+      menu: exitMenu
+
+      MesaChevron {}
+
+      ConfirmMenu {
+        id: exitMenu
+
+        onConfirmed: root.run(() => PowerService.exitSession())
+      }
     }
 
     MesaRow {
@@ -103,7 +100,15 @@ MesaPanel {
         color: rebootRow.contentColor
       }
 
-      onClicked: root.arm("reboot")
+      menu: rebootMenu
+
+      MesaChevron {}
+
+      ConfirmMenu {
+        id: rebootMenu
+
+        onConfirmed: root.run(() => PowerService.reboot())
+      }
     }
 
     MesaRow {
@@ -119,31 +124,14 @@ MesaPanel {
         color: shutdownRow.highlighted ? shutdownRow.contentColor : ThemeService.colors.critical
       }
 
-      onClicked: root.arm("shutdown")
-    }
+      menu: shutdownMenu
 
-    MesaRow {
-      visible: root.pendingAction !== ""
-      label: root.message
-      labelColor: ThemeService.colors.attention
+      MesaChevron {}
 
-      MesaButton {
-        Layout.alignment: Qt.AlignVCenter
+      ConfirmMenu {
+        id: shutdownMenu
 
-        flat: true
-        icon: "window-close"
-
-        onClicked: root.pendingAction = ""
-      }
-
-      MesaButton {
-        Layout.alignment: Qt.AlignVCenter
-
-        flat: true
-        icon: "dialog-ok"
-        contentColor: ThemeService.colors.critical
-
-        onClicked: root.confirm()
+        onConfirmed: root.run(() => PowerService.shutdown())
       }
     }
   }

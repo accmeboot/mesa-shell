@@ -27,8 +27,8 @@ Item {
 
   signal toggled
 
-  implicitWidth: root.radio ? radioIcon.implicitWidth : root.trackHeight * 2
-  implicitHeight: root.radio ? radioIcon.implicitHeight : root.trackHeight
+  implicitWidth: root.radio ? root.trackHeight : root.trackHeight * 2
+  implicitHeight: root.trackHeight
 
   activeFocusOnTab: root.enabled
 
@@ -36,13 +36,11 @@ Item {
   Keys.onEnterPressed: root.toggled()
   Keys.onSpacePressed: root.toggled()
 
-  MesaIcon {
-    id: radioIcon
-
+  Rectangle {
     anchors.centerIn: parent
-    visible: root.radio
-    name: root.checked ? "system-suspend-hibernate" : "draw-circle"
-    size: Math.round(ConfigService.font.size * 1.35)
+    visible: root.radio && root.checked
+    width: parent.width - root.knobInset * 2
+    height: width
     color: root.color
   }
 

@@ -55,7 +55,7 @@ PopupWindow {
 
       const entry = entries[index];
 
-      if (entry.isSeparator || !entry.enabled) continue;
+      if (entry.isSeparator || entry.isHeader || !entry.enabled) continue;
 
       root.currentIndex = index;
       return;
@@ -65,9 +65,11 @@ PopupWindow {
   function activate(): void {
     const entry = root.entryAt(root.currentIndex);
 
-    if (!entry || entry.isSeparator || !entry.enabled) return;
+    if (!entry || entry.isSeparator || entry.isHeader || !entry.enabled) return;
 
     if (entry.slider) return;
+
+    if (entry.isInput && entry.text === "") return;
 
     if (entry.hasChildren) {
       root.submenuRequested(root.currentIndex);
@@ -75,6 +77,31 @@ PopupWindow {
     }
 
     root.triggered(root.currentIndex);
+  }
+
+  function type(event: var): bool {
+    const entry = root.entryAt(root.currentIndex);
+
+    if (!entry || !entry.isInput || !entry.enabled) return false;
+
+    if (event.key === Qt.Key_Backspace) {
+      entry.text = event.modifiers & Qt.ControlModifier ? "" : entry.text.slice(0, -1);
+      return true;
+    }
+
+    if (event.key === Qt.Key_U && event.modifiers & Qt.ControlModifier) {
+      entry.text = "";
+      return true;
+    }
+
+    if (event.modifiers & (Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier)) return false;
+
+    const code = event.text.length > 0 ? event.text.charCodeAt(0) : 0;
+
+    if (code < 32 || code === 127) return false;
+
+    entry.text += event.text;
+    return true;
   }
 
   function adjust(delta: int): void {
@@ -102,6 +129,14 @@ PopupWindow {
     id: toggleMetrics
 
     visible: false
+  }
+
+  TextMetrics {
+    id: inputMetrics
+
+    font.family: ConfigService.font.name
+    font.pointSize: ConfigService.font.size
+    text: "0".repeat(20)
   }
 
   TextMetrics {
@@ -142,6 +177,8 @@ PopupWindow {
 
           readonly property bool highlighted: row.index === root.currentIndex
           readonly property bool isSlider: row.modelData.slider ?? false
+          readonly property bool isHeader: row.modelData.isHeader ?? false
+          readonly property bool isInput: row.modelData.isInput ?? false
           readonly property color contentColor: row.foreground
           readonly property color surfaceColor: row.color
           readonly property color foreground: {
@@ -151,18 +188,46 @@ PopupWindow {
           }
 
           Layout.fillWidth: true
-          implicitWidth: row.modelData.isSeparator ? 0 : content.implicitWidth + root.rowPadding * 2
-          implicitHeight: row.modelData.isSeparator ? ConfigService.border : Math.max(content.implicitHeight, ConfigService.controlHeight)
+          implicitWidth: {
+            if (row.modelData.isSeparator) return 0;
+            if (row.isHeader) return headerText.implicitWidth + root.rowPadding * 2;
+
+            return content.implicitWidth + root.rowPadding * 2;
+          }
+          implicitHeight: {
+            if (row.modelData.isSeparator) return ConfigService.border;
+            if (row.isHeader) return headerText.implicitHeight + ConfigService.spaceSm * 2;
+
+            return Math.max(content.implicitHeight, ConfigService.controlHeight);
+          }
           color: {
             if (row.modelData.isSeparator) return ThemeService.colors.on_surface;
+            if (row.isHeader) return ThemeService.colors.surface;
 
             return row.highlighted ? ThemeService.colors.highlight : ThemeService.colors.background;
+          }
+
+          MesaText {
+            id: headerText
+
+            visible: row.isHeader
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: root.rowPadding
+            anchors.rightMargin: root.rowPadding
+            text: row.modelData.text
+            color: ThemeService.colors.foreground
+            font.capitalization: Font.AllUppercase
+            font.letterSpacing: 1
+            font.pointSize: Math.max(1, ConfigService.font.size - 1)
+            elide: Text.ElideRight
           }
 
           RowLayout {
             id: content
 
-            visible: !row.modelData.isSeparator
+            visible: !row.modelData.isSeparator && !row.isHeader
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
@@ -197,8 +262,57 @@ PopupWindow {
 
             MesaText {
               Layout.fillWidth: !row.isSlider
+
+              visible: !row.isInput
               text: row.modelData.text
               color: row.foreground
+            }
+
+            Item {
+              Layout.fillWidth: true
+              Layout.preferredWidth: Math.ceil(inputMetrics.advanceWidth)
+              Layout.preferredHeight: inputText.implicitHeight
+
+              visible: row.isInput
+
+              MesaText {
+                id: inputText
+
+                readonly property bool empty: row.modelData.text === ""
+
+                width: Math.min(inputText.implicitWidth, parent.width - caret.width)
+                text: {
+                  if (inputText.empty) return row.modelData.placeholder ?? "";
+
+                  return row.modelData.secret ? "*".repeat(row.modelData.text.length) : row.modelData.text;
+                }
+                color: inputText.empty ? (row.highlighted ? Qt.alpha(row.foreground, 0.6) : ThemeService.colors.on_surface) : row.foreground
+                elide: Text.ElideLeft
+              }
+
+              Rectangle {
+                id: caret
+
+                x: inputText.empty ? 0 : inputText.width
+                anchors.verticalCenter: parent.verticalCenter
+                width: Math.max(ConfigService.border, Math.round(ConfigService.font.size * 0.15))
+                height: inputText.implicitHeight
+                visible: row.highlighted && caretBlink.shown
+                color: row.foreground
+              }
+
+              Timer {
+                id: caretBlink
+
+                property bool shown: true
+
+                interval: 530
+                repeat: true
+                running: row.isInput && row.highlighted
+
+                onRunningChanged: caretBlink.shown = true
+                onTriggered: caretBlink.shown = !caretBlink.shown
+              }
             }
 
             MesaSlider {
@@ -231,7 +345,7 @@ PopupWindow {
 
           MouseArea {
             anchors.fill: parent
-            enabled: !row.modelData.isSeparator && row.modelData.enabled
+            enabled: !row.modelData.isSeparator && !row.isHeader && row.modelData.enabled
             acceptedButtons: row.isSlider ? Qt.NoButton : Qt.LeftButton
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
@@ -239,6 +353,9 @@ PopupWindow {
             onEntered: root.entered(row.index)
             onClicked: {
               root.currentIndex = row.index;
+
+              if (row.isInput) return;
+
               root.activate();
             }
           }

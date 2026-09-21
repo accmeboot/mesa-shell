@@ -24,6 +24,7 @@ MesaRow {
 
     name: "brightnesssettings"
     size: ConfigService.iconSize
+    color: root.contentColor
   }
 
   MesaSlider {
@@ -48,6 +49,7 @@ MesaRow {
     Layout.alignment: Qt.AlignVCenter
 
     text: `${Math.round(brightness.value * 100)}%`
+    color: root.contentColor
     horizontalAlignment: Text.AlignRight
   }
 }

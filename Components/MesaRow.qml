@@ -8,7 +8,7 @@ Rectangle {
   id: root
 
   property string label
-  property color labelColor: ThemeService.colors.foreground
+  property color labelColor: root.interactive ? ThemeService.colors.foreground : root.mutedColor
   property string sublabel
   property string value
   property string fallback
@@ -86,6 +86,10 @@ Rectangle {
     if (MenuService.current.anchorItem === root) return;
 
     MenuService.close();
+  }
+
+  Keys.onPressed: event => {
+    if (MenuService.isOpen && MenuService.current.type?.(event)) event.accepted = true;
   }
 
   Keys.onReturnPressed: root.trigger()
