@@ -22,7 +22,7 @@ Item {
   }
   property color backgroundColor: root.row ? root.row.surfaceColor : ThemeService.colors.background
 
-  readonly property int trackHeight: Math.round(ConfigService.font.size * 1.25)
+  readonly property int trackHeight: ConfigService.iconSizeSmall
   readonly property int knobInset: Math.max(ConfigService.border * 2, Math.round(root.trackHeight / 6))
 
   signal toggled
