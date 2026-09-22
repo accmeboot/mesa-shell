@@ -336,11 +336,8 @@ PopupWindow {
               horizontalAlignment: Text.AlignRight
             }
 
-            MesaIcon {
+            MesaChevron {
               visible: row.modelData.hasChildren
-              name: "pan-end"
-              size: root.indicatorSize
-              color: row.foreground
             }
           }
 
