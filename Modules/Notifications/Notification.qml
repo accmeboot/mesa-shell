@@ -27,6 +27,7 @@ Rectangle {
   MesaButton {
     icon: "window-close"
     color: ThemeService.colors.critical
+    border.width: ConfigService.border
     contentColor: ThemeService.colors.background
     onClicked: {
         NotificationsService.dismissOrExpireNotification(modelData.id);
@@ -122,8 +123,7 @@ Rectangle {
 
             maximumContentWidth: actionsFlow.width - action.horizontalPadding * 2
             text: action.modelData.text || "OK" + " (" + action.modelData.identifier + ")"
-            color: ThemeService.colors.highlight
-            contentColor: ThemeService.colors.background
+            border.width: ConfigService.border
             onClicked: {
               NotificationsService.invokeAction(root.modelData.id, action.modelData.id);
             }

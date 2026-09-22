@@ -44,11 +44,11 @@ Rectangle {
   implicitHeight: (root.icon ? iconLoader.implicitHeight : label.implicitHeight) + root.verticalPadding
   color: {
     if (root.flat) return root.inverted ? root.rowAccent : "transparent";
-    return root.accented ? (root.enabled ? root.accent : ThemeService.colors.attention) : ThemeService.colors.surface;
+    return root.accented ? (root.enabled ? root.accent : ThemeService.colors.attention) : "transparent";
   }
 
   border.color: ThemeService.colors.on_surface
-  border.width: root.flat ? 0 : ConfigService.border
+  border.width: 0
 
   activeFocusOnTab: root.enabled
 

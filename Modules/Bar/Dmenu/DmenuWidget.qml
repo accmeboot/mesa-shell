@@ -119,6 +119,8 @@ RowLayout {
       Layout.preferredWidth: root.listWidth
       Layout.maximumWidth: root.listWidth
 
+      borderColor: "transparent"
+
       onTextChanged: {
         root.currentIndex = 0;
       }

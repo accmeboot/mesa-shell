@@ -71,10 +71,6 @@ Scope {
 
             icon: "application-exit"
             iconSize: ConfigService.iconSizeLarge
-
-            horizontalPadding: ConfigService.spaceLg
-            verticalPadding: ConfigService.spaceLg
-
             onClicked: PowerService.exitSession()
           }
 
@@ -83,10 +79,6 @@ Scope {
 
             icon: "system-reboot"
             iconSize: ConfigService.iconSizeLarge
-
-            horizontalPadding: ConfigService.spaceLg
-            verticalPadding: ConfigService.spaceLg
-
             onClicked: PowerService.reboot()
           }
 
@@ -96,10 +88,6 @@ Scope {
             icon: "system-shutdown"
             iconSize: ConfigService.iconSizeLarge
             contentColor: ThemeService.colors.critical
-
-            horizontalPadding: ConfigService.spaceLg
-            verticalPadding: ConfigService.spaceLg
-
             onClicked: PowerService.shutdown()
           }
         }

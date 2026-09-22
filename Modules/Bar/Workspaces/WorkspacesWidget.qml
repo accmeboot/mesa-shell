@@ -23,19 +23,15 @@ RowLayout {
       visible: modelData.monitor === root.screen.name
 
       text: modelData.name
-      color: {
-        if (modelData.focused) {
-          return ThemeService.colors.highlight
-        }
 
-        if (modelData.urgent) {
-          return ThemeService.colors.critical
-        }
-
-        return ThemeService.colors.surface
+      Rectangle {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        height: ConfigService.border * 2
+        visible: workspace.modelData.focused || workspace.modelData.urgent
+        color: workspace.modelData.focused ? ThemeService.colors.highlight : ThemeService.colors.critical
       }
-
-      contentColor: modelData.focused ? ThemeService.colors.background : ThemeService.colors.foreground
 
       onClicked: workspace.modelData.activate()
     }
