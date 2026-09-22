@@ -15,18 +15,6 @@ RowLayout {
   readonly property bool menuOpen: trayMenu.isOpen
   readonly property bool ipcOpen: PanelService.current === "tray" && PanelService.screen === trayRow.screen.name
 
-  property bool isVisible: false
-  property bool expandedByIpc: false
-
-  function openFromIpc(): void {
-    if (!trayRow.isVisible) {
-      trayRow.isVisible = true;
-      trayRow.expandedByIpc = true;
-    }
-
-    Qt.callLater(trayRow.openFirstMenu);
-  }
-
   function menuItems(): var {
     const list = [];
 
@@ -49,7 +37,12 @@ RowLayout {
   function openFirstMenu(): void {
     const list = trayRow.menuItems();
 
-    if (list.length > 0) trayRow.openMenu(list[0]);
+    if (list.length === 0) {
+      PanelService.close("tray");
+      return;
+    }
+
+    trayRow.openMenu(list[0]);
   }
 
   function stepMenu(delta: int): void {
@@ -69,19 +62,9 @@ RowLayout {
     PanelService.close("tray");
   }
 
-  function closeFromIpc(): void {
-    trayMenu.close();
-
-    if (!trayRow.expandedByIpc) return;
-
-    trayRow.expandedByIpc = false;
-    trayRow.isVisible = false;
-  }
-
   spacing: 0
 
-  onIsVisibleChanged: if (!trayRow.isVisible) trayMenu.close()
-  onIpcOpenChanged: trayRow.ipcOpen ? trayRow.openFromIpc() : trayRow.closeFromIpc()
+  onIpcOpenChanged: trayRow.ipcOpen ? Qt.callLater(trayRow.openFirstMenu) : trayMenu.close()
 
   onMenuOpenChanged: {
     if (trayRow.menuOpen) {
@@ -136,8 +119,6 @@ RowLayout {
 
       required property SystemTrayItem modelData
 
-      visible: trayRow.isVisible
-
       Layout.fillWidth: true
       Layout.maximumWidth: item.implicitWidth
       Layout.minimumWidth: item.horizontalPadding * 2 + Math.round(ConfigService.font.size * 2)
@@ -169,7 +150,6 @@ RowLayout {
     id: trayMenu
   }
 
-
   MesaCatcher {
     active: trayMenu.isOpen
     layer: WlrLayer.Overlay
@@ -178,13 +158,5 @@ RowLayout {
     excludeScreen: trayRow.screen
 
     onDismissed: trayMenu.close()
-  }
-
-  MesaButton {
-    id: toggle
-
-    Layout.fillHeight: true
-    icon: trayRow.isVisible ? "window-close" : "view-more-horizontal"
-    onClicked: trayRow.isVisible = !trayRow.isVisible
   }
 }

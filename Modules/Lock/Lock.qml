@@ -44,24 +44,27 @@ Scope {
         opacity: 0.9
       }
 
+      MesaText {
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: ConfigService.spaceMd
+
+        text: Qt.formatDateTime(clock.date, ConfigService.dateTimeFormat)
+        font.pointSize: ConfigService.font.size * 1.5
+
+        SystemClock {
+          id: clock
+          precision: SystemClock.Minutes
+        }
+      }
+
+
       RowLayout {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.margins: ConfigService.spaceLg
 
         spacing: ConfigService.spaceLg
-
-        MesaText {
-          Layout.alignment: Qt.AlignVCenter
-
-          text: Qt.formatDateTime(clock.date, ConfigService.dateTimeFormat)
-          font.pointSize: ConfigService.font.size * 2
-
-          SystemClock {
-            id: clock
-            precision: SystemClock.Minutes
-          }
-        }
 
         RowLayout {
           spacing: 0
@@ -87,7 +90,6 @@ Scope {
 
             icon: "system-shutdown"
             iconSize: ConfigService.iconSizeLarge
-            contentColor: ThemeService.colors.critical
             onClicked: PowerService.shutdown()
           }
         }

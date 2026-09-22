@@ -156,7 +156,7 @@ A menu entry can be a text field, such as the Wi-Fi password prompt. While one i
 
 ### Tray menus
 
-`panel toggle tray` expands the tray if it is collapsed and opens the first menu.
+`panel toggle tray` opens the first tray menu.
 
 | Key | Action |
 | --- | --- |

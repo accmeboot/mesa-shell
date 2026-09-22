@@ -115,13 +115,12 @@ MesaPanel {
       id: shutdownRow
 
       label: "Shut down"
-      labelColor: ThemeService.colors.critical
       interactive: true
 
       leading: MesaIcon {
         name: "system-shutdown"
         size: ConfigService.iconSizeSmall
-        color: shutdownRow.highlighted ? shutdownRow.contentColor : ThemeService.colors.critical
+        color: shutdownRow.contentColor
       }
 
       menu: shutdownMenu
