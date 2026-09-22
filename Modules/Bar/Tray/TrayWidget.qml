@@ -110,18 +110,12 @@ RowLayout {
       trayMenu.activeMenu().step(-1);
       break;
     case Qt.Key_H:
+    case Qt.Key_Left:
       shift ? trayRow.stepMenu(-1) : trayMenu.closeSubmenu();
       break;
     case Qt.Key_L:
-      shift ? trayRow.stepMenu(1) : trayMenu.activeMenu().enterSubmenu();
-      break;
-    case Qt.Key_Left:
-      if (!shift) return;
-      trayRow.stepMenu(-1);
-      break;
     case Qt.Key_Right:
-      if (!shift) return;
-      trayRow.stepMenu(1);
+      shift ? trayRow.stepMenu(1) : trayMenu.activeMenu().enterSubmenu();
       break;
     default:
       return;
