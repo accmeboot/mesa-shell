@@ -18,5 +18,5 @@ MesaIcon {
 
   color: root.row ? root.row.contentColor : ThemeService.colors.foreground
   name: "pan-end"
-  size: ConfigService.iconSize
+  size: ConfigService.iconSizeSmall
 }
