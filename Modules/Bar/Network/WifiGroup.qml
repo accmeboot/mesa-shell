@@ -133,7 +133,7 @@ MesaSection {
           Layout.alignment: Qt.AlignVCenter
 
           name: entry.network.security === WifiSecurityType.Open || entry.network.security === WifiSecurityType.Owe ? "unlock" : "lock"
-          size: ConfigService.iconSize
+          size: ConfigService.iconSizeSmall
           color: networkRow.mutedColor
         }
 
