@@ -11,6 +11,15 @@ MesaPanelWidget {
 
   readonly property string level: String(Math.floor(root.percentage / 10) * 10).padStart(3, "0")
 
+  readonly property bool onAcAdapter: {
+    switch (root.device?.state) {
+    case UPowerDeviceState.PendingCharge:
+    case UPowerDeviceState.FullyCharged:
+      return true;
+    default: return false;
+    }
+  }
+
   visible: root.device?.isLaptopBattery ?? false
 
   panel: "battery"
@@ -26,7 +35,15 @@ MesaPanelWidget {
     default: return `battery-${root.level}`;
     }
   }
-  iconColor: ColorService.threshold(root.percentage, 50, 20)
+  iconColor: {
+    const colors = ThemeService.colors;
+
+    if (root.onAcAdapter) return colors.ok;
+    if (root.percentage < 20) return colors.critical;
+    if (root.percentage < 50) return colors.attention;
+
+    return colors.foreground;
+  }
 
   content: BatteryPanel {}
 }

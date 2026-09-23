@@ -1,6 +1,5 @@
 import Quickshell.Networking
 
-import qs.Services
 import qs.Components
 
 MesaPanelWidget {
@@ -32,7 +31,6 @@ MesaPanelWidget {
 
     return "network-wired";
   }
-  iconColor: ColorService.status(root.connected)
 
   content: NetworkPanel {}
 }

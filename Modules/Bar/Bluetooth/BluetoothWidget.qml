@@ -1,6 +1,5 @@
 import Quickshell.Bluetooth
 
-import qs.Services
 import qs.Components
 
 MesaPanelWidget {
@@ -19,18 +18,6 @@ MesaPanelWidget {
     case BluetoothAdapterState.Disabling:
       return "bluetooth-active";
     default: return "bluetooth-disabled";
-    }
-  }
-  iconColor: {
-    const colors = ThemeService.colors;
-
-    switch (root.adapter?.state) {
-    case BluetoothAdapterState.Enabled: return root.connectedDevices.length > 0 ? colors.ok : colors.foreground;
-    case BluetoothAdapterState.Enabling:
-    case BluetoothAdapterState.Disabling:
-      return colors.attention;
-    case BluetoothAdapterState.Blocked: return colors.critical;
-    default: return colors.foreground;
     }
   }
 
