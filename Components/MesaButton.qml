@@ -12,6 +12,8 @@ Rectangle {
   property color contentColor: root.accented ? ThemeService.colors.background : ThemeService.colors.foreground
   property color disabledContentColor: root.accented ? ThemeService.colors.background : ThemeService.colors.on_surface
   property bool flat: false
+  property bool underlined: false
+  property color underlineColor: ThemeService.colors.highlight
   readonly property var row: {
     for (let item = root.parent; item; item = item.parent) {
       if (item.surfaceColor !== undefined) return item;
@@ -77,6 +79,16 @@ Rectangle {
       size: root.iconSize
       color: root.effectiveContentColor
     }
+  }
+
+  Rectangle {
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    anchors.bottomMargin: ConfigService.border
+    height: ConfigService.border * 2
+    visible: root.underlined
+    color: root.underlineColor
   }
 
   MouseArea {

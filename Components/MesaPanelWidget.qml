@@ -12,27 +12,33 @@ RowLayout {
 
   property string icon
   property color iconColor: ThemeService.colors.foreground
+  property var icons: [{ icon: root.icon, color: root.iconColor }]
   property Component content: null
 
   readonly property bool isOpen: root.visible && PanelService.current === root.panel && PanelService.screen === root.screen.name
 
   spacing: 0
 
-  MesaButton {
-    id: button
+  Repeater {
+    model: root.icons
 
-    Layout.fillHeight: true
+    MesaButton {
+      required property var modelData
 
-    icon: root.icon
-    contentColor: root.iconColor
+      Layout.fillHeight: true
 
-    onClicked: PanelService.toggle(root.panel, root.screen.name)
+      icon: modelData.icon
+      contentColor: modelData.color
+      underlined: root.isOpen
+
+      onClicked: PanelService.toggle(root.panel, root.screen.name)
+    }
   }
 
   MesaPopup {
     open: root.isOpen
     screen: root.screen
-    anchorItem: button
+    anchorItem: root
     exclude: root
     namespace: `mesa-${root.panel}`
     keyboardFocus: WlrKeyboardFocus.Exclusive

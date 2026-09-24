@@ -124,6 +124,7 @@ RowLayout {
       Layout.minimumWidth: item.horizontalPadding * 2 + Math.round(ConfigService.font.size * 2)
 
       acceptedButtons: Qt.LeftButton | Qt.RightButton
+      underlined: trayMenu.isOpen && trayMenu.anchorItem === item
 
       text: {
         var appName = item.modelData.title || item.modelData.tooltipTitle || item.modelData.id;

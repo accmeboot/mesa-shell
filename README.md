@@ -17,6 +17,7 @@ More screenshots in [`assets/screenshots`](assets/screenshots).
 - [sway](https://github.com/swaywm/sway)
 - [systemd](https://github.com/systemd/systemd)
 - [`brightnessctl`](https://github.com/Hummer12007/brightnessctl) (optional)
+- [`fuser`](https://gitlab.com/psmisc/psmisc) from psmisc (optional, camera detection for apps opening `/dev/video*` directly)
 - [`socat`](http://www.dest-unreach.org/socat/) (`scripts/mesa-dmenu` only)
 
 ## Installation

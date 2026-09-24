@@ -20,18 +20,13 @@ RowLayout {
 
       required property var modelData
 
+      Layout.fillHeight: true
+
       visible: modelData.monitor === root.screen.name
 
       text: modelData.name
-
-      Rectangle {
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        height: ConfigService.border * 2
-        visible: workspace.modelData.focused || workspace.modelData.urgent
-        color: workspace.modelData.focused ? ThemeService.colors.highlight : ThemeService.colors.critical
-      }
+      underlined: workspace.modelData.focused || workspace.modelData.urgent
+      underlineColor: workspace.modelData.focused ? ThemeService.colors.highlight : ThemeService.colors.critical
 
       onClicked: workspace.modelData.activate()
     }

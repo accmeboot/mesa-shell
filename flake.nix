@@ -57,7 +57,7 @@
             postBuild = ''
               for bin in quickshell qs; do
                 wrapProgram $out/bin/$bin \
-                  --suffix PATH : ${lib.makeBinPath [ pkgs.brightnessctl pkgs.bluez ]}
+                  --suffix PATH : ${lib.makeBinPath [ pkgs.brightnessctl pkgs.bluez pkgs.psmisc ]}
               done
             '';
             meta.mainProgram = "quickshell";

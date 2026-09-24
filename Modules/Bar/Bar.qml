@@ -16,6 +16,7 @@ import qs.Modules.Bar.Mode
 import qs.Modules.Bar.Network
 import qs.Modules.Bar.Notification
 import qs.Modules.Bar.Power
+import qs.Modules.Bar.Privacy
 import qs.Modules.Bar.Theme
 import qs.Modules.Bar.Tray
 import qs.Modules.Bar.Workspaces
@@ -61,6 +62,7 @@ Scope {
 
         WorkspacesWidget {
           Layout.alignment: Qt.AlignLeft
+          Layout.fillHeight: true
           screen: modelData
         }
         DmenuWidget {
@@ -89,6 +91,11 @@ Scope {
           id: tray
           Layout.fillHeight: true
           Layout.fillWidth: true
+          screen: modelData
+        }
+        PrivacyWidget {
+          id: privacy
+          Layout.fillHeight: true
           screen: modelData
         }
         NetworkWidget {
