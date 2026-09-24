@@ -18,7 +18,10 @@ MesaPanelWidget {
     return icons;
   }
 
+  readonly property bool requested: PanelService.current === root.panel
+
   onVisibleChanged: if (!root.visible) PanelService.close(root.panel)
+  onRequestedChanged: if (root.requested && !root.visible) PanelService.close(root.panel)
 
   content: PrivacyPanel {}
 }
