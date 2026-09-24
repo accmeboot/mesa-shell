@@ -74,7 +74,7 @@ Scope {
 
         if (!root.anchorItem || available === 0) return 0;
 
-        const desired = available - root.anchorRight;
+        const desired = available - root.anchorRight - ConfigService.border;
         const furthest = Math.max(0, available - root.maximumWidth);
 
         return Math.round(Math.max(0, Math.min(desired, furthest)));

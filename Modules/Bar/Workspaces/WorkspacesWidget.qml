@@ -25,8 +25,12 @@ RowLayout {
       visible: modelData.monitor === root.screen.name
 
       text: modelData.name
-      underlined: workspace.modelData.focused || workspace.modelData.urgent
-      underlineColor: workspace.modelData.focused ? ThemeService.colors.highlight : ThemeService.colors.critical
+      accent: {
+        if (workspace.modelData.focused) return ThemeService.colors.highlight;
+        if (workspace.modelData.urgent) return ThemeService.colors.critical;
+
+        return "transparent";
+      }
 
       onClicked: workspace.modelData.activate()
     }
