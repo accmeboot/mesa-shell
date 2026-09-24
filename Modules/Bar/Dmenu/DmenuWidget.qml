@@ -89,7 +89,7 @@ RowLayout {
   MesaButton {
     Layout.fillHeight: true
     icon: "cm_runterm"
-    underlined: root.isOpen
+    open: root.isOpen
     onClicked: root.isOpen ? DmenuService.close() : DmenuService.open(root.screen.name)
   }
 

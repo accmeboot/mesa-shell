@@ -12,6 +12,7 @@ Rectangle {
   property color contentColor: root.accented ? ThemeService.colors.background : ThemeService.colors.foreground
   property color disabledContentColor: root.accented ? ThemeService.colors.background : ThemeService.colors.on_surface
   property bool flat: false
+  property bool open: false
   property bool underlined: false
   property color underlineColor: ThemeService.colors.highlight
   readonly property var row: {
@@ -46,7 +47,9 @@ Rectangle {
   implicitHeight: (root.icon ? iconLoader.implicitHeight : label.implicitHeight) + root.verticalPadding
   color: {
     if (root.flat) return root.inverted ? root.rowAccent : "transparent";
-    return root.accented ? (root.enabled ? root.accent : ThemeService.colors.attention) : "transparent";
+    if (root.accented) return root.enabled ? root.accent : ThemeService.colors.attention;
+
+    return root.open ? ThemeService.colors.surface : "transparent";
   }
 
   border.color: ThemeService.colors.on_surface

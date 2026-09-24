@@ -29,7 +29,7 @@ RowLayout {
 
       icon: modelData.icon
       contentColor: modelData.color
-      underlined: root.isOpen
+      open: root.isOpen
 
       onClicked: PanelService.toggle(root.panel, root.screen.name)
     }

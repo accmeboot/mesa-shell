@@ -87,6 +87,7 @@ hardware.bluetooth.enable = true;
 
 - **Bar**: workspaces, mode, launcher, clock, tray, theme and do-not-disturb toggles
   - audio, network, battery, display, bluetooth and power each open their own panel from the bar
+  - privacy indicators for microphone, camera and screen share, with a panel listing the apps using them
 - **Notifications**: `org.freedesktop.Notifications` daemon
 - **Lock**: `ext-session-lock-v1` lockscreen
 - **Wallpaper**: background layer
@@ -120,7 +121,7 @@ qs -c mesa-shell ipc call <target> <function>
 | `notifications` | `toggle`, `isDoNotDisturb`, `dismissLast`, `dismissAll` |
 | `config` | `reload` |
 
-Panel names: `audio`, `network`, `bluetooth`, `display`, `battery`, `power`, `tray`.
+Panel names: `audio`, `network`, `bluetooth`, `display`, `battery`, `power`, `tray`, `privacy`.
 
 ```bash
 qs -c mesa-shell ipc call panel toggle audio
