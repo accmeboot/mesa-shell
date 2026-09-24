@@ -9,12 +9,12 @@ import qs.Components
 
 Rectangle {
   required property var modelData
-  readonly property int padding: ConfigService.spaceMd
+  readonly property int padding: ConfigService.spaceSm
   readonly property int inset: root.border.width + root.padding
 
   id: root
 
-  implicitWidth: Math.round(ConfigService.font.size * 34)
+  implicitWidth: Math.round(ConfigService.font.size * 28)
   implicitHeight: notificationMainRow.implicitHeight + 2 * root.inset
 
   clip: true
@@ -27,8 +27,12 @@ Rectangle {
   MesaButton {
     icon: "window-close"
     color: ThemeService.colors.critical
-    border.width: ConfigService.border
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.margins: root.border.width
     contentColor: ThemeService.colors.background
+    horizontalPadding: ConfigService.spaceSm
+    verticalPadding: ConfigService.spaceSm
     onClicked: {
         NotificationsService.dismissOrExpireNotification(modelData.id);
     }
@@ -55,7 +59,7 @@ Rectangle {
       id: notificationMainColumn
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignVCenter
-      spacing: ConfigService.spaceMd
+      spacing: ConfigService.spaceSm
 
       RowLayout {
         id: notificationHeader
@@ -110,7 +114,7 @@ Rectangle {
       Flow {
         id: actionsFlow
         Layout.fillWidth: true
-        spacing: ConfigService.spaceMd
+        spacing: ConfigService.spaceSm
         visible: Boolean(modelData.actions.count)
 
         Repeater {
