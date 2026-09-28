@@ -12,6 +12,7 @@ import qs.Modules.Bar.Bluetooth
 import qs.Modules.Bar.Clock
 import qs.Modules.Bar.Display
 import qs.Modules.Bar.Dmenu
+import qs.Modules.Bar.Layout
 import qs.Modules.Bar.Mode
 import qs.Modules.Bar.Network
 import qs.Modules.Bar.Notification
@@ -62,6 +63,10 @@ Scope {
 
         WorkspacesWidget {
           Layout.alignment: Qt.AlignLeft
+          Layout.fillHeight: true
+          screen: modelData
+        }
+        LayoutWidget {
           Layout.fillHeight: true
           screen: modelData
         }

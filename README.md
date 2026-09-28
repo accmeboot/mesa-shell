@@ -1,6 +1,6 @@
 # mesa-shell
 
-Status bar, notification daemon and lockscreen for [Quickshell](https://github.com/outfoxxed/quickshell), built for Sway.
+Status bar, notification daemon and lockscreen for [Quickshell](https://github.com/outfoxxed/quickshell), built for Sway and dwl.
 
 ![mesa-shell](assets/screenshots/desktop.png)
 
@@ -14,7 +14,8 @@ More screenshots in [`assets/screenshots`](assets/screenshots).
   - networkmanager: [`Quickshell.Networking`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Networking/)
   - bluez: [`Quickshell.Bluetooth`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Bluetooth/)
   - pam: [`Quickshell.Services.Pam`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.Pam/)
-- [sway](https://github.com/swaywm/sway)
+- [sway](https://github.com/swaywm/sway) or [dwl](https://codeberg.org/dwl/dwl) with the [`ipc`](https://codeberg.org/dwl/dwl-patches/src/branch/main/patches/ipc) patch
+  - dwl: [`dwlmsg`](https://codeberg.org/notchoc/dwlmsg) (the flake's `dwlmsg` package handles the patch's `focused_geometry` event) and [`wlr-randr`](https://sr.ht/~emersion/wlr-randr/)
 - [systemd](https://github.com/systemd/systemd)
 - [`brightnessctl`](https://github.com/Hummer12007/brightnessctl) (optional)
 - [`fuser`](https://gitlab.com/psmisc/psmisc) from psmisc (optional, camera detection for apps opening `/dev/video*` directly)

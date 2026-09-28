@@ -13,7 +13,7 @@ RowLayout {
   spacing: 0
 
   Repeater {
-    model: SwayService.getWorkspacesForMonitor(root.screen.name)
+    model: CompositorService.workspaces(root.screen.name)
 
     MesaButton {
       id: workspace
@@ -25,6 +25,7 @@ RowLayout {
       visible: modelData.monitor === root.screen.name
 
       text: modelData.name
+      acceptedButtons: Qt.LeftButton | Qt.RightButton
       accent: {
         if (workspace.modelData.focused) return ThemeService.colors.highlight;
         if (workspace.modelData.urgent) return ThemeService.colors.critical;
@@ -32,7 +33,23 @@ RowLayout {
         return "transparent";
       }
 
-      onClicked: workspace.modelData.activate()
+      Rectangle {
+        visible: workspace.modelData.occupied ?? false
+
+        x: Math.round(ConfigService.spaceSm / 2)
+        y: Math.round(ConfigService.spaceSm / 2)
+        width: Math.round(ConfigService.font.size / 2)
+        height: width
+
+        color: workspace.modelData.holdsFocus ? workspace.effectiveContentColor : "transparent"
+        border.color: workspace.effectiveContentColor
+        border.width: 1
+      }
+
+      onClicked: mouse => {
+        if (mouse.button === Qt.RightButton) workspace.modelData.toggle?.();
+        else workspace.modelData.activate();
+      }
     }
   }
 }

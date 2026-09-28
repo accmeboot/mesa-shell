@@ -5,7 +5,7 @@ import qs.Services
 import qs.Components
 
 Rectangle {
-  visible: SwayService.mode === 'resize'
+  visible: CompositorService.mode === 'resize'
 
   color: "transparent"
 
@@ -15,7 +15,7 @@ Rectangle {
   MesaText {
     id: label
     anchors.centerIn: parent
-    text: SwayService.mode
+    text: CompositorService.mode
     color: ThemeService.colors.attention
   }
 }
