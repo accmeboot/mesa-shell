@@ -28,11 +28,11 @@ Singleton {
     return existingWorkspaces.sort((a, b) => a.number - b.number)
   }
 
-  function layout(output: string): string {
-    return "";
+  function layouts(output: string): var {
+    return [];
   }
 
-  function cycleLayout(output: string): void {}
+  function setLayout(output: string, index: int): void {}
 
   function outputInfo(output: string): var {
     const monitor = I3.monitors.values.find((m) => m.name === output);

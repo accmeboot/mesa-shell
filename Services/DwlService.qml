@@ -43,17 +43,12 @@ Singleton {
     root.dwlmsg(["-o", output, "-s", "-t", `${tag}^`]);
   }
 
-  function layout(output: string): string {
-    return root.outputs[output]?.layout ?? "";
+  function layoutIndex(output: string): int {
+    return root.outputs[output]?.layoutIndex ?? -1;
   }
 
-  function cycleLayout(output: string): void {
-    if (root.layouts.length === 0) return;
-
-    const current = root.layouts.indexOf(root.layout(output));
-    const next = (current + 1) % root.layouts.length;
-
-    root.dwlmsg(["-o", output, "-s", "-l", String(next)]);
+  function setLayout(output: string, index: int): void {
+    root.dwlmsg(["-o", output, "-s", "-l", String(index)]);
   }
 
   function outputInfo(output: string): var {
@@ -79,8 +74,8 @@ Singleton {
     case "selmon":
       state.selmon = value === "1";
       break;
-    case "layout":
-      state.layout = value;
+    case "layout_index":
+      state.layoutIndex = parseInt(value, 10);
       break;
     case "tag": {
       const [tag, tagState, clients, focused] = value.split(" ").map((n) => parseInt(n, 10));
@@ -109,7 +104,7 @@ Singleton {
     next[output] = Object.assign({ selected: 0, urgent: 0, occupied: 0, focusedClient: 0 }, state);
     root.outputs = next;
 
-    root.pending[output] = { selmon: state.selmon, layout: state.layout };
+    root.pending[output] = { selmon: state.selmon, layoutIndex: state.layoutIndex };
   }
 
   Process {
@@ -149,7 +144,7 @@ Singleton {
     running: true
 
     stdout: StdioCollector {
-      onStreamFinished: root.layouts = [...new Set(this.text.split("\n").filter((l) => l !== ""))]
+      onStreamFinished: root.layouts = this.text.split("\n").filter((l) => l !== "")
     }
   }
 

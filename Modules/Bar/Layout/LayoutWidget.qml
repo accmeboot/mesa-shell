@@ -1,18 +1,18 @@
-import QtQuick
-
 import qs.Services
 import qs.Components
 
-MesaButton {
+MesaPanelWidget {
   id: root
 
-  required property var screen
+  readonly property var current: CompositorService.currentLayout(root.screen.name)
 
-  readonly property string symbol: CompositorService.layout(root.screen.name)
+  panel: "layout"
+  visible: root.current !== null
+  icon: root.current?.icon ?? ""
 
-  visible: root.symbol !== ""
+  content: LayoutPanel {
+    screen: root.screen
 
-  text: root.symbol.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-
-  onClicked: CompositorService.cycleLayout(root.screen.name)
+    onRequestClose: PanelService.close("layout")
+  }
 }

@@ -1,8 +1,18 @@
 diff --git a/dwlmsg.c b/dwlmsg.c
-index ea2ff04..28d8abf 100644
+index ea2ff04..879ea0a 100644
 --- a/dwlmsg.c
 +++ b/dwlmsg.c
-@@ -253,6 +253,12 @@ dwl_ipc_output_frame(void *data, struct zdwl_ipc_output_v2 *dwl_ipc_output)
+@@ -112,6 +112,9 @@ static void
+ dwl_ipc_output_layout(void *data, struct zdwl_ipc_output_v2 *dwl_ipc_output,
+ 	uint32_t layout)
+ {
++	if (!(lflag && mode & GET)) return;
++	if (data) printf("%s ", (char *)data);
++	printf("layout_index %u\n", layout);
+ }
+ 
+ static void
+@@ -253,6 +256,12 @@ dwl_ipc_output_frame(void *data, struct zdwl_ipc_output_v2 *dwl_ipc_output)
  	fflush(stdout);
  }
  
@@ -15,7 +25,7 @@ index ea2ff04..28d8abf 100644
  static const struct zdwl_ipc_output_v2_listener dwl_ipc_output_listener = {
  	.toggle_visibility = dwl_ipc_output_toggle_visibility,
  	.active = dwl_ipc_output_active,
-@@ -264,6 +270,7 @@ static const struct zdwl_ipc_output_v2_listener dwl_ipc_output_listener = {
+@@ -264,6 +273,7 @@ static const struct zdwl_ipc_output_v2_listener dwl_ipc_output_listener = {
  	.fullscreen = dwl_ipc_output_fullscreen,
  	.floating = dwl_ipc_output_floating,
  	.frame = dwl_ipc_output_frame,

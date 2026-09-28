@@ -21,6 +21,12 @@ Singleton {
 
   readonly property string focusedOutput: root.backend?.focusedOutput || (Quickshell.screens[0]?.name ?? "")
   readonly property string mode: root.backend?.mode ?? ""
+  readonly property var layoutInfo: ({
+    "[]=": { name: "Tile", icon: "layout-tile" },
+    "><>": { name: "Floating", icon: "layout-floating" },
+    "[M]": { name: "Monocle", icon: "layout-monocle" },
+  })
+
   readonly property string exitCommand: root.backend?.exitCommand ?? "loginctl terminate-session \"$XDG_SESSION_ID\""
 
   function workspaces(output: string): var {
@@ -42,12 +48,28 @@ Singleton {
     return root.backend?.workspaces(output) ?? [];
   }
 
-  function layout(output: string): string {
-    return root.backend?.layout(output) ?? "";
+  function layouts(output: string): var {
+    if (root.name === "dwl") {
+      const current = DwlService.layoutIndex(output);
+
+      return DwlService.layouts.map((symbol, index) => ({
+        index: index,
+        symbol: symbol,
+        name: root.layoutInfo[symbol]?.name ?? symbol,
+        icon: root.layoutInfo[symbol]?.icon ?? "layout-tile",
+        current: index === current,
+      }));
+    }
+
+    return root.backend?.layouts(output) ?? [];
   }
 
-  function cycleLayout(output: string): void {
-    root.backend?.cycleLayout(output);
+  function currentLayout(output: string): var {
+    return root.layouts(output).find((layout) => layout.current) ?? null;
+  }
+
+  function setLayout(output: string, index: int): void {
+    root.backend?.setLayout(output, index);
   }
 
   function outputInfo(output: string): var {
