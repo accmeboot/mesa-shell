@@ -29,11 +29,10 @@ RowLayout {
       acceptedButtons: Qt.LeftButton | Qt.RightButton
 
       Rectangle {
-        readonly property int knobInset: Math.max(ConfigService.border * 2, Math.round(ConfigService.iconSizeSmall / 6))
-
         visible: workspace.modelData.focused
+
         anchors.centerIn: parent
-        width: ConfigService.iconSizeSmall - knobInset * 2
+        width: ConfigService.font.size
         height: width
 
         color: workspace.effectiveContentColor
@@ -42,12 +41,11 @@ RowLayout {
       Rectangle {
         visible: (workspace.modelData.occupied ?? false) || workspace.modelData.urgent
 
-
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottomMargin: ConfigService.border
 
-        implicitWidth: workspace.label.implicitWidth
+        implicitWidth: ConfigService.font.size
         implicitHeight: ConfigService.border
 
         color: workspace.modelData.urgent ? ThemeService.colors.critical : workspace.effectiveContentColor
