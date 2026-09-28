@@ -42,11 +42,13 @@ RowLayout {
       Rectangle {
         visible: (workspace.modelData.occupied ?? false) || workspace.modelData.urgent
 
-        x: Math.round(ConfigService.spaceSm / 2)
-        y: Math.round(ConfigService.spaceSm / 2)
-        width: Math.max(4, Math.round(ConfigService.font.size / 3))
-        height: width
-        radius: width / 2
+
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottomMargin: ConfigService.border
+
+        implicitWidth: workspace.label.implicitWidth
+        implicitHeight: ConfigService.border
 
         color: workspace.modelData.urgent ? ThemeService.colors.critical : workspace.effectiveContentColor
       }

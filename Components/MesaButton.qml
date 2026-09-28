@@ -26,6 +26,7 @@ Rectangle {
   property int horizontalPadding: ConfigService.spaceMd
   property int verticalPadding: ConfigService.spaceMd
   property alias acceptedButtons: mouseArea.acceptedButtons
+  property alias label: label
 
   readonly property bool accented: root.accent.a > 0
   readonly property bool inverted: root.flat && root.activeFocus
