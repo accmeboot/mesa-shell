@@ -73,25 +73,25 @@ Singleton {
 
       property JsonObject colors: JsonObject {
         property JsonObject dark: JsonObject {
-          property string background: "#1d2021"
-          property string surface: "#3c3836"
-          property string on_surface: "#504945"
-          property string foreground: "#ebdbb2"
-          property string highlight: "#83a598"
-          property string attention: "#fabd2f"
-          property string ok: "#b8bb26"
-          property string critical: "#fb4934"
+          property string background: "#16181a"
+          property string surface: "#26282a"
+          property string on_surface: "#36383a"
+          property string foreground: "#d6d9da"
+          property string highlight: "#81adc7"
+          property string attention: "#ead086"
+          property string ok: "#8eba7a"
+          property string critical: "#a94459"
         }
 
         property JsonObject light: JsonObject {
-          property string background: "#f9f5d7"
-          property string surface: "#ebdbb2"
-          property string on_surface: "#d5c4a1"
-          property string foreground: "#3c3836"
-          property string highlight: "#076678"
-          property string attention: "#b57614"
-          property string ok: "#79740e"
-          property string critical: "#9d0006"
+          property string background: "#faf8f3"
+          property string surface: "#eae8e3"
+          property string on_surface: "#dad8d3"
+          property string foreground: "#393834"
+          property string highlight: "#78b1ba"
+          property string attention: "#ead086"
+          property string ok: "#b3af62"
+          property string critical: "#a94b27"
         }
       }
 
@@ -100,7 +100,7 @@ Singleton {
         property string size: ""
       }
 
-      property string wallpaper: "assets/sway.png"
+      property string wallpaper: "assets/hello-world.png"
 
       property string dateTimeFormat: "ddd d MMM HH:mm"
 

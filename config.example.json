@@ -1,24 +1,24 @@
 {
   "colors": {
     "dark": {
-      "background": "#1d2021",
-      "surface": "#3c3836",
-      "on_surface": "#504945",
-      "foreground": "#ebdbb2",
-      "highlight": "#83a598",
-      "attention": "#fabd2f",
-      "ok": "#b8bb26",
-      "critical": "#fb4934"
+      "background": "#16181a",
+      "surface": "#26282a",
+      "on_surface": "#36383a",
+      "foreground": "#d6d9da",
+      "highlight": "#81adc7",
+      "attention": "#ead086",
+      "ok": "#8eba7a",
+      "critical": "#a94459"
     },
     "light": {
-      "background": "#f9f5d7",
-      "surface": "#ebdbb2",
-      "on_surface": "#d5c4a1",
-      "foreground": "#3c3836",
-      "highlight": "#076678",
-      "attention": "#b57614",
-      "ok": "#79740e",
-      "critical": "#9d0006"
+      "background": "#faf8f3",
+      "surface": "#eae8e3",
+      "on_surface": "#dad8d3",
+      "foreground": "#393834",
+      "highlight": "#78b1ba",
+      "attention": "#ead086",
+      "ok": "#b3af62",
+      "critical": "#a94b27"
     }
   },
   "defaultPolarity": "dark",
@@ -30,7 +30,7 @@
     "name": "",
     "size": ""
   },
-  "wallpaper": "assets/sway.png",
+  "wallpaper": "assets/hello-world.png",
   "dateTimeFormat": "ddd d MMM HH:mm",
   "spacing": 8,
   "border": 1

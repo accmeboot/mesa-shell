@@ -24,26 +24,31 @@ RowLayout {
 
       visible: modelData.monitor === root.screen.name
 
-      text: modelData.name
+      text: workspace.modelData.name
+      labelVisible: !workspace.modelData.focused
       acceptedButtons: Qt.LeftButton | Qt.RightButton
-      accent: {
-        if (workspace.modelData.focused) return ThemeService.colors.highlight;
-        if (workspace.modelData.urgent) return ThemeService.colors.critical;
 
-        return "transparent";
+      Rectangle {
+        readonly property int knobInset: Math.max(ConfigService.border * 2, Math.round(ConfigService.iconSizeSmall / 6))
+
+        visible: workspace.modelData.focused
+        anchors.centerIn: parent
+        width: ConfigService.iconSizeSmall - knobInset * 2
+        height: width
+
+        color: workspace.effectiveContentColor
       }
 
       Rectangle {
-        visible: workspace.modelData.occupied ?? false
+        visible: (workspace.modelData.occupied ?? false) || workspace.modelData.urgent
 
         x: Math.round(ConfigService.spaceSm / 2)
         y: Math.round(ConfigService.spaceSm / 2)
-        width: Math.round(ConfigService.font.size / 2)
+        width: Math.max(4, Math.round(ConfigService.font.size / 3))
         height: width
+        radius: width / 2
 
-        color: workspace.modelData.holdsFocus ? workspace.effectiveContentColor : "transparent"
-        border.color: workspace.effectiveContentColor
-        border.width: 1
+        color: workspace.modelData.urgent ? ThemeService.colors.critical : workspace.effectiveContentColor
       }
 
       onClicked: mouse => {

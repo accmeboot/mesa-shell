@@ -1,6 +1,6 @@
 # mesa-shell
 
-Status bar, notification daemon and lockscreen for [Quickshell](https://github.com/outfoxxed/quickshell), built for Sway and dwl.
+Status bar, notification daemon and lockscreen for [Quickshell](https://github.com/outfoxxed/quickshell), built for [dwl](https://codeberg.org/dwl/dwl).
 
 ![mesa-shell](assets/screenshots/desktop.png)
 
@@ -14,8 +14,8 @@ More screenshots in [`assets/screenshots`](assets/screenshots).
   - networkmanager: [`Quickshell.Networking`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Networking/)
   - bluez: [`Quickshell.Bluetooth`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Bluetooth/)
   - pam: [`Quickshell.Services.Pam`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.Pam/)
-- [sway](https://github.com/swaywm/sway) or [dwl](https://codeberg.org/dwl/dwl) with the [`ipc`](https://codeberg.org/dwl/dwl-patches/src/branch/main/patches/ipc) patch
-  - dwl: [`dwlmsg`](https://codeberg.org/notchoc/dwlmsg) (the flake's `dwlmsg` package handles the patch's `focused_geometry` event) and [`wlr-randr`](https://sr.ht/~emersion/wlr-randr/)
+- [dwl](https://codeberg.org/dwl/dwl) with the [`ipc`](https://codeberg.org/dwl/dwl-patches/src/branch/main/patches/ipc) patch
+  - [`dwlmsg`](https://codeberg.org/notchoc/dwlmsg) (the flake's `dwlmsg` package handles the patch's `focused_geometry` event) and [`wlr-randr`](https://sr.ht/~emersion/wlr-randr/)
 - [systemd](https://github.com/systemd/systemd)
 - [`brightnessctl`](https://github.com/Hummer12007/brightnessctl) (optional)
 - [`fuser`](https://gitlab.com/psmisc/psmisc) from psmisc (optional, camera detection for apps opening `/dev/video*` directly)
@@ -28,21 +28,26 @@ git clone git@github.com:accmeboot/mesa-shell.git ~/.config/quickshell/mesa-shel
 cp ~/.config/quickshell/mesa-shell/config.example.json ~/.config/quickshell/mesa-shell/config.json
 ```
 
-Sway config:
+Start it from dwl's startup command, with `XDG_CURRENT_DESKTOP=dwl` set so the shell picks the dwl backend:
 
+```bash
+dwl -s 'qs -c mesa-shell -d'
 ```
-exec qs -c mesa-shell -d
-bindsym $mod+d exec qs -c mesa-shell ipc call dmenu toggle
-bindsym $mod+p exec qs -c mesa-shell ipc call panel toggle audio
-bindsym $mod+n exec qs -c mesa-shell ipc call panel toggle network
-bindsym $mod+c exec qs -c mesa-shell ipc call panel toggle bluetooth
-bindsym $mod+m exec qs -c mesa-shell ipc call panel toggle display
-bindsym $mod+t exec qs -c mesa-shell ipc call panel toggle tray
-bindsym $mod+q exec qs -c mesa-shell ipc call panel toggle power
-bindsym $mod+grave exec qs -c mesa-shell ipc call theme toggle
-bindsym $mod+backslash exec qs -c mesa-shell ipc call notifications toggle
-bindsym $mod+bracketleft exec qs -c mesa-shell ipc call notifications dismissLast
-bindsym $mod+bracketright exec qs -c mesa-shell ipc call notifications dismissAll
+
+`config.h` keys:
+
+```c
+{ MODKEY, XKB_KEY_d,          spawn, SHCMD("qs -c mesa-shell ipc call dmenu toggle") },
+{ MODKEY, XKB_KEY_p,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle audio") },
+{ MODKEY, XKB_KEY_n,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle network") },
+{ MODKEY, XKB_KEY_c,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle bluetooth") },
+{ MODKEY, XKB_KEY_m,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle display") },
+{ MODKEY, XKB_KEY_t,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle tray") },
+{ MODKEY, XKB_KEY_q,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle power") },
+{ MODKEY, XKB_KEY_grave,      spawn, SHCMD("qs -c mesa-shell ipc call theme toggle") },
+{ MODKEY, XKB_KEY_backslash,  spawn, SHCMD("qs -c mesa-shell ipc call notifications toggle") },
+{ MODKEY, XKB_KEY_bracketleft,  spawn, SHCMD("qs -c mesa-shell ipc call notifications dismissLast") },
+{ MODKEY, XKB_KEY_bracketright, spawn, SHCMD("qs -c mesa-shell ipc call notifications dismissAll") },
 ```
 
 ### NixOS
@@ -67,10 +72,11 @@ Home Manager (`inputs` passed via `extraSpecialArgs`):
     settings = { }; # written to config.json, same keys as below
   };
 
-  # replaces `exec qs -c mesa-shell -d`
+  # replaces `dwl -s 'qs -c mesa-shell -d'`; dwl has no session target of its own,
+  # so the startup command has to start one (e.g. a custom dwl-session.target)
   programs.quickshell.systemd = {
     enable = true;
-    target = "sway-session.target";
+    target = "dwl-session.target";
   };
 }
 ```
@@ -86,7 +92,7 @@ hardware.bluetooth.enable = true;
 
 ## Modules
 
-- **Bar**: workspaces, mode, launcher, clock, tray, theme and do-not-disturb toggles
+- **Bar**: tags, layout, launcher, clock, tray, theme and do-not-disturb toggles
   - audio, network, battery, display, bluetooth and power each open their own panel from the bar
   - privacy indicators for microphone, camera and screen share, with a panel listing the apps using them
 - **Notifications**: `org.freedesktop.Notifications` daemon
@@ -185,21 +191,19 @@ A menu entry can be a text field, such as the Wi-Fi password prompt. While one i
 
 `config.json` next to `shell.qml`, see `config.example.json`. Every key is optional.
 
-The default palette is [gruvbox](https://github.com/morhetz/gruvbox) hard: `gruvbox-dark-hard` and `gruvbox-light-hard`.
-
 | Key | Default | Notes |
 | --- | --- | --- |
-| `colors.{dark,light}.background` | `#1d2021` / `#f9f5d7` | |
-| `colors.{dark,light}.surface` | `#3c3836` / `#ebdbb2` | |
-| `colors.{dark,light}.on_surface` | `#504945` / `#d5c4a1` | |
-| `colors.{dark,light}.foreground` | `#ebdbb2` / `#3c3836` | |
-| `colors.{dark,light}.highlight` | `#83a598` / `#076678` | |
-| `colors.{dark,light}.ok` | `#b8bb26` / `#79740e` | |
-| `colors.{dark,light}.attention` | `#fabd2f` / `#b57614` | |
-| `colors.{dark,light}.critical` | `#fb4934` / `#9d0006` | |
+| `colors.{dark,light}.background` | `#16181a` / `#faf8f3` | |
+| `colors.{dark,light}.surface` | `#26282a` / `#eae8e3` | |
+| `colors.{dark,light}.on_surface` | `#36383a` / `#dad8d3` | |
+| `colors.{dark,light}.foreground` | `#d6d9da` / `#393834` | |
+| `colors.{dark,light}.highlight` | `#81adc7` / `#78b1ba` | |
+| `colors.{dark,light}.ok` | `#8eba7a` / `#b3af62` | |
+| `colors.{dark,light}.attention` | `#ead086` / `#ead086` | |
+| `colors.{dark,light}.critical` | `#a94459` / `#a94b27` | |
 | `font.name` | `""` | `""` uses the fontconfig default |
 | `font.size` | `""` | pt, `""` uses the fontconfig default |
-| `wallpaper` | `assets/sway.png` | `""` for none |
+| `wallpaper` | `assets/hello-world.png` | `""` for none |
 | `dateTimeFormat` | `ddd d MMM HH:mm` | `Qt.formatDateTime` |
 | `defaultPolarity` | `dark` | `dark` or `light` |
 | `hooks.onDarkThemeSet` | `""` | shell command |

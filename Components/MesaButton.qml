@@ -13,6 +13,7 @@ Rectangle {
   property color disabledContentColor: root.accented ? ThemeService.colors.background : ThemeService.colors.on_surface
   property bool flat: false
   property bool open: false
+  property bool labelVisible: true
   readonly property var row: {
     for (let item = root.parent; item; item = item.parent) {
       if (item.surfaceColor !== undefined) return item;
@@ -61,7 +62,7 @@ Rectangle {
 
   MesaText {
     id: label
-    visible: !root.icon
+    visible: !root.icon && root.labelVisible
     anchors.centerIn: parent
     width: Math.max(0, Math.min(root.contentWidth, root.width - root.horizontalPadding * 2))
     text: root.text

@@ -1,5 +1,5 @@
 {
-  description = "Status bar, notification daemon, quick settings panel and lockscreen for Quickshell, built for Sway and dwl";
+  description = "Status bar, notification daemon, quick settings panel and lockscreen for Quickshell, built for dwl";
 
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 

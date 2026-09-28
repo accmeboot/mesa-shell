@@ -9,12 +9,16 @@ Singleton {
 
   property var outputs: ({})
   property var outputInfos: ({})
-  property var layouts: []
+  property var layoutSymbols: []
   property int tagCount: 9
 
   readonly property string focusedOutput: Object.keys(root.outputs).find((name) => root.outputs[name].selmon) ?? ""
   readonly property string exitCommand: "kill \"$(dwlmsg -P)\""
-  readonly property string mode: ""
+  readonly property var layoutInfo: ({
+    "[]=": { name: "Tile", icon: "layout-tile" },
+    "><>": { name: "Floating", icon: "layout-floating" },
+    "[M]": { name: "Monocle", icon: "layout-monocle" },
+  })
 
   property var pending: ({})
 
@@ -43,8 +47,35 @@ Singleton {
     root.dwlmsg(["-o", output, "-s", "-t", `${tag}^`]);
   }
 
+  function workspaces(output: string): var {
+    return root.tags(output).map((tag) => ({
+      name: String(tag.index + 1),
+      focused: tag.selected && output === root.focusedOutput,
+      active: tag.selected,
+      occupied: tag.occupied,
+      holdsFocus: tag.focusedClient,
+      monitor: output,
+      number: tag.index + 1,
+      urgent: tag.urgent,
+      activate: () => root.viewTag(output, tag.index),
+      toggle: () => root.toggleTag(output, tag.index),
+    }));
+  }
+
   function layoutIndex(output: string): int {
     return root.outputs[output]?.layoutIndex ?? -1;
+  }
+
+  function layouts(output: string): var {
+    const current = root.layoutIndex(output);
+
+    return root.layoutSymbols.map((symbol, index) => ({
+      index: index,
+      symbol: symbol,
+      name: root.layoutInfo[symbol]?.name ?? symbol,
+      icon: root.layoutInfo[symbol]?.icon ?? "layout-tile",
+      current: index === current,
+    }));
   }
 
   function setLayout(output: string, index: int): void {
@@ -144,7 +175,7 @@ Singleton {
     running: true
 
     stdout: StdioCollector {
-      onStreamFinished: root.layouts = this.text.split("\n").filter((l) => l !== "")
+      onStreamFinished: root.layoutSymbols = this.text.split("\n").filter((l) => l !== "")
     }
   }
 
