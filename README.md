@@ -15,7 +15,7 @@ More screenshots in [`assets/screenshots`](assets/screenshots).
   - bluez: [`Quickshell.Bluetooth`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Bluetooth/)
   - pam: [`Quickshell.Services.Pam`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.Pam/)
 - [dwl](https://codeberg.org/dwl/dwl) with the [`ipc`](https://codeberg.org/dwl/dwl-patches/src/branch/main/patches/ipc) patch
-  - [`dwlmsg`](https://codeberg.org/notchoc/dwlmsg) (the flake's `dwlmsg` package handles the patch's `focused_geometry` event) and [`wlr-randr`](https://sr.ht/~emersion/wlr-randr/)
+  - [`dwlmsg`](https://codeberg.org/notchoc/dwlmsg) (needs a patch for the ipc patch's `focused_geometry` event, see below) and [`wlr-randr`](https://sr.ht/~emersion/wlr-randr/)
 - [systemd](https://github.com/systemd/systemd)
 - [`brightnessctl`](https://github.com/Hummer12007/brightnessctl) (optional)
 - [`fuser`](https://gitlab.com/psmisc/psmisc) from psmisc (optional, camera detection for apps opening `/dev/video*` directly)
@@ -61,25 +61,23 @@ inputs.mesa-shell = {
 };
 ```
 
-Home Manager (`inputs` passed via `extraSpecialArgs`):
+The flake only provides the config files and `mesa-dmenu`; link them yourself (`inputs` passed via `extraSpecialArgs`):
 
 ```nix
-{ inputs, ... }: {
-  imports = [ inputs.mesa-shell.homeManagerModules.default ];
-
-  programs.mesa-shell = {
+{ inputs, pkgs, ... }: {
+  programs.quickshell = {
     enable = true;
-    settings = { }; # written to config.json, same keys as below
+    activeConfig = "mesa-shell";
   };
 
-  # replaces `dwl -s 'qs -c mesa-shell -d'`; dwl has no session target of its own,
-  # so the startup command has to start one (e.g. a custom dwl-session.target)
-  programs.quickshell.systemd = {
-    enable = true;
-    target = "dwl-session.target";
+  xdg.configFile."quickshell/mesa-shell" = {
+    source = "${inputs.mesa-shell.packages.${pkgs.stdenv.hostPlatform.system}.default}/share/mesa-shell";
+    recursive = true;
   };
 }
 ```
+
+`dwlmsg` from upstream aborts on dwl's ipc patch: the patch adds a `focused_geometry` event that dwlmsg's bundled protocol doesn't know, and libwayland aborts on events without a listener. Update dwlmsg's `protocols/dwl-ipc-unstable-v2.xml` to the one from the ipc patch and add an empty `focused_geometry` listener. The layout widget also expects `dwlmsg -w` to print a `layout_index <n>` line from the `layout` event.
 
 NixOS services used by the modules:
 
