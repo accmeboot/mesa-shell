@@ -24,20 +24,6 @@ Rectangle {
   border.color: ThemeService.colors.on_surface
   border.width: ConfigService.border
 
-  MesaButton {
-    icon: "window-close"
-    color: ThemeService.colors.critical
-    anchors.top: parent.top
-    anchors.left: parent.left
-    anchors.margins: root.border.width
-    contentColor: ThemeService.colors.background
-    horizontalPadding: ConfigService.spaceSm
-    verticalPadding: ConfigService.spaceSm
-    onClicked: {
-        NotificationsService.dismissOrExpireNotification(modelData.id);
-    }
-  }
-
   RowLayout {
     id: notificationMainRow
 
@@ -92,6 +78,17 @@ Rectangle {
         MesaText {
           id: notificationTime
           text: getTime(modelData.timestamp)
+        }
+        MesaButton {
+          Layout.alignment: Qt.AlignVCenter
+          icon: "window-close"
+          color: ThemeService.colors.critical
+          contentColor: ThemeService.colors.background
+          horizontalPadding: ConfigService.spaceSm
+          verticalPadding: ConfigService.spaceSm
+          onClicked: {
+            NotificationsService.dismissOrExpireNotification(root.modelData.id);
+          }
         }
       }
 
