@@ -38,7 +38,7 @@ Singleton {
     }
     client = socket;
     items = lines;
-    screen = SwayService.focusedOutput;
+    screen = CompositorService.focusedOutput;
     mode = "choose";
     isOpen = true;
   }
@@ -120,7 +120,7 @@ Singleton {
     target: "dmenu"
 
     function open(): void {
-      root.open(SwayService.focusedOutput);
+      root.open(CompositorService.focusedOutput);
     }
 
     function close(): void {
@@ -128,7 +128,7 @@ Singleton {
     }
 
     function toggle(): void {
-      root.isOpen ? root.close() : root.open(SwayService.focusedOutput);
+      root.isOpen ? root.close() : root.open(CompositorService.focusedOutput);
     }
   }
 }

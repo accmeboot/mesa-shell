@@ -16,7 +16,7 @@ Singleton {
   }
 
   function exitSession(): void {
-    root.run("swaymsg exit");
+    root.run(CompositorService.exitCommand);
   }
 
   function reboot(): void {

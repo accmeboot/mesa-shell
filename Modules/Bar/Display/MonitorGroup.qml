@@ -1,11 +1,10 @@
-import Quickshell.I3
-
+import qs.Services
 import qs.Components
 
 MesaSection {
   id: root
 
-  readonly property var info: I3.focusedMonitor?.lastIpcObject ?? null
+  readonly property var info: CompositorService.outputInfo(CompositorService.focusedOutput)
 
   title: "Monitor"
 

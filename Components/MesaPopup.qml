@@ -17,12 +17,12 @@ Scope {
   readonly property int minimumWidth: Math.round(ConfigService.font.size * 25)
   readonly property int maximumWidth: Math.max(root.minimumWidth, Math.round((root.screen?.width ?? 0) / 3))
 
-  readonly property real anchorRight: {
+  readonly property real anchorLeft: {
     const item = root.anchorItem;
 
     if (!item) return 0;
 
-    let edge = item.width;
+    let edge = 0;
 
     for (let node = item; node; node = node.parent) {
       edge += node.x;
@@ -30,6 +30,8 @@ Scope {
 
     return edge;
   }
+  readonly property real anchorRight: root.anchorLeft + (root.anchorItem?.width ?? 0)
+  readonly property bool alignLeft: (root.anchorLeft + root.anchorRight) / 2 < (root.screen?.width ?? 0) / 2
 
   property Component content: null
 
@@ -66,13 +68,25 @@ Scope {
 
       anchors {
         top: true
-        right: true
+        left: root.alignLeft
+        right: !root.alignLeft
+      }
+
+      margins.left: {
+        const available = root.screen?.width ?? 0;
+
+        if (!root.alignLeft || !root.anchorItem || available === 0) return 0;
+
+        const desired = root.anchorLeft - ConfigService.border;
+        const furthest = Math.max(0, available - root.maximumWidth);
+
+        return Math.round(Math.max(0, Math.min(desired, furthest)));
       }
 
       margins.right: {
         const available = root.screen?.width ?? 0;
 
-        if (!root.anchorItem || available === 0) return 0;
+        if (root.alignLeft || !root.anchorItem || available === 0) return 0;
 
         const desired = available - root.anchorRight - ConfigService.border;
         const furthest = Math.max(0, available - root.maximumWidth);

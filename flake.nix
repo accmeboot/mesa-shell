@@ -1,5 +1,5 @@
 {
-  description = "Status bar, notification daemon, quick settings panel and lockscreen for Quickshell, built for Sway";
+  description = "Status bar, notification daemon, quick settings panel and lockscreen for Quickshell, built for dwl";
 
   inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
@@ -43,61 +43,5 @@
           meta.mainProgram = "mesa-dmenu";
         };
       });
-
-      homeManagerModules.default = { config, lib, pkgs, ... }:
-        let
-          cfg = config.programs.mesa-shell;
-          json = pkgs.formats.json { };
-          system = pkgs.stdenv.hostPlatform.system;
-
-          quickshell = pkgs.symlinkJoin {
-            name = "quickshell-mesa-shell";
-            paths = [ pkgs.quickshell ];
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            postBuild = ''
-              for bin in quickshell qs; do
-                wrapProgram $out/bin/$bin \
-                  --suffix PATH : ${lib.makeBinPath [ pkgs.brightnessctl pkgs.bluez pkgs.psmisc ]}
-              done
-            '';
-            meta.mainProgram = "quickshell";
-          };
-        in
-        {
-          options.programs.mesa-shell = {
-            enable = lib.mkEnableOption "mesa-shell";
-
-            package = lib.mkOption {
-              type = lib.types.package;
-              default = self.packages.${system}.default;
-              description = "The mesa-shell package.";
-            };
-
-            settings = lib.mkOption {
-              type = json.type;
-              default = { };
-              description = "Written to config.json, see config.example.json.";
-            };
-          };
-
-          config = lib.mkIf cfg.enable {
-            programs.quickshell = {
-              enable = true;
-              package = quickshell;
-              activeConfig = "mesa-shell";
-            };
-
-            xdg.configFile."quickshell/mesa-shell" = {
-              source = "${cfg.package}/share/mesa-shell";
-              recursive = true;
-            };
-
-            xdg.configFile."quickshell/mesa-shell/config.json" = lib.mkIf (cfg.settings != { }) {
-              source = json.generate "mesa-shell-config.json" cfg.settings;
-            };
-
-            home.packages = [ self.packages.${system}.mesa-dmenu ];
-          };
-        };
     };
 }

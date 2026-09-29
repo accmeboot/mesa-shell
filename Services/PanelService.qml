@@ -34,11 +34,11 @@ Singleton {
     target: "panel"
 
     function toggle(panel: string): void {
-      root.toggle(panel, SwayService.focusedOutput);
+      root.toggle(panel, CompositorService.focusedOutput);
     }
 
     function open(panel: string): void {
-      root.open(panel, SwayService.focusedOutput);
+      root.open(panel, CompositorService.focusedOutput);
     }
 
     function close(): void {
