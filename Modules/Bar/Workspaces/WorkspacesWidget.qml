@@ -35,7 +35,7 @@ RowLayout {
         width: ConfigService.font.size
         height: width
 
-        color: workspace.effectiveContentColor
+        color: ThemeService.colors.highlight
       }
 
       Rectangle {
