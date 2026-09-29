@@ -14,6 +14,7 @@ More screenshots in [`assets/screenshots`](assets/screenshots).
   - networkmanager: [`Quickshell.Networking`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Networking/)
   - bluez: [`Quickshell.Bluetooth`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Bluetooth/)
   - pam: [`Quickshell.Services.Pam`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.Pam/)
+- [`bluetoothctl`](https://github.com/bluez/bluez) from bluez (pairing agent)
 - [dwl](https://codeberg.org/dwl/dwl) with the [`ipc`](https://codeberg.org/dwl/dwl-patches/src/branch/main/patches/ipc) patch
   - [`dwlmsg`](https://codeberg.org/notchoc/dwlmsg) (needs a patch for the ipc patch's `focused_geometry` event, see below) and [`wlr-randr`](https://sr.ht/~emersion/wlr-randr/)
 - [systemd](https://github.com/systemd/systemd)
@@ -91,7 +92,8 @@ hardware.bluetooth.enable = true;
 ## Modules
 
 - **Bar**: tags, layout, launcher, clock, tray, theme and do-not-disturb toggles
-  - audio, network, battery, display, bluetooth and power each open their own panel from the bar
+  - left click a tag to view it, right click to toggle it into the view
+  - layout, audio, network, battery, display, bluetooth and power each open their own panel from the bar
   - privacy indicators for microphone, camera and screen share, with a panel listing the apps using them
 - **Notifications**: `org.freedesktop.Notifications` daemon
 - **Lock**: `ext-session-lock-v1` lockscreen
@@ -106,6 +108,8 @@ hardware.bluetooth.enable = true;
 | ![Audio panel](assets/screenshots/audio.png) | ![Display panel](assets/screenshots/display.png) |
 | **Battery** | **Power** |
 | ![Battery panel](assets/screenshots/battery.png) | ![Power panel](assets/screenshots/power.png) |
+| **Layout** | **Privacy** |
+| ![Layout panel](assets/screenshots/layout.png) | ![Privacy panel](assets/screenshots/privacy.png) |
 | **Launcher** | **Notification** |
 | ![dmenu launcher](assets/screenshots/dmenu.png) | ![Notification](assets/screenshots/notification.png) |
 | **Tray menu** | **Lock screen** |
@@ -126,7 +130,7 @@ qs -c mesa-shell ipc call <target> <function>
 | `notifications` | `toggle`, `isDoNotDisturb`, `dismissLast`, `dismissAll` |
 | `config` | `reload` |
 
-Panel names: `audio`, `network`, `bluetooth`, `display`, `battery`, `power`, `tray`, `privacy`.
+Panel names: `layout`, `audio`, `network`, `bluetooth`, `display`, `battery`, `power`, `tray`, `privacy`. `privacy` only opens while a microphone, camera or screen share is in use.
 
 ```bash
 qs -c mesa-shell ipc call panel toggle audio
