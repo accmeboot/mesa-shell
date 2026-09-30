@@ -16,7 +16,7 @@ More screenshots in [`assets/screenshots`](assets/screenshots).
   - pam: [`Quickshell.Services.Pam`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.Pam/)
 - [`bluetoothctl`](https://github.com/bluez/bluez) from bluez (pairing agent)
 - [dwl](https://codeberg.org/dwl/dwl) with the [`ipc`](https://codeberg.org/dwl/dwl-patches/src/branch/main/patches/ipc) patch
-  - [`dwlmsg`](https://codeberg.org/notchoc/dwlmsg) (needs a patch for the ipc patch's `focused_geometry` event, see below) and [`wlr-randr`](https://sr.ht/~emersion/wlr-randr/)
+  - [`dwlmsg`](https://codeberg.org/notchoc/dwlmsg) (needs a patch for the ipc patch's `focused_geometry` event, see below)
 - [systemd](https://github.com/systemd/systemd)
 - [`brightnessctl`](https://github.com/Hummer12007/brightnessctl) (optional)
 - [`fuser`](https://gitlab.com/psmisc/psmisc) from psmisc (optional, camera detection for apps opening `/dev/video*` directly)
@@ -42,9 +42,8 @@ dwl -s 'qs -c mesa-shell -d'
 { MODKEY, XKB_KEY_p,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle audio") },
 { MODKEY, XKB_KEY_n,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle network") },
 { MODKEY, XKB_KEY_c,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle bluetooth") },
-{ MODKEY, XKB_KEY_m,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle display") },
 { MODKEY, XKB_KEY_t,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle tray") },
-{ MODKEY, XKB_KEY_q,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle power") },
+{ MODKEY, XKB_KEY_q,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle control") },
 { MODKEY, XKB_KEY_grave,      spawn, SHCMD("qs -c mesa-shell ipc call theme toggle") },
 { MODKEY, XKB_KEY_backslash,  spawn, SHCMD("qs -c mesa-shell ipc call notifications toggle") },
 { MODKEY, XKB_KEY_bracketleft,  spawn, SHCMD("qs -c mesa-shell ipc call notifications dismissLast") },
@@ -91,9 +90,10 @@ hardware.bluetooth.enable = true;
 
 ## Modules
 
-- **Bar**: tags, layout, launcher, clock, tray, theme and do-not-disturb toggles
+- **Bar**: tags, layout, launcher, clock and tray
   - left click a tag to view it, right click to toggle it into the view
-  - layout, audio, network, battery, display, bluetooth and power each open their own panel from the bar
+  - layout, audio, network, battery, bluetooth and control each open their own panel from the bar
+  - the control panel holds the brightness slider, the dark theme and do-not-disturb toggles and the session actions (lock, suspend, log out, restart, shut down)
   - privacy indicators for microphone, camera and screen share, with a panel listing the apps using them
 - **Notifications**: `org.freedesktop.Notifications` daemon
 - **Lock**: `ext-session-lock-v1` lockscreen
@@ -104,10 +104,10 @@ hardware.bluetooth.enable = true;
 | Network | Bluetooth |
 | --- | --- |
 | ![Network panel](assets/screenshots/network.png) | ![Bluetooth panel](assets/screenshots/bluetooth.png) |
-| **Audio** | **Display** |
-| ![Audio panel](assets/screenshots/audio.png) | ![Display panel](assets/screenshots/display.png) |
-| **Battery** | **Power** |
-| ![Battery panel](assets/screenshots/battery.png) | ![Power panel](assets/screenshots/power.png) |
+| **Audio** | **Control** |
+| ![Audio panel](assets/screenshots/audio.png) | ![Control panel](assets/screenshots/control.png) |
+| **Battery** | |
+| ![Battery panel](assets/screenshots/battery.png) | |
 | **Layout** | **Privacy** |
 | ![Layout panel](assets/screenshots/layout.png) | ![Privacy panel](assets/screenshots/privacy.png) |
 | **Launcher** | **Notification** |
@@ -130,7 +130,7 @@ qs -c mesa-shell ipc call <target> <function>
 | `notifications` | `toggle`, `isDoNotDisturb`, `dismissLast`, `dismissAll` |
 | `config` | `reload` |
 
-Panel names: `layout`, `audio`, `network`, `bluetooth`, `display`, `battery`, `power`, `tray`, `privacy`. `privacy` only opens while a microphone, camera or screen share is in use.
+Panel names: `layout`, `audio`, `network`, `bluetooth`, `battery`, `control`, `tray`, `privacy`. `privacy` only opens while a microphone, camera or screen share is in use.
 
 ```bash
 qs -c mesa-shell ipc call panel toggle audio
@@ -153,7 +153,7 @@ Panels are built from rows. A row either acts on its own or opens a menu, and `D
 | `Enter`, `Space` | activate the selection |
 | `Escape` | close the panel |
 
-Sliders live inside menus, except for brightness, which sits directly in its panel. That one takes the selection itself, and `Left`/`h` and `Right`/`l` then decrease and increase it. Either kind moves in 1% steps.
+Sliders live inside menus, except for brightness, which sits directly in the control panel. That one takes the selection itself, and `Left`/`h` and `Right`/`l` then decrease and increase it. Either kind moves in 1% steps.
 
 ### Menu text entry
 

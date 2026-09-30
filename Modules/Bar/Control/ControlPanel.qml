@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 
 import qs.Services
 import qs.Components
@@ -30,7 +31,43 @@ MesaPanel {
     }
   }
 
-  SystemGroup {}
+  BrightnessGroup {}
+
+  MesaSection {
+    title: "Settings"
+
+    MesaRow {
+      label: "Dark theme"
+      interactive: true
+
+      onClicked: ThemeService.toggle()
+
+      MesaIndicator {
+        Layout.alignment: Qt.AlignVCenter
+
+        activeFocusOnTab: false
+        checked: ThemeService.isDark
+
+        onToggled: ThemeService.toggle()
+      }
+    }
+
+    MesaRow {
+      label: "Do not disturb"
+      interactive: true
+
+      onClicked: NotificationsService.toggleDoNotDisturb()
+
+      MesaIndicator {
+        Layout.alignment: Qt.AlignVCenter
+
+        activeFocusOnTab: false
+        checked: NotificationsService.doNotDisturb
+
+        onToggled: NotificationsService.toggleDoNotDisturb()
+      }
+    }
+  }
 
   MesaSection {
     title: "Session"

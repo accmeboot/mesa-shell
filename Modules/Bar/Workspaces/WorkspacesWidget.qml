@@ -29,10 +29,12 @@ RowLayout {
       acceptedButtons: Qt.LeftButton | Qt.RightButton
 
       Rectangle {
+        id: focusSquare
+
         visible: workspace.modelData.focused
 
         anchors.centerIn: parent
-        width: ConfigService.font.size
+        width: Math.round(ConfigService.font.size)
         height: width
 
         color: ThemeService.colors.highlight
@@ -41,14 +43,17 @@ RowLayout {
       Rectangle {
         visible: (workspace.modelData.occupied ?? false) || workspace.modelData.urgent
 
-        anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: ConfigService.border
+        readonly property int overlap: Math.round(width / 2)
 
-        implicitWidth: ConfigService.font.size
-        implicitHeight: ConfigService.border
+        anchors.right: focusSquare.left
+        anchors.bottom: focusSquare.top
+        anchors.rightMargin: -overlap
+        anchors.bottomMargin: -overlap
 
-        color: workspace.modelData.urgent ? ThemeService.colors.critical : workspace.effectiveContentColor
+        width: Math.round(ConfigService.font.size / 2)
+        height: width
+
+        color: workspace.modelData.urgent ? ThemeService.colors.critical : Qt.alpha(workspace.effectiveContentColor, 0.6)
       }
 
       onClicked: mouse => {

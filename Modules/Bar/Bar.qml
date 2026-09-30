@@ -10,14 +10,11 @@ import qs.Modules.Bar.Audio
 import qs.Modules.Bar.Battery
 import qs.Modules.Bar.Bluetooth
 import qs.Modules.Bar.Clock
-import qs.Modules.Bar.Display
 import qs.Modules.Bar.Dmenu
 import qs.Modules.Bar.Layout
 import qs.Modules.Bar.Network
-import qs.Modules.Bar.Notification
-import qs.Modules.Bar.Power
+import qs.Modules.Bar.Control
 import qs.Modules.Bar.Privacy
-import qs.Modules.Bar.Theme
 import qs.Modules.Bar.Tray
 import qs.Modules.Bar.Workspaces
 
@@ -116,26 +113,13 @@ Scope {
           Layout.fillHeight: true
           screen: modelData
         }
-        DisplayWidget {
-          id: display
-          Layout.fillHeight: true
-          screen: modelData
-        }
         BluetoothWidget {
           id: bluetooth
           Layout.fillHeight: true
           screen: modelData
         }
-        ThemeWidget {
-          id: theme
-          Layout.fillHeight: true
-        }
-        NotificationWidget {
-          id: notification
-          Layout.fillHeight: true
-        }
-        PowerWidget {
-          id: power
+        ControlWidget {
+          id: control
           Layout.fillHeight: true
           screen: modelData
         }

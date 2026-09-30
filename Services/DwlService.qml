@@ -8,7 +8,6 @@ Singleton {
   id: root
 
   property var outputs: ({})
-  property var outputInfos: ({})
   property var layoutSymbols: []
   property int tagCount: 9
 
@@ -80,14 +79,6 @@ Singleton {
 
   function setLayout(output: string, index: int): void {
     root.dwlmsg(["-o", output, "-s", "-l", String(index)]);
-  }
-
-  function outputInfo(output: string): var {
-    return root.outputInfos[output] ?? null;
-  }
-
-  function refreshOutputs(): void {
-    randr.running = true;
   }
 
   function dwlmsg(args: var): void {
@@ -176,50 +167,6 @@ Singleton {
 
     stdout: StdioCollector {
       onStreamFinished: root.layoutSymbols = this.text.split("\n").filter((l) => l !== "")
-    }
-  }
-
-  Process {
-    id: randr
-
-    command: ["wlr-randr", "--json"]
-    running: true
-
-    stdout: StdioCollector {
-      onStreamFinished: {
-        try {
-          const infos = {};
-
-          for (const output of JSON.parse(this.text)) {
-            const mode = output.modes?.find((m) => m.current) ?? null;
-
-            infos[output.name] = {
-              name: output.name,
-              make: output.make ?? "",
-              model: output.model ?? "",
-              serial: output.serial ?? "",
-              width: mode?.width ?? 0,
-              height: mode?.height ?? 0,
-              refresh: mode?.refresh ?? 0,
-              scale: output.scale ?? 0,
-              transform: output.transform ?? "",
-              adaptiveSync: output.adaptive_sync === undefined ? "" : output.adaptive_sync ? "enabled" : "disabled",
-            };
-          }
-
-          root.outputInfos = infos;
-        } catch (e) {
-          console.error(e);
-        }
-      }
-    }
-  }
-
-  Connections {
-    target: Quickshell
-
-    function onScreensChanged(): void {
-      root.refreshOutputs();
     }
   }
 }

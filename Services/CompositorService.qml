@@ -35,12 +35,4 @@ Singleton {
   function setLayout(output: string, index: int): void {
     root.backend?.setLayout(output, index);
   }
-
-  function outputInfo(output: string): var {
-    return root.backend?.outputInfo(output) ?? null;
-  }
-
-  function refreshOutputs(): void {
-    root.backend?.refreshOutputs();
-  }
 }
