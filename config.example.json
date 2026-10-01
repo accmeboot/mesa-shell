@@ -21,16 +21,14 @@
       "critical": "#a94b27"
     }
   },
-  "defaultPolarity": "dark",
-  "hooks": {
-    "onDarkThemeSet": "set-dark-theme",
-    "onLightThemeSet": "set-light-theme"
-  },
   "font": {
     "name": "",
     "size": ""
   },
-  "wallpaper": "assets/hello-world.png",
+  "wallpaper": {
+    "dark": "assets/hello-world.png",
+    "light": "assets/hello-world.png"
+  },
   "dateTimeFormat": "ddd d MMM HH:mm",
   "spacing": 8,
   "border": 1

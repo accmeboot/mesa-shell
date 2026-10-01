@@ -11,30 +11,17 @@ Singleton {
 
   readonly property bool isDark: root.polarity !== "light"
   readonly property JsonObject colors: root.polarity === "light" ? ConfigService.colors.light : ConfigService.colors.dark
+  readonly property url wallpaper: {
+    if (!ConfigService.settled) return "";
 
-  function run(command: string): void {
-    if (!command) return;
-
-    process.command = ["sh", "-c", command];
-    process.running = true;
-  }
-
-  function dark(): void {
-    if (process.running) return;
-
-    root.polarity = "dark";
-    root.run(ConfigService.hooks.onDarkThemeSet);
-  }
-
-  function light(): void {
-    if (process.running) return;
-
-    root.polarity = "light";
-    root.run(ConfigService.hooks.onLightThemeSet);
+    return ConfigService.toUrl(root.polarity === "light" ? ConfigService.wallpaper.light : ConfigService.wallpaper.dark);
   }
 
   function toggle(): void {
-    root.isDark ? root.light() : root.dark();
+    if (setter.running) return;
+
+    setter.command = ["gsettings", "set", "org.gnome.desktop.interface", "color-scheme", root.isDark ? "prefer-light" : "prefer-dark"];
+    setter.running = true;
   }
 
   IpcHandler {
@@ -49,15 +36,16 @@ Singleton {
     }
   }
 
-  Connections {
-    target: ConfigService
+  Process {
+    command: ["sh", "-c", "gsettings get org.gnome.desktop.interface color-scheme && exec gsettings monitor org.gnome.desktop.interface color-scheme"]
+    running: true
 
-    function onSettledChanged(): void {
-      if (!root.polarity) root.polarity = ConfigService.defaultPolarity;
+    stdout: SplitParser {
+      onRead: line => root.polarity = line.includes("prefer-dark") ? "dark" : "light"
     }
   }
 
   Process {
-    id: process
+    id: setter
   }
 }

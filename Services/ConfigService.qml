@@ -23,8 +23,6 @@ Singleton {
   }
   readonly property alias spacing: adapter.spacing
   readonly property alias border: adapter.border
-  readonly property alias hooks: adapter.hooks
-  readonly property alias defaultPolarity: adapter.defaultPolarity
   readonly property alias dateTimeFormat: adapter.dateTimeFormat
 
   readonly property int spaceSm: Math.round(root.spacing / 2)
@@ -37,10 +35,10 @@ Singleton {
 
   property bool settled: false
 
-  readonly property url wallpaper: {
-    if (!settled) return "";
+  readonly property alias wallpaper: adapter.wallpaper
 
-    const path = (adapter.wallpaper ?? "").trim();
+  function toUrl(path: string): string {
+    path = (path ?? "").trim();
 
     if (!path) return "";
     if (path.startsWith("file://")) return path;
@@ -50,10 +48,30 @@ Singleton {
     return Qt.resolvedUrl("../" + path);
   }
 
+  function merge(target: QtObject, source: var): void {
+    for (const key in source) {
+      if (key === "include" || !(key in target)) continue;
+
+      const value = source[key];
+      if (value !== null && typeof value === "object" && typeof target[key] === "object") {
+        root.merge(target[key], value);
+      } else {
+        target[key] = value;
+      }
+    }
+  }
+
+  function applyIncludes(): void {
+    for (const include of includes.instances) {
+      if (include.json) root.merge(adapter, include.json);
+    }
+  }
+
   IpcHandler {
     target: "config"
 
     function reload(): void {
+      for (const include of includes.instances) include.reload();
       view.reload();
     }
   }
@@ -65,7 +83,10 @@ Singleton {
     watchChanges: true
     onFileChanged: reload()
 
-    onLoaded: root.settled = true
+    onLoaded: {
+      root.applyIncludes();
+      root.settled = true;
+    }
     onLoadFailed: root.settled = true
 
     JsonAdapter {
@@ -100,20 +121,46 @@ Singleton {
         property string size: ""
       }
 
-      property string wallpaper: "assets/hello-world.png"
+      property JsonObject wallpaper: JsonObject {
+        property string dark: "assets/hello-world.png"
+        property string light: "assets/hello-world.png"
+      }
 
       property string dateTimeFormat: "ddd d MMM HH:mm"
 
-      property string defaultPolarity: "dark"
-
-      property JsonObject hooks: JsonObject {
-        property string onDarkThemeSet: ""
-        property string onLightThemeSet: ""
-      }
+      property list<string> include: []
 
       property int spacing: 10
 
       property int border: 1
+    }
+  }
+
+  Variants {
+    id: includes
+
+    model: adapter.include
+
+    delegate: FileView {
+      required property string modelData
+
+      property var json: null
+
+      path: root.toUrl(modelData)
+      watchChanges: true
+      printErrors: false
+      onFileChanged: reload()
+
+      onLoaded: {
+        try {
+          json = JSON.parse(text());
+        } catch (error) {
+          console.warn(`config: ${modelData}: ${error}`);
+          json = null;
+        }
+        root.applyIncludes();
+      }
+      onLoadFailed: json = null
     }
   }
 }

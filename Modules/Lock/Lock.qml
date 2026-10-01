@@ -29,7 +29,7 @@ Scope {
       Image {
         anchors.fill: parent
 
-        source: ConfigService.wallpaper
+        source: ThemeService.wallpaper
         fillMode: Image.PreserveAspectCrop
         asynchronous: true
 
