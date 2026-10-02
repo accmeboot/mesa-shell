@@ -1,4 +1,30 @@
 {
+  "scheme": {
+    "dark": "default-dark",
+    "light": "default-light"
+  },
+  "wallpaper": {
+    "dark": "assets/hello-world.png",
+    "light": "assets/hello-world.png",
+    "dir": "~/Pictures"
+  },
+  "iconTheme": {
+    "dark": "Papirus-Dark",
+    "light": "Papirus-Light"
+  },
+  "retint": {
+    "rotate": 15,
+    "tint": 0.15,
+    "maxRampChroma": 0.030
+  },
+  "font": {
+    "name": "",
+    "size": "",
+    "serif": "",
+    "mono": "",
+    "applicationsSize": "",
+    "terminalSize": ""
+  },
   "colors": {
     "dark": {
       "background": "#16181a",
@@ -20,14 +46,6 @@
       "ok": "#b3af62",
       "critical": "#a94b27"
     }
-  },
-  "font": {
-    "name": "",
-    "size": ""
-  },
-  "wallpaper": {
-    "dark": "assets/hello-world.png",
-    "light": "assets/hello-world.png"
   },
   "dateTimeFormat": "ddd d MMM HH:mm",
   "spacing": 8,

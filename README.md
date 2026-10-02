@@ -22,72 +22,43 @@ More screenshots in [`assets/screenshots`](assets/screenshots).
 - [`brightnessctl`](https://github.com/Hummer12007/brightnessctl) (optional)
 - [`fuser`](https://gitlab.com/psmisc/psmisc) from psmisc (optional, camera detection for apps opening `/dev/video*` directly)
 - [`socat`](http://www.dest-unreach.org/socat/) (`scripts/mesa-dmenu` only)
+- [`jq`](https://jqlang.org) (`mshell`)
+- [python](https://www.python.org) with [numpy](https://numpy.org) and [pillow](https://python-pillow.github.io) (`mshell build`'s retint)
+- [`yazi`](https://github.com/sxyazi/yazi) (optional, `mshell wall`'s picker)
+- [Papirus](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme) (optional, the default `iconTheme`)
+- [adw-gtk3](https://github.com/lassekongo83/adw-gtk3) and [qt5ct](https://sourceforge.net/projects/qt5ct/)/[qt6ct](https://github.com/trialuser02/qt6ct) (theming GTK3 and Qt apps)
 
 ## Installation
 
 ```bash
-git clone git@github.com:accmeboot/mesa-shell.git ~/.config/quickshell/mesa-shell
-cp ~/.config/quickshell/mesa-shell/config.example.json ~/.config/quickshell/mesa-shell/config.json
+git clone git@github.com:accmeboot/mesa-shell.git ~/setup/mesa-shell
+~/setup/mesa-shell/install.sh
 ```
+
+`install.sh` installs the packages above from the Arch repos (dwl and dwlmsg aren't packaged), enables NetworkManager and bluetooth, writes the GTK3/GTK4/fontconfig theme files (see Theming), copies `config.example.json` to `config.json` unless it exists, links the repo to `~/.config/quickshell/mesa-shell` and `mshell` to `~/.local/bin`, and runs `mshell build`. It uses `pacman -Syu`, never `-S`: installing against a stale package database is a partial upgrade.
 
 Start it from dwl's startup command, with `XDG_CURRENT_DESKTOP=dwl` set so the shell picks the dwl backend:
 
 ```bash
-dwl -s 'qs -c mesa-shell -d'
+dwl -s 'mshell run -d'
 ```
 
 `config.h` keys:
 
 ```c
-{ MODKEY, XKB_KEY_d,          spawn, SHCMD("qs -c mesa-shell ipc call dmenu toggle") },
-{ MODKEY, XKB_KEY_p,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle audio") },
-{ MODKEY, XKB_KEY_n,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle network") },
-{ MODKEY, XKB_KEY_c,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle bluetooth") },
-{ MODKEY, XKB_KEY_t,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle tray") },
-{ MODKEY, XKB_KEY_q,          spawn, SHCMD("qs -c mesa-shell ipc call panel toggle control") },
-{ MODKEY, XKB_KEY_grave,      spawn, SHCMD("qs -c mesa-shell ipc call theme toggle") },
-{ MODKEY, XKB_KEY_backslash,  spawn, SHCMD("qs -c mesa-shell ipc call notifications toggle") },
-{ MODKEY, XKB_KEY_bracketleft,  spawn, SHCMD("qs -c mesa-shell ipc call notifications dismissLast") },
-{ MODKEY, XKB_KEY_bracketright, spawn, SHCMD("qs -c mesa-shell ipc call notifications dismissAll") },
-```
-
-### NixOS
-
-Flake input:
-
-```nix
-inputs.mesa-shell = {
-  url = "github:accmeboot/mesa-shell";
-  inputs.nixpkgs.follows = "nixpkgs";
-};
-```
-
-The flake only provides the config files and `mesa-dmenu`; link them yourself (`inputs` passed via `extraSpecialArgs`):
-
-```nix
-{ inputs, pkgs, ... }: {
-  programs.quickshell = {
-    enable = true;
-    activeConfig = "mesa-shell";
-  };
-
-  xdg.configFile."quickshell/mesa-shell" = {
-    source = "${inputs.mesa-shell.packages.${pkgs.stdenv.hostPlatform.system}.default}/share/mesa-shell";
-    recursive = true;
-  };
-}
+{ MODKEY, XKB_KEY_d,          spawn, SHCMD("mshell dmenu toggle") },
+{ MODKEY, XKB_KEY_p,          spawn, SHCMD("mshell panel toggle audio") },
+{ MODKEY, XKB_KEY_n,          spawn, SHCMD("mshell panel toggle network") },
+{ MODKEY, XKB_KEY_c,          spawn, SHCMD("mshell panel toggle bluetooth") },
+{ MODKEY, XKB_KEY_t,          spawn, SHCMD("mshell panel toggle tray") },
+{ MODKEY, XKB_KEY_q,          spawn, SHCMD("mshell panel toggle control") },
+{ MODKEY, XKB_KEY_grave,      spawn, SHCMD("mshell theme toggle") },
+{ MODKEY, XKB_KEY_backslash,  spawn, SHCMD("mshell notifications toggle") },
+{ MODKEY, XKB_KEY_bracketleft,  spawn, SHCMD("mshell notifications dismissLast") },
+{ MODKEY, XKB_KEY_bracketright, spawn, SHCMD("mshell notifications dismissAll") },
 ```
 
 `dwlmsg` from upstream aborts on dwl's ipc patch: the patch adds a `focused_geometry` event that dwlmsg's bundled protocol doesn't know, and libwayland aborts on events without a listener. Update dwlmsg's `protocols/dwl-ipc-unstable-v2.xml` to the one from the ipc patch and add an empty `focused_geometry` listener. The layout widget also expects `dwlmsg -w` to print a `layout_index <n>` line from the `layout` event.
-
-NixOS services used by the modules:
-
-```nix
-services.upower.enable = true;
-services.pipewire.enable = true;
-networking.networkmanager.enable = true;
-hardware.bluetooth.enable = true;
-```
 
 ## Modules
 
@@ -117,11 +88,45 @@ hardware.bluetooth.enable = true;
 | **Tray menu** | **Lock screen** |
 | ![Tray menu](assets/screenshots/tray-menu.png) | ![Lock screen](assets/screenshots/lock.png) |
 
-## IPC
+## mshell
 
-```bash
-qs -c mesa-shell ipc call <target> <function>
 ```
+mshell run [qs args...]             start the shell (qs -c mesa-shell)
+mshell build                        generate both palettes, render templates, write colors into config.json
+mshell status                       show the built palettes
+mshell wall <dark|light> [image]    set a polarity's wallpaper and build
+mshell apply [dark|light]           point GTK3, Qt and the icon theme at a polarity (default: current)
+mshell <target> <function> [args]   qs -c mesa-shell ipc call <target> <function> [args]
+mshell ipc ...                      qs -c mesa-shell ipc ... (e.g. mshell ipc show)
+```
+
+`mshell`'s own commands must never share a name with an IPC target, or the target becomes unreachable through it.
+
+## Theming
+
+`mshell build` retints each polarity's base16 scheme toward its wallpaper (`theme/retint.py`), writes the shell's `colors.dark` and `colors.light` into `config.json`, and renders every file in `theme/templates/` into `~/.local/state/base16/{dark,light}/` for the other apps. Files are rewritten in place so file watchers (the shell's own `config.json`) see the change; ghostty (`SIGUSR2`) and nvim (`SIGUSR1`) don't watch theirs, so the build signals them to reload. Fonts that live in gsettings rather than a file (GTK's `font-name` and `monospace-font-name`) are set by the build too.
+
+`mshell wall <dark|light> [image]` writes the image into `wallpaper.<polarity>` and builds. Without an image it opens yazi in `wallpaper.dir` as a file picker (Enter picks, `q` cancels).
+
+The build doesn't track which polarity is active. Apps load both renders and follow the desktop's color-scheme setting (`org.gnome.desktop.interface color-scheme`), directly or through their terminal.
+
+Schemes are `theme/schemes/<name>.yaml`, or a path. Without a wallpaper the scheme is used as is.
+
+GTK4, ghostty and nvim follow `color-scheme` themselves. The rest don't, so whenever the setting changes (and on startup) the shell runs `mshell apply <polarity>`, and `mshell build` runs it for the current polarity:
+
+- GTK4 / libadwaita: `~/.config/gtk-4.0/gtk.css` imports both palettes, each wrapped in `@media (prefers-color-scheme: ...)`, so GTK picks the right one itself
+- GTK3 has no color-scheme preference, so each polarity is its own theme, `base16-dark` / `base16-light`: adw-gtk3 with the palette on top. `apply` sets `gtk-theme`
+- icons: `apply` sets `icon-theme` to `iconTheme.<polarity>`
+- Qt: qt5ct/qt6ct (needs `QT_QPA_PLATFORMTHEME=qt5ct` in the session; qt6ct answers to that name too). `apply` links `qt5ct.conf`/`qt6ct.conf` to the polarity's `qtct.conf`, which sets the color scheme, icon theme and fonts; qt*ct reload on their own when a file in their config directory is replaced
+- fonts: `~/.config/fontconfig/fonts.conf` includes the rendered `fonts.conf`, which puts the configured fonts in front of sans-serif/serif/monospace. It inserts them right before the generic name, not at the head of the list, so a font an app asks for by name still wins
+
+`install.sh` writes the GTK3 themes every time, and the GTK4 and fontconfig configs only if missing.
+
+### Templates
+
+`theme/templates/<path>` renders to `~/.local/state/base16/<polarity>/<path>`. Variables follow the [builder spec](https://github.com/tinted-theming/home/blob/main/builder.md) (`{{base0D-hex}}`, `{{base0D-rgb-r}}`, `{{base0D-dec-r}}`, `{{scheme-name}}`, `{{scheme-variant}}`, ...), plus `{{output-dir}}` (where the polarity's files are rendered), `{{wallpaper}}`, `{{icon-theme}}`, `{{font-sans}}`, `{{font-serif}}`, `{{font-mono}}` and `{{font-size-applications|desktop|terminal}}`. Only plain `{{name}}` substitution is supported, no mustache sections.
+
+## IPC
 
 | Target | Functions |
 | --- | --- |
@@ -135,7 +140,7 @@ qs -c mesa-shell ipc call <target> <function>
 Panel names: `layout`, `audio`, `network`, `bluetooth`, `battery`, `control`, `tray`, `privacy`. `privacy` only opens while a microphone, camera or screen share is in use.
 
 ```bash
-qs -c mesa-shell ipc call panel toggle audio
+mshell panel toggle audio
 ```
 
 ## Keyboard navigation
@@ -193,12 +198,17 @@ A menu entry can be a text field, such as the Wi-Fi password prompt. While one i
 
 ## Config
 
-`config.json` next to `shell.qml`, see `config.example.json`. Every key is optional.
+`config.json` next to `shell.qml`, see `config.example.json`. Every key is optional. It configures both the shell and `mshell`; run `mshell build` after changing the theming keys. `colors` is written by `mshell build`, so edits to it last until the next build; change `scheme` instead.
 
-`include` lists more JSON files with the same keys, laid over `config.json` in order (later files win). Paths are absolute, `~/` or relative to `config.json`; missing files are skipped. Useful for colors generated by a theming tool, e.g. one file per polarity that only sets `colors.dark` or `colors.light`.
+Paths are absolute, `~/` or relative to the repo.
 
 | Key | Default | Notes |
 | --- | --- | --- |
+| `scheme.{dark,light}` | `default-dark` / `default-light` | `theme/schemes/<name>.yaml`, or a path |
+| `iconTheme.{dark,light}` | `Papirus-Dark` / `Papirus-Light` | |
+| `retint.rotate` | `15` | `retint.py --rotate` |
+| `retint.tint` | `0.15` | `retint.py --tint` |
+| `retint.maxRampChroma` | `0.030` | `retint.py --max-ramp-chroma` |
 | `colors.{dark,light}.background` | `#16181a` / `#faf8f3` | |
 | `colors.{dark,light}.surface` | `#26282a` / `#eae8e3` | |
 | `colors.{dark,light}.on_surface` | `#36383a` / `#dad8d3` | |
@@ -209,9 +219,13 @@ A menu entry can be a text field, such as the Wi-Fi password prompt. While one i
 | `colors.{dark,light}.critical` | `#a94459` / `#a94b27` | |
 | `font.name` | `""` | `""` uses the fontconfig default |
 | `font.size` | `""` | pt, `""` uses the fontconfig default |
+| `font.serif` | `""` | templates only |
+| `font.mono` | `""` | templates only |
+| `font.applicationsSize` | `""` | pt, templates and GTK only |
+| `font.terminalSize` | `""` | pt, templates only |
 | `wallpaper.{dark,light}` | `assets/hello-world.png` | `""` for none |
+| `wallpaper.dir` | `~/Pictures` | where `mshell wall` opens its picker |
 | `dateTimeFormat` | `ddd d MMM HH:mm` | `Qt.formatDateTime` |
-| `include` | `[]` | JSON files laid over this one |
 | `spacing` | `10` | px |
 | `border` | `1` | px |
 
@@ -229,15 +243,6 @@ As the xdg-desktop-portal-wlr screen chooser:
 [screencast]
 chooser_type=dmenu
 chooser_cmd=/path/to/mesa-dmenu
-```
-
-On NixOS:
-
-```nix
-xdg.portal.wlr.settings.screencast = {
-  chooser_type = "dmenu";
-  chooser_cmd = lib.getExe inputs.mesa-shell.packages.${pkgs.stdenv.hostPlatform.system}.mesa-dmenu;
-};
 ```
 
 ## License

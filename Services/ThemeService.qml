@@ -9,6 +9,9 @@ Singleton {
 
   property string polarity: ""
 
+  // GTK3, Qt and the icon theme don't follow color-scheme on their own
+  onPolarityChanged: if (root.polarity) applier.exec([Quickshell.shellPath("mshell"), "apply", root.polarity])
+
   readonly property bool isDark: root.polarity !== "light"
   readonly property JsonObject colors: root.polarity === "light" ? ConfigService.colors.light : ConfigService.colors.dark
   readonly property url wallpaper: {
@@ -47,5 +50,9 @@ Singleton {
 
   Process {
     id: setter
+  }
+
+  Process {
+    id: applier
   }
 }

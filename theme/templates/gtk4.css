@@ -1,0 +1,32 @@
+@media (prefers-color-scheme: {{scheme-variant}}) {
+  :root {
+    --accent-bg-color: #{{base0D-hex}};
+    --accent-fg-color: #{{base00-hex}};
+    --destructive-bg-color: #{{base08-hex}};
+    --destructive-fg-color: #{{base00-hex}};
+    --success-bg-color: #{{base0B-hex}};
+    --success-fg-color: #{{base00-hex}};
+    --warning-bg-color: #{{base0A-hex}};
+    --warning-fg-color: #{{base00-hex}};
+    --error-bg-color: #{{base08-hex}};
+    --error-fg-color: #{{base00-hex}};
+    --window-bg-color: #{{base00-hex}};
+    --window-fg-color: #{{base05-hex}};
+    --view-bg-color: #{{base00-hex}};
+    --view-fg-color: #{{base05-hex}};
+    --headerbar-bg-color: #{{base01-hex}};
+    --headerbar-fg-color: #{{base05-hex}};
+    --card-bg-color: #{{base01-hex}};
+    --card-fg-color: #{{base05-hex}};
+    --dialog-bg-color: #{{base01-hex}};
+    --dialog-fg-color: #{{base05-hex}};
+    --popover-bg-color: #{{base01-hex}};
+    --popover-fg-color: #{{base05-hex}};
+    --sidebar-bg-color: #{{base01-hex}};
+    --sidebar-fg-color: #{{base05-hex}};
+    --secondary-sidebar-bg-color: #{{base01-hex}};
+    --secondary-sidebar-fg-color: #{{base05-hex}};
+    --thumbnail-bg-color: #{{base01-hex}};
+    --thumbnail-fg-color: #{{base05-hex}};
+  }
+}
