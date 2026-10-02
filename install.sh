@@ -30,6 +30,7 @@ packages=(
   python-pillow
   yazi
   papirus-icon-theme
+  ttf-terminus-nerd
   adw-gtk-theme
   qt5ct
   qt6ct

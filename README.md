@@ -26,6 +26,7 @@ More screenshots in [`assets/screenshots`](assets/screenshots).
 - [python](https://www.python.org) with [numpy](https://numpy.org) and [pillow](https://python-pillow.github.io) (`mshell build`'s retint)
 - [`yazi`](https://github.com/sxyazi/yazi) (optional, `mshell wall`'s picker)
 - [Papirus](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme) (optional, the default `iconTheme`)
+- [Terminess Nerd Font](https://www.nerdfonts.com) (optional, the default `font` in `config.example.json`)
 - [adw-gtk3](https://github.com/lassekongo83/adw-gtk3) and [qt5ct](https://sourceforge.net/projects/qt5ct/)/[qt6ct](https://github.com/trialuser02/qt6ct) (theming GTK3 and Qt apps)
 
 ## Installation

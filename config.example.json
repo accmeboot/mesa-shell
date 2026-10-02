@@ -18,12 +18,12 @@
     "maxRampChroma": 0.030
   },
   "font": {
-    "name": "",
-    "size": "",
-    "serif": "",
-    "mono": "",
-    "applicationsSize": "",
-    "terminalSize": ""
+    "name": "Terminess Nerd Font",
+    "size": "14",
+    "serif": "Terminess Nerd Font",
+    "mono": "Terminess Nerd Font",
+    "applicationsSize": "12",
+    "terminalSize": "16"
   },
   "colors": {
     "dark": {
