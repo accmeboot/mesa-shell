@@ -45,7 +45,7 @@ if [[ ! -e config.json ]]; then
 fi
 
 config="${XDG_CONFIG_HOME:-$HOME/.config}"
-state="${XDG_STATE_HOME:-$HOME/.local/state}/base16"
+state="${XDG_STATE_HOME:-$HOME/.local/state}/mshell"
 themes="${XDG_DATA_HOME:-$HOME/.local/share}/themes"
 
 quickshell="$config/quickshell"

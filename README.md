@@ -105,7 +105,7 @@ mshell ipc ...                      qs -c mesa-shell ipc ... (e.g. mshell ipc sh
 
 ## Theming
 
-`mshell build` retints each polarity's base16 scheme toward its wallpaper (`theme/retint.py`), writes the shell's `colors.dark` and `colors.light` into `config.json`, and renders every file in `theme/templates/` into `~/.local/state/base16/{dark,light}/` for the other apps. Files are rewritten in place so file watchers (the shell's own `config.json`) see the change; ghostty (`SIGUSR2`) and nvim (`SIGUSR1`) don't watch theirs, so the build signals them to reload. Fonts that live in gsettings rather than a file (GTK's `font-name` and `monospace-font-name`) are set by the build too.
+`mshell build` retints each polarity's base16 scheme toward its wallpaper (`theme/retint.py`), writes the shell's `colors.dark` and `colors.light` into `config.json`, and renders every file in `theme/templates/` into `~/.local/state/mshell/{dark,light}/` for the other apps. Files are rewritten in place so file watchers (the shell's own `config.json`) see the change; ghostty (`SIGUSR2`) and nvim (`SIGUSR1`) don't watch theirs, so the build signals them to reload. Fonts that live in gsettings rather than a file (GTK's `font-name` and `monospace-font-name`) are set by the build too.
 
 `mshell wall <dark|light> [image]` writes the image into `wallpaper.<polarity>` and builds. Without an image it opens yazi in `wallpaper.dir` as a file picker (Enter picks, `q` cancels).
 
@@ -125,7 +125,7 @@ GTK4, ghostty and nvim follow `color-scheme` themselves. The rest don't, so when
 
 ### Templates
 
-`theme/templates/<path>` renders to `~/.local/state/base16/<polarity>/<path>`. Variables follow the [builder spec](https://github.com/tinted-theming/home/blob/main/builder.md) (`{{base0D-hex}}`, `{{base0D-rgb-r}}`, `{{base0D-dec-r}}`, `{{scheme-name}}`, `{{scheme-variant}}`, ...), plus `{{output-dir}}` (where the polarity's files are rendered), `{{wallpaper}}`, `{{icon-theme}}`, `{{font-sans}}`, `{{font-serif}}`, `{{font-mono}}` and `{{font-size-applications|desktop|terminal}}`. Only plain `{{name}}` substitution is supported, no mustache sections.
+`theme/templates/<path>` renders to `~/.local/state/mshell/<polarity>/<path>`. Variables follow the [builder spec](https://github.com/tinted-theming/home/blob/main/builder.md) (`{{base0D-hex}}`, `{{base0D-rgb-r}}`, `{{base0D-dec-r}}`, `{{scheme-name}}`, `{{scheme-variant}}`, ...), plus `{{output-dir}}` (where the polarity's files are rendered), `{{wallpaper}}`, `{{icon-theme}}`, `{{font-sans}}`, `{{font-serif}}`, `{{font-mono}}` and `{{font-size-applications|desktop|terminal}}`. Only plain `{{name}}` substitution is supported, no mustache sections.
 
 ## IPC
 
