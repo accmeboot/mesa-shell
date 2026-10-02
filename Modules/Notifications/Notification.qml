@@ -24,6 +24,15 @@ Rectangle {
   border.color: ThemeService.colors.on_surface
   border.width: ConfigService.border
 
+  MouseArea {
+    anchors.fill: parent
+
+    enabled: Boolean(root.modelData.defaultActionId)
+    cursorShape: Qt.PointingHandCursor
+
+    onClicked: NotificationsService.invokeDefaultAction(root.modelData.id)
+  }
+
   RowLayout {
     id: notificationMainRow
 
@@ -123,7 +132,7 @@ Rectangle {
             required property var modelData
 
             maximumContentWidth: actionsFlow.width - action.horizontalPadding * 2
-            text: action.modelData.text || "OK" + " (" + action.modelData.identifier + ")"
+            text: action.modelData.text || action.modelData.identifier
             border.width: ConfigService.border
             onClicked: {
               NotificationsService.invokeAction(root.modelData.id, action.modelData.id);

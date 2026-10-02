@@ -90,6 +90,7 @@ Singleton {
     activeList.setProperty(notificationIdx, "image", item.image);
     activeList.setProperty(notificationIdx, "icon", item.icon);
     activeList.setProperty(notificationIdx, "actions", item.actions);
+    activeList.setProperty(notificationIdx, "defaultActionId", item.defaultActionId);
     activeList.setProperty(notificationIdx, "urgency", item.urgency);
 
     notificationsActions = notificationsActions.map(action => {
@@ -138,7 +139,13 @@ Singleton {
     };
   }
 
+  function isDefaultAction(action) {
+    return action.identifier === "default";
+  }
+
   function prepareNotificationObject(notification) {
+    var defaultIndex = notification.actions.findIndex(isDefaultAction);
+
     return {
       id: notification.id,
       title: notification.summary,
@@ -149,13 +156,14 @@ Singleton {
       appName: notification.appName,
       expireTimeout: notification.expireTimeout,
       timestamp: Date.now(),
+      defaultActionId: defaultIndex === -1 ? "" : makeNotificationActionId(notification.id, defaultIndex),
       actions: notification.actions.map((action, index) => {
         return {
           id: makeNotificationActionId(notification.id, index),
           identifier: action.identifier,
           text: action.text
         };
-      })
+      }).filter((action, index) => index !== defaultIndex)
     };
   }
 
@@ -206,6 +214,17 @@ Singleton {
     }
   }
 
+  function invokeDefaultAction(notificationId) {
+    var notificationIdx = getNotificationIndexById(notificationId);
+
+    if (notificationIdx === -1)
+    return;
+    var defaultActionId = activeList.get(notificationIdx).defaultActionId;
+
+    if (defaultActionId)
+    invokeAction(notificationId, defaultActionId);
+  }
+
   function removeNotification(notificationId) {
     var notificationIdx = getNotificationIndexById(notificationId);
 
@@ -246,7 +265,7 @@ Singleton {
       for (var i = root.activeList.count - 1; i >= 0; --i) {
         var notification = root.activeList.get(i);
 
-        var hasActions = notification.actions?.count > 0;
+        var hasActions = notification.actions?.count > 0 || Boolean(notification.defaultActionId);
         var noTimeout = notification.expireTimeout <= 0;
 
         if (hasActions || noTimeout)
