@@ -99,8 +99,8 @@ Singleton {
       }
 
       property JsonObject wallpaper: JsonObject {
-        property string dark: "assets/hello-world.png"
-        property string light: "assets/hello-world.png"
+        property string dark: "assets/wallpaper-dark.png"
+        property string light: "assets/wallpaper-light.jpg"
       }
 
       property string dateTimeFormat: "ddd d MMM HH:mm"

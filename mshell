@@ -16,6 +16,8 @@ usage: mshell run [qs args...]             start the shell
                                           (no image: pick one with yazi)
        mshell apply [dark|light]          point GTK3, Qt and the icon theme at a
                                           polarity (default: the current one)
+       mshell dmenu                       pick one of stdin's lines in the bar
+                                          launcher and print it
        mshell <target> <function> [args]  call the running shell over IPC
                                           (mshell ipc show lists them)
 EOF
@@ -296,6 +298,13 @@ status() {
   done
 }
 
+# prints nothing on cancel
+dmenu() {
+  local sock="${XDG_RUNTIME_DIR:?}/mesa-shell-dmenu.sock"
+  [[ -S $sock ]] || die "shell not running: no $sock"
+  { cat; printf '\0'; } | socat -t 86400 - "UNIX-CONNECT:$sock,shut-none"
+}
+
 wall() {
   local polarity=${1-} image=${2-} choice
   [[ $polarity == dark || $polarity == light ]] || usage
@@ -322,6 +331,10 @@ case ${1-} in
   status) status ;;
   wall) shift; wall "$@" ;;
   apply) shift; apply "$@" ;;
+  # dmenu is also an IPC target; with a function it goes to the shell
+  dmenu)
+    if (($# == 1)); then dmenu; else exec qs -c mesa-shell ipc call "$@"; fi
+    ;;
   ipc) shift; exec qs -c mesa-shell ipc "$@" ;;
   "" | -h | --help) usage ;;
   *) exec qs -c mesa-shell ipc call "$@" ;;

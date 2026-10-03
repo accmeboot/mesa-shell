@@ -9,7 +9,14 @@ MesaPanelWidget {
   readonly property UPowerDevice device: UPower.displayDevice
   readonly property int percentage: root.device ? Math.round(root.device.percentage * 100) : 0
 
-  readonly property string level: String(Math.floor(root.percentage / 10) * 10).padStart(3, "0")
+  readonly property string level: {
+    if (root.percentage >= 88) return "100";
+    if (root.percentage >= 63) return "070";
+    if (root.percentage >= 38) return "040";
+    if (root.percentage >= 13) return "020";
+    if (root.percentage >= 5) return "010";
+    return "000";
+  }
 
   readonly property bool onAcAdapter: {
     switch (root.device?.state) {

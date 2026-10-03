@@ -4,8 +4,8 @@
     "light": "default-light"
   },
   "wallpaper": {
-    "dark": "assets/hello-world.png",
-    "light": "assets/hello-world.png",
+    "dark": "assets/wallpaper-dark.png",
+    "light": "assets/wallpaper-light.jpg",
     "dir": "~/Pictures"
   },
   "iconTheme": {

@@ -21,7 +21,7 @@ More screenshots in [`assets/screenshots`](assets/screenshots).
 - [`gsettings`](https://gitlab.gnome.org/GNOME/glib) from glib2 with gsettings-desktop-schemas (dark theme follows and toggles `org.gnome.desktop.interface color-scheme`)
 - [`brightnessctl`](https://github.com/Hummer12007/brightnessctl) (optional)
 - [`fuser`](https://gitlab.com/psmisc/psmisc) from psmisc (optional, camera detection for apps opening `/dev/video*` directly)
-- [`socat`](http://www.dest-unreach.org/socat/) (`scripts/mesa-dmenu` only)
+- [`socat`](http://www.dest-unreach.org/socat/) (`mshell dmenu` only)
 - [`jq`](https://jqlang.org) (`mshell`)
 - [python](https://www.python.org) with [numpy](https://numpy.org) and [pillow](https://python-pillow.github.io) (`mshell build`'s retint)
 - [`yazi`](https://github.com/sxyazi/yazi) (optional, `mshell wall`'s picker)
@@ -97,35 +97,58 @@ mshell build                        generate both palettes, render templates, wr
 mshell status                       show the built palettes
 mshell wall <dark|light> [image]    set a polarity's wallpaper and build
 mshell apply [dark|light]           point GTK3, Qt and the icon theme at a polarity (default: current)
+mshell dmenu                        pick one of stdin's lines in the bar launcher and print it
 mshell <target> <function> [args]   qs -c mesa-shell ipc call <target> <function> [args]
 mshell ipc ...                      qs -c mesa-shell ipc ... (e.g. mshell ipc show)
 ```
 
-`mshell`'s own commands must never share a name with an IPC target, or the target becomes unreachable through it.
+`mshell`'s own commands must never share a name with an IPC target, or the target becomes unreachable through it. The one exception is `dmenu`: with no function it runs the picker, with one (`mshell dmenu toggle`) it goes to the IPC target.
 
 ## Theming
 
-`mshell build` retints each polarity's base16 scheme toward its wallpaper (`theme/retint.py`), writes the shell's `colors.dark` and `colors.light` into `config.json`, and renders every file in `theme/templates/` into `~/.local/state/mshell/{dark,light}/` for the other apps. Files are rewritten in place so file watchers (the shell's own `config.json`) see the change; ghostty (`SIGUSR2`) and nvim (`SIGUSR1`) don't watch theirs, so the build signals them to reload. Fonts that live in gsettings rather than a file (GTK's `font-name` and `monospace-font-name`) are set by the build too.
+There are two palettes, `dark` and `light`. Each one starts from a base16 scheme (`theme/schemes/<name>.yaml`, or a path) and can have a wallpaper.
 
-`mshell wall <dark|light> [image]` writes the image into `wallpaper.<polarity>` and builds. Without an image it opens yazi in `wallpaper.dir` as a file picker (Enter picks, `q` cancels).
+`mshell build`:
 
-The build doesn't track which polarity is active. Apps load both renders and follow the desktop's color-scheme setting (`org.gnome.desktop.interface color-scheme`), directly or through their terminal.
+1. retints each scheme toward its wallpaper (`theme/retint.py`). A scheme without a wallpaper is used as is
+2. writes the shell's `colors.dark` and `colors.light` into `config.json`
+3. renders every file in `theme/templates/` into `~/.local/state/mshell/{dark,light}/` (see [Templates](#templates))
+4. if gsettings is writable, sets the GTK fonts that live there rather than in a file (`font-name`, `monospace-font-name`) and runs `mshell apply` for the current polarity
+5. signals the apps that don't watch their files to reload: ghostty (`SIGUSR2`) and nvim (`SIGUSR1`)
 
-Schemes are `theme/schemes/<name>.yaml`, or a path. Without a wallpaper the scheme is used as is.
+Files are rewritten in place, so anything watching them (such as the shell watching `config.json`) sees the change.
 
-GTK4, ghostty and nvim follow `color-scheme` themselves. The rest don't, so whenever the setting changes (and on startup) the shell runs `mshell apply <polarity>`, and `mshell build` runs it for the current polarity:
+`mshell wall <dark|light> [image]` sets `wallpaper.<polarity>` and builds. Without an image it opens yazi in `wallpaper.dir` as a file picker (`Enter` picks, `q` cancels).
 
-- GTK4 / libadwaita: `~/.config/gtk-4.0/gtk.css` imports both palettes, each wrapped in `@media (prefers-color-scheme: ...)`, so GTK picks the right one itself
-- GTK3 has no color-scheme preference, so each polarity is its own theme, `base16-dark` / `base16-light`: adw-gtk3 with the palette on top. `apply` sets `gtk-theme`
-- icons: `apply` sets `icon-theme` to `iconTheme.<polarity>`
-- Qt: qt5ct/qt6ct (needs `QT_QPA_PLATFORMTHEME=qt5ct` in the session; qt6ct answers to that name too). `apply` links `qt5ct.conf`/`qt6ct.conf` to the polarity's `qtct.conf`, which sets the color scheme, icon theme and fonts; qt*ct reload on their own when a file in their config directory is replaced
-- fonts: `~/.config/fontconfig/fonts.conf` includes the rendered `fonts.conf`, which puts the configured fonts in front of sans-serif/serif/monospace. It inserts them right before the generic name, not at the head of the list, so a font an app asks for by name still wins
+### Dark and light
 
-`install.sh` writes the GTK3 themes every time, and the GTK4 and fontconfig configs only if missing.
+Both palettes are always rendered; the build doesn't track which one is active. Apps follow the desktop's color-scheme setting (`org.gnome.desktop.interface color-scheme`). Some do that on their own. For the rest, the shell runs `mshell apply <polarity>` on startup and whenever the setting changes.
+
+| App | How it switches |
+| --- | --- |
+| GTK4 / libadwaita | On its own. `~/.config/gtk-4.0/gtk.css` imports both palettes, each wrapped in `@media (prefers-color-scheme: ...)` |
+| ghostty, nvim | On their own |
+| GTK3 | `apply` sets `gtk-theme` to `base16-dark` / `base16-light` (adw-gtk3 with the palette on top). GTK3 has no color-scheme preference, so each palette is a separate theme |
+| Qt | `apply` links `qt5ct.conf` / `qt6ct.conf` to the polarity's `qtct.conf`, which sets the color scheme, icon theme and fonts. qt5ct/qt6ct reload on their own. Needs `QT_QPA_PLATFORMTHEME=qt5ct` in the session (qt6ct also answers to that name) |
+| Icons | `apply` sets `icon-theme` to `iconTheme.<polarity>` |
+
+Fonts don't depend on the polarity. `~/.config/fontconfig/fonts.conf` includes the rendered `fonts.conf`, which puts the configured fonts in front of `sans-serif`, `serif` and `monospace`. They are inserted right before the generic name, not at the top of the list, so a font an app asks for by name still wins.
+
+`install.sh` writes the GTK3 themes every time. It writes the GTK4 and fontconfig configs only if they don't exist yet.
 
 ### Templates
 
-`theme/templates/<path>` renders to `~/.local/state/mshell/<polarity>/<path>`. Variables follow the [builder spec](https://github.com/tinted-theming/home/blob/main/builder.md) (`{{base0D-hex}}`, `{{base0D-rgb-r}}`, `{{base0D-dec-r}}`, `{{scheme-name}}`, `{{scheme-variant}}`, ...), plus `{{output-dir}}` (where the polarity's files are rendered), `{{wallpaper}}`, `{{icon-theme}}`, `{{font-sans}}`, `{{font-serif}}`, `{{font-mono}}` and `{{font-size-applications|desktop|terminal}}`. Only plain `{{name}}` substitution is supported, no mustache sections.
+`theme/templates/<path>` renders to `~/.local/state/mshell/<polarity>/<path>`. Only plain `{{name}}` substitution is supported, with no mustache sections.
+
+| Variable | Value |
+| --- | --- |
+| `{{base0D-hex}}`, `{{base0D-rgb-r}}`, `{{base0D-dec-r}}`, `{{scheme-name}}`, `{{scheme-variant}}`, ... | everything in the [base16 builder spec](https://github.com/tinted-theming/home/blob/main/builder.md) |
+| `{{highlight-hex}}`, `{{highlight-rgb-r}}`, ... | the highlight color, in the same formats as the base colors. Picked from the wallpaper, or `base0D` without one |
+| `{{output-dir}}` | the directory the polarity's files are rendered into |
+| `{{wallpaper}}` | the polarity's wallpaper |
+| `{{icon-theme}}` | `iconTheme.<polarity>` |
+| `{{font-sans}}`, `{{font-serif}}`, `{{font-mono}}` | the configured fonts |
+| `{{font-size-applications}}`, `{{font-size-desktop}}`, `{{font-size-terminal}}` | the configured font sizes |
 
 ## IPC
 
@@ -224,18 +247,18 @@ Paths are absolute, `~/` or relative to the repo.
 | `font.mono` | `""` | templates only |
 | `font.applicationsSize` | `""` | pt, templates and GTK only |
 | `font.terminalSize` | `""` | pt, templates only |
-| `wallpaper.{dark,light}` | `assets/hello-world.png` | `""` for none |
+| `wallpaper.{dark,light}` | `assets/wallpaper-dark.png` / `assets/wallpaper-light.jpg` | `""` for none |
 | `wallpaper.dir` | `~/Pictures` | where `mshell wall` opens its picker |
 | `dateTimeFormat` | `ddd d MMM HH:mm` | `Qt.formatDateTime` |
 | `spacing` | `10` | px |
 | `border` | `1` | px |
 
-## dmenu script
+## dmenu
 
-`scripts/mesa-dmenu` shows stdin lines in the bar launcher and prints the chosen one. Prints nothing on cancel.
+`mshell dmenu` shows stdin lines in the bar launcher and prints the chosen one. Prints nothing on cancel.
 
 ```bash
-printf 'a\nb\n' | scripts/mesa-dmenu
+printf 'a\nb\n' | mshell dmenu
 ```
 
 As the xdg-desktop-portal-wlr screen chooser:
@@ -243,7 +266,7 @@ As the xdg-desktop-portal-wlr screen chooser:
 ```ini
 [screencast]
 chooser_type=dmenu
-chooser_cmd=/path/to/mesa-dmenu
+chooser_cmd=/path/to/mshell dmenu
 ```
 
 ## License
