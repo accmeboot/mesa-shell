@@ -29,6 +29,13 @@ LRGB_FROM_LMS = np.array([
 
 RAMP = [f"base0{i}" for i in "01234567"]
 
+# pixels at least this colourful count towards the highlight hue; below
+# VIVID_FRACTION of them the image reads as greyscale and the highlight is the
+# foreground instead
+VIVID_CHROMA = 0.05
+VIVID_FRACTION = 0.025
+HUE_BINS = 36
+
 
 def srgb_to_linear(c):
     return np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
@@ -91,6 +98,43 @@ def image_tone(path, size=128):
     return hue, chroma
 
 
+def image_peak_hue(path, size=128):
+    img = Image.open(path).convert("RGB").resize((size, size), Image.LANCZOS)
+    rgb = np.asarray(img, dtype=np.float64).reshape(-1, 3) / 255.0
+    L, C, h = to_lch(srgb_to_oklab(rgb))
+
+    vivid = (L > 0.15) & (L < 0.95) & (C > VIVID_CHROMA)
+    if vivid.mean() < VIVID_FRACTION:
+        return None
+
+    # the mode rather than the mean: a mean lands between the colours of a
+    # multi-hue image
+    bins = ((h[vivid] % (2 * math.pi)) / (2 * math.pi) * HUE_BINS).astype(int) % HUE_BINS
+    hist = np.bincount(bins, weights=C[vivid], minlength=HUE_BINS)
+    hist = hist + 0.5 * (np.roll(hist, 1) + np.roll(hist, -1))
+    return (int(hist.argmax()) + 0.5) * 2 * math.pi / HUE_BINS
+
+
+def to_hex(srgb):
+    return "".join(
+        f"{int(round(min(max(float(v), 0.0), 1.0) * 255)):02X}" for v in srgb
+    )
+
+
+def hex_to_lch(hexstr):
+    rgb = np.array([int(hexstr[i:i + 2], 16) / 255.0 for i in (0, 2, 4)])
+    return (float(v) for v in to_lch(srgb_to_oklab(rgb)))
+
+
+def highlight(palette, peak):
+    """base0D's lightness and chroma at the image's dominant hue, or the
+    foreground for a greyscale image."""
+    if peak is None:
+        return palette["base05"]
+    L, C, _ = hex_to_lch(palette["base0D"])
+    return to_hex(clip_to_srgb(L, C, peak))
+
+
 def rotate_toward(h, target, max_rad):
     delta = (target - h + math.pi) % (2 * math.pi) - math.pi
     return h + math.copysign(min(abs(delta), max_rad), delta)
@@ -100,8 +144,7 @@ def retint(scheme, hue, chroma, tint, rotate_deg, max_ramp_chroma):
     out = {}
     rotate_rad = math.radians(rotate_deg)
     for slot, hexstr in scheme.items():
-        rgb = np.array([int(hexstr[i:i + 2], 16) / 255.0 for i in (0, 2, 4)])
-        L, C, h = (float(v) for v in to_lch(srgb_to_oklab(rgb)))
+        L, C, h = hex_to_lch(hexstr)
 
         if hue is None:
             out[slot] = hexstr
@@ -114,10 +157,7 @@ def retint(scheme, hue, chroma, tint, rotate_deg, max_ramp_chroma):
             h2 = rotate_toward(h, hue, rotate_rad)
             C2 = C
 
-        srgb = clip_to_srgb(L, C2, h2)
-        out[slot] = "".join(
-            f"{int(round(min(max(float(v), 0.0), 1.0) * 255)):02X}" for v in srgb
-        )
+        out[slot] = to_hex(clip_to_srgb(L, C2, h2))
     return out
 
 
@@ -157,6 +197,8 @@ def main():
     hue, chroma = image_tone(args.image)
     tinted = retint(palette, hue, chroma, args.tint, args.rotate,
                     args.max_ramp_chroma)
+    peak = image_peak_hue(args.image)
+    accent = highlight(tinted, peak)
 
     if args.report:
         deg = "n/a" if hue is None else f"{math.degrees(hue) % 360:6.1f}°"
@@ -165,12 +207,15 @@ def main():
             mark = "ramp  " if slot in RAMP else "accent"
             print(f"  {slot} {mark}  #{palette[slot]} -> #{tinted[slot]}",
                   file=sys.stderr)
+        deg = "greyscale, base05" if peak is None else f"peak hue {math.degrees(peak):.1f}°"
+        print(f"  highlight #{accent} ({deg})", file=sys.stderr)
 
     name = meta.get("name", "scheme")
     print('system: "base16"')
     print(f'name: "{name} (retinted)"')
     print(f'author: "{meta.get("author", "")}"')
     print(f'variant: "{meta.get("variant", "dark")}"')
+    print(f'highlight: "#{accent.lower()}"')
     print("palette:")
     for slot, val in tinted.items():
         print(f'  {slot}: "#{val.lower()}"')

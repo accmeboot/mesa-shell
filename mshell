@@ -109,6 +109,16 @@ palette_variables() {
       return n
     }
     function out(key, val) { printf "%s\t%s\n", key, val }
+    function color(key, hex,    r, g, b) {
+      r = substr(hex, 1, 2); g = substr(hex, 3, 2); b = substr(hex, 5, 2)
+      out(key "-hex", hex)
+      out(key "-hex-bgr", b g r)
+      out(key "-hex-r", r); out(key "-hex-g", g); out(key "-hex-b", b)
+      out(key "-rgb-r", hex2dec(r)); out(key "-rgb-g", hex2dec(g)); out(key "-rgb-b", hex2dec(b))
+      out(key "-dec-r", sprintf("%.8f", hex2dec(r) / 255))
+      out(key "-dec-g", sprintf("%.8f", hex2dec(g) / 255))
+      out(key "-dec-b", sprintf("%.8f", hex2dec(b) / 255))
+    }
 
     BEGIN { out("scheme-slug", slug) }
 
@@ -117,20 +127,17 @@ palette_variables() {
       val = $0; sub(/^[^:]*:[[:space:]]*/, "", val)
       sub(/[[:space:]]+$/, "", val); gsub(/^["\047]|["\047]$/, "", val)
 
-      if (key ~ /^base0[0-9A-F]$/) {
+      if (key ~ /^(base0[0-9A-F]|highlight)$/) {
         hex = tolower(val); sub(/^#/, "", hex)
-        r = substr(hex, 1, 2); g = substr(hex, 3, 2); b = substr(hex, 5, 2)
-        out(key "-hex", hex)
-        out(key "-hex-bgr", b g r)
-        out(key "-hex-r", r); out(key "-hex-g", g); out(key "-hex-b", b)
-        out(key "-rgb-r", hex2dec(r)); out(key "-rgb-g", hex2dec(g)); out(key "-rgb-b", hex2dec(b))
-        out(key "-dec-r", sprintf("%.8f", hex2dec(r) / 255))
-        out(key "-dec-g", sprintf("%.8f", hex2dec(g) / 255))
-        out(key "-dec-b", sprintf("%.8f", hex2dec(b) / 255))
+        seen[key] = hex
+        color(key, hex)
       } else if (key ~ /^(system|name|author|variant)$/) {
         out("scheme-" key, val)
       }
     }
+
+    # retint.py picks the highlight from the wallpaper; plain schemes use base0D
+    END { if (!("highlight" in seen)) color("highlight", seen["base0D"]) }
   ' "$1"
 }
 
@@ -157,7 +164,7 @@ shell_colors() {
         surface: .["base01-hex"],
         on_surface: .["base02-hex"],
         foreground: .["base05-hex"],
-        highlight: .["base0D-hex"],
+        highlight: .["highlight-hex"],
         attention: .["base0A-hex"],
         ok: .["base0B-hex"],
         critical: .["base08-hex"]
