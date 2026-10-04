@@ -5,6 +5,9 @@ repo=$(dirname "$(readlink -f "$0")")
 config=$repo/config.json
 state=${XDG_STATE_HOME:-$HOME/.local/state}/mshell
 configs=${XDG_CONFIG_HOME:-$HOME/.config}
+polarities=(dark light)
+declare -A cfg=()
+tmp=
 
 usage() {
   cat >&2 <<EOF
@@ -29,41 +32,37 @@ die() {
   exit 1
 }
 
-# config.json is the shell's config too; every key is optional, so missing
-# and empty values fall back to the defaults below
+check_polarity() {
+  [[ $1 == dark || $1 == light ]] || usage
+}
+
 load_config() {
   [[ -r $config ]] || die "missing $config (run install.sh)"
   local assignments
   assignments=$(jq -r '
     def otherwise($default): if . == null or . == "" then $default else . end;
-    def var($name; $value): "\($name)=\($value | tostring | @sh)";
-    var("SCHEME_DARK"; .scheme.dark | otherwise("default-dark")),
-    var("SCHEME_LIGHT"; .scheme.light | otherwise("default-light")),
-    var("WALLPAPER_DARK"; .wallpaper.dark | otherwise("")),
-    var("WALLPAPER_LIGHT"; .wallpaper.light | otherwise("")),
-    var("WALLPAPER_DIR"; .wallpaper.dir | otherwise("~/Pictures")),
-    var("ICON_THEME_DARK"; .iconTheme.dark | otherwise("Papirus-Dark")),
-    var("ICON_THEME_LIGHT"; .iconTheme.light | otherwise("Papirus-Light")),
-    var("RETINT_ROTATE"; .retint.rotate | otherwise(15)),
-    var("RETINT_TINT"; .retint.tint | otherwise(0.15)),
-    var("RETINT_MAX_RAMP_CHROMA"; .retint.maxRampChroma | otherwise(0.030)),
-    var("FONT_SANS"; .font.name | otherwise("sans-serif")),
-    var("FONT_SERIF"; .font.serif | otherwise("serif")),
-    var("FONT_MONO"; .font.mono | otherwise("monospace")),
-    var("FONT_SIZE_DESKTOP"; .font.size | otherwise(14)),
-    var("FONT_SIZE_APPLICATIONS"; .font.applicationsSize | otherwise(12)),
-    var("FONT_SIZE_TERMINAL"; .font.terminalSize | otherwise(16))
+    def var($path; $default):
+      "cfg[\($path)]=\(getpath($path | split(".")) | otherwise($default) | tostring | @sh)";
+    var("scheme.dark"; "default-dark"),
+    var("scheme.light"; "default-light"),
+    var("wallpaper.dark"; ""),
+    var("wallpaper.light"; ""),
+    var("wallpaper.dir"; "~/Pictures"),
+    var("iconTheme.dark"; "Papirus-Dark"),
+    var("iconTheme.light"; "Papirus-Light"),
+    var("retint.rotate"; 15),
+    var("retint.tint"; 0.15),
+    var("retint.maxRampChroma"; 0.030),
+    var("font.name"; "sans-serif"),
+    var("font.serif"; "serif"),
+    var("font.mono"; "monospace"),
+    var("font.size"; 14),
+    var("font.applicationsSize"; 12),
+    var("font.terminalSize"; 16)
   ' "$config") || die "can't read $config"
   eval "$assignments"
 }
 
-polar() {
-  local name="$1_${2^^}"
-  printf '%s' "${!name-}"
-}
-
-# resolves paths the way ConfigService.toUrl does: absolute, ~/ or relative
-# to the repo
 resolve() {
   case $1 in
     "") ;;
@@ -83,23 +82,20 @@ scheme_path() {
 }
 
 generate() {
-  local scheme wallpaper
-  scheme=$(scheme_path "$(polar SCHEME "$1")")
-  wallpaper=$(resolve "$(polar WALLPAPER "$1")")
-  [[ -r $scheme ]] || die "$1: scheme not found: $scheme"
+  local polarity=$1 scheme=$2 wallpaper=$3
+  [[ -r $scheme ]] || die "$polarity: scheme not found: $scheme"
 
   if [[ -z $wallpaper ]]; then
-    cp "$scheme" "$2"
+    cat "$scheme"
     return
   fi
-  [[ -r $wallpaper ]] || die "$1: wallpaper not found: $wallpaper"
+  [[ -r $wallpaper ]] || die "$polarity: wallpaper not found: $wallpaper"
   "$repo/theme/retint.py" \
     --scheme "$scheme" \
     --image "$wallpaper" \
-    --rotate "$RETINT_ROTATE" \
-    --tint "$RETINT_TINT" \
-    --max-ramp-chroma "$RETINT_MAX_RAMP_CHROMA" \
-    >"$2"
+    --rotate "${cfg[retint.rotate]}" \
+    --tint "${cfg[retint.tint]}" \
+    --max-ramp-chroma "${cfg[retint.maxRampChroma]}"
 }
 
 palette_variables() {
@@ -138,7 +134,6 @@ palette_variables() {
       }
     }
 
-    # retint.py picks the highlight from the wallpaper; plain schemes use base0D
     END { if (!("highlight" in seen)) color("highlight", seen["base0D"]) }
   ' "$1"
 }
@@ -146,17 +141,16 @@ palette_variables() {
 config_variables() {
   printf '%s\t%s\n' \
     output-dir "$state/$1" \
-    wallpaper "$(resolve "$(polar WALLPAPER "$1")")" \
-    icon-theme "$(polar ICON_THEME "$1")" \
-    font-sans "$FONT_SANS" \
-    font-serif "$FONT_SERIF" \
-    font-mono "$FONT_MONO" \
-    font-size-applications "$FONT_SIZE_APPLICATIONS" \
-    font-size-desktop "$FONT_SIZE_DESKTOP" \
-    font-size-terminal "$FONT_SIZE_TERMINAL"
+    wallpaper "$2" \
+    icon-theme "${cfg[iconTheme.$1]}" \
+    font-sans "${cfg[font.name]}" \
+    font-serif "${cfg[font.serif]}" \
+    font-mono "${cfg[font.mono]}" \
+    font-size-applications "${cfg[font.applicationsSize]}" \
+    font-size-desktop "${cfg[font.size]}" \
+    font-size-terminal "${cfg[font.terminalSize]}"
 }
 
-# the shell's colors, picked from the palette variables
 shell_colors() {
   jq -Rn '
     [inputs | split("\t") | {(.[0]): .[1]}] | add
@@ -200,36 +194,32 @@ render() {
   ' "$1" "$2"
 }
 
-# expects load_config; extra arguments are a jq filter (and its --arg
-# options) applied to config.json in the same write as the colors, so the
-# shell reloads once
-build() {
-  mkdir -p "$state"
+render_templates() {
+  local variables=$1 out=$2 template
+  while IFS= read -r -d '' template; do
+    template=${template#./}
+    mkdir -p "$(dirname "$out/$template")"
+    render "$variables" "$repo/theme/templates/$template" >"$out/$template"
+  done < <(cd "$repo/theme/templates" && find . -type f ! -name .gitkeep -print0)
+}
 
-  local polarity scheme variables template
-  tmp=$(mktemp -d "$state/.build.XXXXXX")
-  trap 'rm -rf "$tmp"' EXIT
+build_polarity() {
+  local polarity=$1 out=$tmp/$1 variables=$tmp/$1.variables scheme wallpaper
+  scheme=$(scheme_path "${cfg[scheme.$polarity]}")
+  wallpaper=$(resolve "${cfg[wallpaper.$polarity]}")
 
-  for polarity in dark light; do
-    mkdir "$tmp/$polarity"
-    scheme=$(scheme_path "$(polar SCHEME "$polarity")")
-    generate "$polarity" "$tmp/$polarity/scheme.yaml"
+  mkdir "$out"
+  generate "$polarity" "$scheme" "$wallpaper" >"$out/scheme.yaml"
+  {
+    palette_variables "$out/scheme.yaml" "$(basename "$scheme" .yaml)"
+    config_variables "$polarity" "$wallpaper"
+  } >"$variables"
+  shell_colors "$variables" >"$tmp/$polarity.colors.json"
+  render_templates "$variables" "$out"
+}
 
-    variables="$tmp/$polarity.variables"
-    palette_variables "$tmp/$polarity/scheme.yaml" "$(basename "$scheme" .yaml)" >"$variables"
-    config_variables "$polarity" >>"$variables"
-    shell_colors "$variables" >"$tmp/$polarity.colors.json"
-
-    while IFS= read -r -d '' template; do
-      template=${template#./}
-      mkdir -p "$(dirname "$tmp/$polarity/$template")"
-      render "$variables" "$repo/theme/templates/$template" >"$tmp/$polarity/$template"
-    done < <(cd "$repo/theme/templates" && find . -type f ! -name .gitkeep -print0)
-  done
-
-  # rewritten in place so the shell's file watcher sees the change
-  local filter='.colors.dark = $dark | .colors.light = $light'
-  local args=()
+write_config() {
+  local filter='.colors.dark = $dark | .colors.light = $light' args=()
   if (($#)); then
     filter+=" | $1"
     args=("${@:2}")
@@ -238,38 +228,54 @@ build() {
     --argjson light "$(<"$tmp/light.colors.json")" \
     "${args[@]}" "$filter" "$config" >"$tmp/config.json"
   cat "$tmp/config.json" >"$config"
+}
 
-  for polarity in dark light; do
-    mkdir -p "$state/$polarity"
-    cp -R "$tmp/$polarity/." "$state/$polarity/"
-    while IFS= read -r -d '' file; do
-      [[ -e $tmp/$polarity/$file ]] || rm "$state/$polarity/$file"
-    done < <(cd "$state/$polarity" && find . -type f -print0)
-  done
+sync_state() {
+  local dir=$state/$1 file
+  mkdir -p "$dir"
+  cp -R "$tmp/$1/." "$dir/"
+  while IFS= read -r -d '' file; do
+    [[ -e $tmp/$1/$file ]] || rm "$dir/$file"
+  done < <(cd "$dir" && find . -type f -print0)
+  find "$dir" -mindepth 1 -type d -empty -delete
+}
 
+reload_apps() {
   if gsettings writable org.gnome.desktop.interface font-name &>/dev/null; then
-    gsettings set org.gnome.desktop.interface font-name "$FONT_SANS $FONT_SIZE_APPLICATIONS"
-    gsettings set org.gnome.desktop.interface monospace-font-name "$FONT_MONO $FONT_SIZE_APPLICATIONS"
-    apply
+    gsettings set org.gnome.desktop.interface font-name "${cfg[font.name]} ${cfg[font.applicationsSize]}"
+    gsettings set org.gnome.desktop.interface monospace-font-name "${cfg[font.mono]} ${cfg[font.applicationsSize]}"
   fi
-
+  apply
   pkill -USR2 -x ghostty || true
   pkill -USR1 -x nvim || true
 }
 
-# GTK3 and Qt have no color-scheme preference, so the shell runs this whenever
-# the setting changes; GTK4, ghostty and nvim follow it on their own
+build() {
+  mkdir -p "$state"
+  tmp=$(mktemp -d "$state/.build.XXXXXX")
+  trap 'rm -rf "$tmp"' EXIT
+
+  local polarity
+  for polarity in "${polarities[@]}"; do build_polarity "$polarity"; done
+  write_config "$@"
+  for polarity in "${polarities[@]}"; do sync_state "$polarity"; done
+  reload_apps
+}
+
 apply() {
-  local polarity=${1-} icons= qtct
+  local polarity=${1-} icons= qtct gsettings=
+  gsettings writable org.gnome.desktop.interface gtk-theme &>/dev/null && gsettings=1
   if [[ -z $polarity ]]; then
     polarity=light
-    [[ $(gsettings get org.gnome.desktop.interface color-scheme) == *prefer-dark* ]] && polarity=dark
+    [[ -n $gsettings && $(gsettings get org.gnome.desktop.interface color-scheme) == *prefer-dark* ]] && polarity=dark
   fi
-  [[ $polarity == dark || $polarity == light ]] || usage
+  check_polarity "$polarity"
 
-  gsettings set org.gnome.desktop.interface gtk-theme "base16-$polarity"
-  { read -r icons <"$state/$polarity/icon-theme"; } 2>/dev/null || true
-  [[ -n $icons ]] && gsettings set org.gnome.desktop.interface icon-theme "$icons"
+  if [[ -n $gsettings ]]; then
+    gsettings set org.gnome.desktop.interface gtk-theme "base16-$polarity"
+    { read -r icons <"$state/$polarity/icon-theme"; } 2>/dev/null || true
+    [[ -n $icons ]] && gsettings set org.gnome.desktop.interface icon-theme "$icons"
+  fi
   for qtct in qt5ct qt6ct; do
     mkdir -p "$configs/$qtct"
     ln -sfn "$state/$polarity/qtct.conf" "$configs/$qtct/$qtct.conf"
@@ -277,28 +283,28 @@ apply() {
 }
 
 status() {
-  local polarity scheme name swatches key r g b
+  local polarity scheme name swatches key val
   echo "config: $config"
   echo "state:  $state"
-  for polarity in dark light; do
+  for polarity in "${polarities[@]}"; do
     scheme="$state/$polarity/scheme.yaml"
     if [[ ! -r $scheme ]]; then
       printf '%-6s not built\n' "$polarity"
       continue
     fi
     name="" swatches=""
-    while IFS=$'\t' read -r key r; do
+    while IFS=$'\t' read -r key val; do
       case $key in
-        scheme-name) name=$r ;;
-        base0?-rgb-r) IFS=$'\t' read -r _ g && IFS=$'\t' read -r _ b &&
-          swatches+=$'\e[48;2;'"$r;$g;${b}m  "$'\e[0m' ;;
+        scheme-name) name=$val ;;
+        base0?-hex)
+          swatches+=$'\e[48;2;'"$((16#${val:0:2}));$((16#${val:2:2}));$((16#${val:4:2}))m  "$'\e[0m'
+          ;;
       esac
-    done < <(palette_variables "$scheme" "" | grep -E '^(scheme-name|base0.-rgb-)')
+    done < <(palette_variables "$scheme" "")
     printf '%-6s %s %s\n' "$polarity" "$swatches" "$name"
   done
 }
 
-# prints nothing on cancel
 dmenu() {
   local sock="${XDG_RUNTIME_DIR:?}/mesa-shell-dmenu.sock"
   [[ -S $sock ]] || die "shell not running: no $sock"
@@ -307,35 +313,41 @@ dmenu() {
 
 wall() {
   local polarity=${1-} image=${2-} choice
-  [[ $polarity == dark || $polarity == light ]] || usage
+  check_polarity "$polarity"
   load_config
 
   if [[ -z $image ]]; then
     command -v yazi >/dev/null || die "yazi not found"
-    choice=$(mktemp)
-    yazi --chooser-file="$choice" "$(resolve "$WALLPAPER_DIR")"
+    mkdir -p "$state"
+    choice=$(mktemp "$state/.choice.XXXXXX")
+    trap "rm -f ${choice@Q}" EXIT
+    yazi --chooser-file="$choice" "$(resolve "${cfg[wallpaper.dir]}")"
     image=$(head -n 1 "$choice")
     rm -f "$choice"
+    trap - EXIT
     [[ -n $image ]] || exit 0
   fi
   [[ -f $image && -r $image ]] || die "not a readable file: $image"
 
   image=$(readlink -f "$image")
-  printf -v "WALLPAPER_${polarity^^}" '%s' "$image"
+  cfg[wallpaper.$polarity]=$image
   build ".wallpaper.$polarity = \$image" --arg image "$image"
 }
 
+shell() {
+  exec qs -c mesa-shell "$@"
+}
+
 case ${1-} in
-  run) shift; exec qs -c mesa-shell "$@" ;;
+  run) shift; shell "$@" ;;
   build) load_config; build ;;
   status) status ;;
   wall) shift; wall "$@" ;;
   apply) shift; apply "$@" ;;
-  # dmenu is also an IPC target; with a function it goes to the shell
   dmenu)
-    if (($# == 1)); then dmenu; else exec qs -c mesa-shell ipc call "$@"; fi
+    if (($# == 1)); then dmenu; else shell ipc call "$@"; fi
     ;;
-  ipc) shift; exec qs -c mesa-shell ipc "$@" ;;
+  ipc) shift; shell ipc "$@" ;;
   "" | -h | --help) usage ;;
-  *) exec qs -c mesa-shell ipc call "$@" ;;
+  *) shell ipc call "$@" ;;
 esac
