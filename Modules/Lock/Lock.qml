@@ -2,6 +2,7 @@ import Quickshell
 import Quickshell.Wayland
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Shapes
 
 import qs.Services
 import qs.Components
@@ -38,128 +39,190 @@ Scope {
       }
 
       Rectangle {
-        anchors.fill: parent
-
-        color: ThemeService.colors.background
-        opacity: 0.9
-      }
-
-      MesaText {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: ConfigService.spaceMd
+        anchors.topMargin: ConfigService.spaceLg
 
-        text: Qt.formatDateTime(clock.date, ConfigService.dateTimeFormat)
-        font.pointSize: ConfigService.font.size * 1.5
+        implicitWidth: date.implicitWidth + ConfigService.spaceLg * 2
+        implicitHeight: date.implicitHeight + ConfigService.spaceMd * 2
 
-        SystemClock {
-          id: clock
-          precision: SystemClock.Minutes
+        color: ThemeService.colors.background
+
+        MesaText {
+          id: date
+
+          anchors.centerIn: parent
+
+          text: Qt.formatDateTime(clock.date, ConfigService.dateTimeFormat)
+          font.pointSize: ConfigService.font.size * 1.5
+
+          SystemClock {
+            id: clock
+            precision: SystemClock.Minutes
+          }
         }
       }
 
+      Rectangle {
+        id: bar
 
-      RowLayout {
-        anchors.right: parent.right
+        readonly property real stroke: ConfigService.border * 3
+
         anchors.bottom: parent.bottom
-        anchors.margins: ConfigService.spaceLg
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottomMargin: ConfigService.spaceLg
 
-        spacing: ConfigService.spaceLg
+        implicitWidth: row.implicitWidth + ConfigService.spaceMd
+        implicitHeight: row.implicitHeight + ConfigService.spaceMd * 2
 
-        RowLayout {
-          spacing: 0
+        color: ThemeService.colors.background
 
-          MesaButton {
-            Layout.fillWidth: true
+        focus: true
 
-            icon: "application-exit"
-            iconSize: ConfigService.iconSizeLarge
-            onClicked: PowerService.exitSession()
+        Keys.onPressed: event => {
+          if (LockService.authenticating) return;
+
+          if (event.key === Qt.Key_CapsLock) {
+            if (!event.isAutoRepeat) LockService.capsLock = !LockService.capsLock;
+          } else if (event.key === Qt.Key_Escape) {
+            if (LockService.password !== "") flash.trigger(ThemeService.colors.highlight, true);
+            LockService.input("");
+          } else if (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab) {
+          } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+            LockService.submit();
+          } else if (event.key === Qt.Key_Backspace) {
+            if (LockService.password === "") return;
+
+            LockService.input(LockService.password.slice(0, -1));
+            flash.trigger(ThemeService.colors.attention, false);
+          } else {
+            const code = event.text.charCodeAt(0);
+            if (!(code >= 32 && code !== 127)) return;
+
+            if (event.text.toLowerCase() !== event.text.toUpperCase()) {
+              LockService.capsLock = (event.text === event.text.toUpperCase()) !== Boolean(event.modifiers & Qt.ShiftModifier);
+            }
+
+            LockService.input(LockService.password + event.text);
+            flash.trigger(ThemeService.colors.highlight, false);
           }
 
-          MesaButton {
-            Layout.fillWidth: true
-
-            icon: "system-reboot"
-            iconSize: ConfigService.iconSizeLarge
-            onClicked: PowerService.reboot()
-          }
-
-          MesaButton {
-            Layout.fillWidth: true
-
-            icon: "system-shutdown"
-            iconSize: ConfigService.iconSizeLarge
-            onClicked: PowerService.shutdown()
-          }
+          event.accepted = true;
         }
-      }
-
-      ColumnLayout {
-        anchors.centerIn: parent
-
-        spacing: ConfigService.spaceMd
 
         RowLayout {
-          Layout.alignment: Qt.AlignHCenter
+          id: row
+
+          anchors.fill: parent
+          anchors.leftMargin: ConfigService.spaceMd
 
           spacing: ConfigService.spaceMd
 
           MesaIcon {
             name: "im-user"
             size: ConfigService.iconSizeLarge
+            color: LockService.failed ? ThemeService.colors.critical : ThemeService.colors.foreground
           }
 
-          MesaText {
-            text: LockService.user
-            font.pointSize: ConfigService.font.size * 2
-          }
-        }
+          Item {
+            Layout.fillHeight: true
+            Layout.preferredWidth: Math.ceil(longest.width) + ConfigService.spaceMd * 2
 
-        MesaInput {
-          id: input
+            TextMetrics {
+              id: longest
 
-          Layout.preferredWidth: Math.round(ConfigService.font.size * 20)
+              font: status.font
+              text: "CAPS"
+            }
 
-          focus: true
-          horizontalAlignment: TextInput.AlignHCenter
-          echoMode: TextInput.Password
-          passwordCharacter: "*"
-          readOnly: LockService.authenticating
+            MesaText {
+              id: status
 
-          font.pointSize: ConfigService.font.size * 2
+              anchors.centerIn: parent
 
-          text: LockService.authenticating ? "" : LockService.password
+              visible: LockService.authenticating || LockService.capsLock
 
-          topPadding: ConfigService.spaceMd
-          bottomPadding: ConfigService.spaceMd
-
-          borderColor: {
-            if (LockService.failed) return ThemeService.colors.critical;
-            if (LockService.authenticating) return ThemeService.colors.attention;
-            return ThemeService.colors.highlight;
+              text: LockService.authenticating ? "..." : "CAPS"
+              color: ThemeService.colors.attention
+            }
           }
 
-          background: Rectangle {
-            color: ThemeService.colors.background
-            border.color: input.borderColor
-            border.width: ConfigService.border * 2
-          }
+          RowLayout {
+            spacing: 0
 
-          onTextEdited: LockService.input(text)
-          onAccepted: LockService.submit()
+            MesaButton {
+              icon: "application-exit"
+              iconSize: ConfigService.iconSizeLarge
+              onClicked: PowerService.exitSession()
+            }
 
-          Keys.onEscapePressed: LockService.input("")
+            MesaButton {
+              icon: "system-reboot"
+              iconSize: ConfigService.iconSizeLarge
+              onClicked: PowerService.reboot()
+            }
 
-          MesaText {
-            anchors.centerIn: parent
-
-            visible: LockService.authenticating
-
-            text: "Verifying..."
+            MesaButton {
+              icon: "system-shutdown"
+              iconSize: ConfigService.iconSizeLarge
+              onClicked: PowerService.shutdown()
+            }
           }
         }
-      }    
+
+        Shape {
+          id: flash
+
+          readonly property real perimeter: 2 * (width + height - bar.stroke * 2)
+          property real position: 0
+          property real segment: 0
+          property color color: ThemeService.colors.highlight
+
+          function trigger(color: color, full: bool): void {
+            flash.color = color;
+            flash.segment = full ? flash.perimeter : Math.max(flash.height, flash.perimeter / 8);
+            flash.position = full ? 0 : Math.random() * flash.perimeter;
+            fade.restart();
+          }
+
+          anchors.fill: parent
+
+          opacity: 0
+
+          NumberAnimation on opacity {
+            id: fade
+
+            running: false
+            from: 1
+            to: 0
+            duration: 400
+            easing.type: Easing.InQuad
+          }
+
+          ShapePath {
+            strokeColor: flash.color
+            strokeWidth: bar.stroke
+            fillColor: "transparent"
+            strokeStyle: ShapePath.DashLine
+            capStyle: ShapePath.SquareCap
+            joinStyle: ShapePath.MiterJoin
+            dashPattern: [flash.segment / bar.stroke, flash.perimeter * 2 / bar.stroke]
+            dashOffset: (flash.perimeter * 2 + flash.segment - flash.position) / bar.stroke
+
+            startX: bar.stroke / 2
+            startY: bar.stroke / 2
+
+            PathLine { x: flash.width - bar.stroke / 2; y: bar.stroke / 2 }
+            PathLine { x: flash.width - bar.stroke / 2; y: flash.height - bar.stroke / 2 }
+            PathLine { x: bar.stroke / 2; y: flash.height - bar.stroke / 2 }
+            PathLine { x: bar.stroke / 2; y: bar.stroke / 2 }
+            PathLine { x: flash.width - bar.stroke / 2; y: bar.stroke / 2 }
+            PathLine { x: flash.width - bar.stroke / 2; y: flash.height - bar.stroke / 2 }
+            PathLine { x: bar.stroke / 2; y: flash.height - bar.stroke / 2 }
+            PathLine { x: bar.stroke / 2; y: bar.stroke / 2 }
+          }
+        }
+      }
     }
   }
 }

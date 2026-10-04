@@ -8,13 +8,13 @@ import QtQuick
 Singleton {
   id: root
 
-  readonly property string user: Quickshell.env("USER") ?? ""
   readonly property bool authenticating: pam.active
 
   property bool locked: false
   property bool failed: false
 
   property string password: ""
+  property bool capsLock: false
 
   function lock(): void {
     root.password = "";
