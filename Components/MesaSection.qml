@@ -20,7 +20,7 @@ ColumnLayout {
     visible: root.title !== ""
     implicitWidth: headerRow.implicitWidth + ConfigService.spaceMd * 2
     implicitHeight: headerRow.implicitHeight + ConfigService.spaceSm * 2
-    color: ThemeService.colors.surface
+    color: "transparent"
 
     RowLayout {
       id: headerRow
@@ -38,7 +38,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignVCenter
 
         text: root.title
-        color: ThemeService.colors.foreground
+        color: ThemeService.colors.on_surface
         font.capitalization: Font.AllUppercase
         font.letterSpacing: 1
         font.pointSize: Math.max(1, ConfigService.font.size - 1)
