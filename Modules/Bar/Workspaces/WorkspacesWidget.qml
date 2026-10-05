@@ -32,8 +32,9 @@ RowLayout {
 
         visible: workspace.modelData.focused
 
-        anchors.centerIn: parent
-        width: Math.round(ConfigService.font.size)
+        x: Math.floor((parent.width - width) / 2)
+        y: Math.floor((parent.height - height) / 2)
+        width: Math.round(ConfigService.font.size) | 1
         height: width
 
         color: ThemeService.colors.highlight
