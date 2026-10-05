@@ -134,7 +134,9 @@ RowLayout {
           appName = appName.substring(0, item.modelData.id.indexOf("_"));
         }
 
-        return appName.toLowerCase()
+        appName = appName.toLowerCase()
+
+        return appName.charAt(0).toUpperCase() + appName.slice(1)
       }
 
       onClicked: mouse => {
