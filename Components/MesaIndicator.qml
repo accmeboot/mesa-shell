@@ -16,7 +16,7 @@ Item {
   }
 
   property color color: {
-    if (!root.enabled) return ThemeService.colors.on_surface;
+    if (!root.enabled) return root.row ? root.row.disabledColor : ThemeService.disabled;
 
     return root.row ? root.row.contentColor : ThemeService.colors.foreground;
   }

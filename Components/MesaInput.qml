@@ -14,7 +14,7 @@ TextField {
   font.pointSize: ConfigService.font.size
   renderType: Text.NativeRendering
 
-  placeholderTextColor: ThemeService.colors.on_surface
+  placeholderTextColor: ThemeService.muted
   selectionColor: ThemeService.colors.highlight
   selectedTextColor: ThemeService.colors.background
 

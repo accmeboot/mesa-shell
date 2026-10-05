@@ -49,7 +49,7 @@ MesaSection {
       valueColor: {
         const colors = ThemeService.colors;
 
-        if (!deviceRow.device.hasLink) return colors.on_surface;
+        if (!deviceRow.device.hasLink) return deviceRow.mutedColor;
 
         switch (deviceRow.device.state) {
         case ConnectionState.Connecting:

@@ -10,7 +10,7 @@ Rectangle {
   property int iconSize: ConfigService.iconSize
   property color accent: "transparent"
   property color contentColor: root.accented ? ThemeService.colors.background : ThemeService.colors.foreground
-  property color disabledContentColor: root.accented ? ThemeService.colors.background : ThemeService.colors.on_surface
+  property color disabledContentColor: root.accented ? ThemeService.colors.background : ThemeService.disabled
   property bool flat: false
   property bool open: false
   property bool labelVisible: true
@@ -34,7 +34,7 @@ Rectangle {
   readonly property color rowAccent: root.row ? root.row.accentColor : ThemeService.colors.highlight
   readonly property color effectiveContentColor: {
     if (!root.flat) return root.enabled ? root.contentColor : root.disabledContentColor;
-    if (!root.enabled) return ThemeService.colors.on_surface;
+    if (!root.enabled) return root.row ? root.row.disabledColor : ThemeService.disabled;
 
     return root.inverted ? root.rowSurface : root.rowContent;
   }

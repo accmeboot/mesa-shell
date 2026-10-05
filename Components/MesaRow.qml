@@ -31,6 +31,7 @@ Rectangle {
   readonly property bool highlighted: root.containsFocus
   readonly property color contentColor: root.highlighted ? ThemeService.colors.background : ThemeService.colors.foreground
   readonly property color mutedColor: Qt.alpha(root.contentColor, 0.6)
+  readonly property color disabledColor: Qt.alpha(root.contentColor, 0.4)
   readonly property color surfaceColor: root.highlighted ? ThemeService.colors.highlight : ThemeService.colors.background
   readonly property color accentColor: root.highlighted ? ThemeService.colors.background : ThemeService.colors.highlight
 
@@ -181,7 +182,7 @@ Rectangle {
       text: root.hasValue ? root.value : root.fallback
       color: {
         if (root.highlighted) return root.contentColor;
-        return root.hasValue ? root.valueColor : ThemeService.colors.on_surface;
+        return root.hasValue ? root.valueColor : root.mutedColor;
       }
     }
 

@@ -44,7 +44,7 @@ MesaSection {
   MesaRow {
     label: "Discoverable"
     value: root.adapter?.discoverable && root.adapter.discoverableTimeout > 0 ? `resets after ${root.formatTimeout(root.adapter.discoverableTimeout)}` : ""
-    valueColor: ThemeService.colors.on_surface
+    valueColor: ThemeService.muted
     interactive: root.adapter?.enabled ?? false
 
     onClicked: root.adapter.discoverable = !root.adapter.discoverable

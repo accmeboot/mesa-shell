@@ -182,8 +182,9 @@ PopupWindow {
           readonly property real value: row.modelData.value ?? 0
           readonly property color contentColor: row.foreground
           readonly property color surfaceColor: row.color
+          readonly property color disabledColor: Qt.alpha(row.highlighted ? ThemeService.colors.background : ThemeService.colors.foreground, 0.4)
           readonly property color foreground: {
-            if (!row.modelData.enabled) return ThemeService.colors.on_surface;
+            if (!row.modelData.enabled) return ThemeService.disabled;
 
             return row.highlighted ? ThemeService.colors.background : ThemeService.colors.foreground;
           }
@@ -288,7 +289,7 @@ PopupWindow {
 
                   return row.modelData.secret ? "*".repeat(row.modelData.text.length) : row.modelData.text;
                 }
-                color: inputText.empty ? (row.highlighted ? Qt.alpha(row.foreground, 0.6) : ThemeService.colors.on_surface) : row.foreground
+                color: inputText.empty ? Qt.alpha(row.foreground, 0.6) : row.foreground
                 elide: Text.ElideLeft
               }
 

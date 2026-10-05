@@ -50,7 +50,7 @@ MesaPanel {
           return colors.attention;
         case UPowerDeviceState.Empty: return colors.critical;
         case UPowerDeviceState.Discharging: return colors.foreground;
-        default: return colors.on_surface;
+        default: return ThemeService.muted;
         }
       }
     }

@@ -54,7 +54,7 @@ MesaSection {
   MesaRow {
     visible: root.listed.length === 0
     label: root.scanning ? "Scanning" : "No devices"
-    labelColor: root.scanning ? ThemeService.colors.attention : ThemeService.colors.on_surface
+    labelColor: root.scanning ? ThemeService.colors.attention : ThemeService.muted
   }
 
   ScriptModel {
@@ -89,14 +89,14 @@ MesaSection {
         const colors = ThemeService.colors;
 
         if (deviceRow.device.pairing) return colors.attention;
-        if (!deviceRow.device.paired) return colors.on_surface;
+        if (!deviceRow.device.paired) return deviceRow.mutedColor;
 
         switch (deviceRow.device.state) {
         case BluetoothDeviceState.Connected: return colors.ok;
         case BluetoothDeviceState.Connecting:
         case BluetoothDeviceState.Disconnecting:
           return colors.attention;
-        default: return colors.on_surface;
+        default: return deviceRow.mutedColor;
         }
       }
       interactive: true
