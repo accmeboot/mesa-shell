@@ -26,7 +26,6 @@ RowLayout {
 
       text: workspace.modelData.name
       labelVisible: !workspace.modelData.focused
-      acceptedButtons: Qt.LeftButton | Qt.RightButton
 
       Rectangle {
         id: focusSquare
@@ -41,7 +40,7 @@ RowLayout {
       }
 
       Rectangle {
-        visible: (workspace.modelData.occupied ?? false) || workspace.modelData.urgent
+        visible: workspace.modelData.urgent
 
         readonly property int overlap: Math.round(width / 2)
 
@@ -53,13 +52,10 @@ RowLayout {
         width: Math.round(ConfigService.font.size / 2)
         height: width
 
-        color: workspace.modelData.urgent ? ThemeService.colors.critical : Qt.alpha(workspace.effectiveContentColor, 0.6)
+        color: ThemeService.colors.critical
       }
 
-      onClicked: mouse => {
-        if (mouse.button === Qt.RightButton) workspace.modelData.toggle?.();
-        else workspace.modelData.activate();
-      }
+      onClicked: workspace.modelData.activate()
     }
   }
 }

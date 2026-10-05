@@ -11,7 +11,7 @@ import qs.Modules.Bar.Battery
 import qs.Modules.Bar.Bluetooth
 import qs.Modules.Bar.Clock
 import qs.Modules.Bar.Dmenu
-import qs.Modules.Bar.Layout
+import qs.Modules.Bar.Mode
 import qs.Modules.Bar.Network
 import qs.Modules.Bar.Control
 import qs.Modules.Bar.Privacy
@@ -62,15 +62,14 @@ Scope {
           Layout.fillHeight: true
           screen: modelData
         }
-        LayoutWidget {
-          Layout.fillHeight: true
-          screen: modelData
-        }
         DmenuWidget {
           id: dmenu
           Layout.fillHeight: true
           Layout.fillWidth: true
           screen: modelData
+        }
+        ModeWidget {
+          Layout.fillHeight: true
         }
         Item { Layout.fillWidth: true }
       }

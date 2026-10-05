@@ -1,6 +1,6 @@
 # mesa-shell
 
-Status bar, notification daemon and lockscreen for [Quickshell](https://github.com/outfoxxed/quickshell), built for [dwl](https://codeberg.org/dwl/dwl).
+Status bar, notification daemon and lockscreen for [Quickshell](https://github.com/outfoxxed/quickshell), built for [sway](https://swaywm.org).
 
 ![mesa-shell](assets/screenshots/desktop.png)
 
@@ -15,8 +15,7 @@ More screenshots in [`assets/screenshots`](assets/screenshots).
   - bluez: [`Quickshell.Bluetooth`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Bluetooth/)
   - pam: [`Quickshell.Services.Pam`](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.Pam/)
 - [`bluetoothctl`](https://github.com/bluez/bluez) from bluez (pairing agent)
-- [dwl](https://codeberg.org/dwl/dwl) with the [`ipc`](https://codeberg.org/dwl/dwl-patches/src/branch/main/patches/ipc) patch
-  - [`dwlmsg`](https://codeberg.org/notchoc/dwlmsg) (needs a patch for the ipc patch's `focused_geometry` event, see below)
+- [sway](https://swaywm.org): [`Quickshell.I3`](https://quickshell.org/docs/v0.3.1/types/Quickshell.I3/), `swaymsg`
 - [systemd](https://github.com/systemd/systemd)
 - [`gsettings`](https://gitlab.gnome.org/GNOME/glib) from glib2 with gsettings-desktop-schemas (dark theme follows and toggles `org.gnome.desktop.interface color-scheme`)
 - [`brightnessctl`](https://github.com/Hummer12007/brightnessctl) (optional)
@@ -36,36 +35,31 @@ git clone git@github.com:accmeboot/mesa-shell.git ~/setup/mesa-shell
 ~/setup/mesa-shell/install.sh
 ```
 
-`install.sh` installs the packages above from the Arch repos (dwl and dwlmsg aren't packaged), enables NetworkManager and bluetooth, writes the GTK3/GTK4/fontconfig theme files (see Theming), copies `config.example.json` to `config.json` unless it exists, links the repo to `~/.config/quickshell/mesa-shell` and `mshell` to `~/.local/bin`, and runs `mshell build`. It uses `pacman -Syu`, never `-S`: installing against a stale package database is a partial upgrade.
+`install.sh` installs the packages above from the Arch repos (sway itself is left to the compositor setup), enables NetworkManager and bluetooth, writes the GTK3/GTK4/fontconfig theme files (see Theming), copies `config.example.json` to `config.json` unless it exists, links the repo to `~/.config/quickshell/mesa-shell` and `mshell` to `~/.local/bin`, and runs `mshell build`. It uses `pacman -Syu`, never `-S`: installing against a stale package database is a partial upgrade.
 
-Start it from dwl's startup command, with `XDG_CURRENT_DESKTOP=dwl` set so the shell picks the dwl backend:
+Start it from the sway config. sway sets `XDG_CURRENT_DESKTOP=sway`, which picks the sway backend:
 
-```bash
-dwl -s 'mshell run -d'
 ```
+exec mshell run
 
-`config.h` keys:
-
-```c
-{ MODKEY, XKB_KEY_d,          spawn, SHCMD("mshell dmenu toggle") },
-{ MODKEY, XKB_KEY_p,          spawn, SHCMD("mshell panel toggle audio") },
-{ MODKEY, XKB_KEY_n,          spawn, SHCMD("mshell panel toggle network") },
-{ MODKEY, XKB_KEY_c,          spawn, SHCMD("mshell panel toggle bluetooth") },
-{ MODKEY, XKB_KEY_t,          spawn, SHCMD("mshell panel toggle tray") },
-{ MODKEY, XKB_KEY_q,          spawn, SHCMD("mshell panel toggle control") },
-{ MODKEY, XKB_KEY_grave,      spawn, SHCMD("mshell theme toggle") },
-{ MODKEY, XKB_KEY_backslash,  spawn, SHCMD("mshell notifications toggle") },
-{ MODKEY, XKB_KEY_bracketleft,  spawn, SHCMD("mshell notifications dismissLast") },
-{ MODKEY, XKB_KEY_bracketright, spawn, SHCMD("mshell notifications dismissAll") },
+bindsym $mod+d exec mshell dmenu toggle
+bindsym $mod+p exec mshell panel toggle audio
+bindsym $mod+n exec mshell panel toggle network
+bindsym $mod+c exec mshell panel toggle bluetooth
+bindsym $mod+t exec mshell panel toggle tray
+bindsym $mod+q exec mshell panel toggle control
+bindsym $mod+grave exec mshell theme toggle
+bindsym $mod+backslash exec mshell notifications toggle
+bindsym $mod+bracketleft exec mshell notifications dismissLast
+bindsym $mod+bracketright exec mshell notifications dismissAll
 ```
-
-`dwlmsg` from upstream aborts on dwl's ipc patch: the patch adds a `focused_geometry` event that dwlmsg's bundled protocol doesn't know, and libwayland aborts on events without a listener. Update dwlmsg's `protocols/dwl-ipc-unstable-v2.xml` to the one from the ipc patch and add an empty `focused_geometry` listener. The layout widget also expects `dwlmsg -w` to print a `layout_index <n>` line from the `layout` event.
 
 ## Modules
 
-- **Bar**: tags, layout, launcher, clock and tray
-  - left click a tag to view it, right click to toggle it into the view
-  - layout, audio, network, battery, bluetooth and control each open their own panel from the bar
+- **Bar**: workspaces, binding mode, launcher, clock and tray
+  - click a workspace to switch to it
+  - the current binding mode (`resize`, ...) shows next to the workspaces while it isn't `default`
+  - audio, network, battery, bluetooth and control each open their own panel from the bar
   - the control panel holds the brightness slider, the dark theme and do-not-disturb toggles and the session actions (lock, suspend, log out, restart, shut down)
   - the dark theme toggle switches the desktop's `color-scheme` setting, and the shell follows that setting whoever changes it
   - privacy indicators for microphone, camera and screen share, with a panel listing the apps using them
@@ -80,10 +74,8 @@ dwl -s 'mshell run -d'
 | ![Network panel](assets/screenshots/network.png) | ![Bluetooth panel](assets/screenshots/bluetooth.png) |
 | **Audio** | **Control** |
 | ![Audio panel](assets/screenshots/audio.png) | ![Control panel](assets/screenshots/control.png) |
-| **Battery** | |
-| ![Battery panel](assets/screenshots/battery.png) | |
-| **Layout** | **Privacy** |
-| ![Layout panel](assets/screenshots/layout.png) | ![Privacy panel](assets/screenshots/privacy.png) |
+| **Battery** | **Privacy** |
+| ![Battery panel](assets/screenshots/battery.png) | ![Privacy panel](assets/screenshots/privacy.png) |
 | **Launcher** | **Notification** |
 | ![dmenu launcher](assets/screenshots/dmenu.png) | ![Notification](assets/screenshots/notification.png) |
 | **Tray menu** | **Lock screen** |
@@ -131,6 +123,7 @@ Both palettes are always rendered; the build doesn't track which one is active. 
 | GTK3 | `apply` sets `gtk-theme` to `base16-dark` / `base16-light` (adw-gtk3 with the palette on top). GTK3 has no color-scheme preference, so each palette is a separate theme |
 | Qt | `apply` links `qt5ct.conf` / `qt6ct.conf` to the polarity's `qtct.conf`, which sets the color scheme, icon theme and fonts. qt5ct/qt6ct reload on their own. Needs `QT_QPA_PLATFORMTHEME=qt5ct` in the session (qt6ct also answers to that name) |
 | Icons | `apply` sets `icon-theme` to `iconTheme.<polarity>` |
+| sway | `apply` points `~/.local/state/mshell/current` at the polarity and sends its `sway` file (the `client.*` border colors) to the running sway. Include `~/.local/state/mshell/current/sway` in the sway config so a reload or a new session picks it up too |
 
 Fonts don't depend on the polarity. `~/.config/fontconfig/fonts.conf` includes the rendered `fonts.conf`, which puts the configured fonts in front of `sans-serif`, `serif` and `monospace`. They are inserted right before the generic name, not at the top of the list, so a font an app asks for by name still wins.
 
@@ -161,7 +154,7 @@ Fonts don't depend on the polarity. `~/.config/fontconfig/fonts.conf` includes t
 | `notifications` | `toggle`, `isDoNotDisturb`, `dismissLast`, `dismissAll` |
 | `config` | `reload` |
 
-Panel names: `layout`, `audio`, `network`, `bluetooth`, `battery`, `control`, `tray`, `privacy`. `privacy` only opens while a microphone, camera or screen share is in use.
+Panel names: `audio`, `network`, `bluetooth`, `battery`, `control`, `tray`, `privacy`. `privacy` only opens while a microphone, camera or screen share is in use.
 
 ```bash
 mshell panel toggle audio

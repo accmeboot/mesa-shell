@@ -280,6 +280,10 @@ apply() {
     mkdir -p "$configs/$qtct"
     ln -sfn "$state/$polarity/qtct.conf" "$configs/$qtct/$qtct.conf"
   done
+  ln -sfn "$polarity" "$state/current"
+  if [[ -n ${SWAYSOCK-} ]] && command -v swaymsg >/dev/null; then
+    swaymsg -q -- "$(paste -sd ';' "$state/current/sway")" || true
+  fi
 }
 
 status() {
