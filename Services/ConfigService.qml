@@ -32,6 +32,8 @@ Singleton {
   readonly property int iconSizeSmall: Math.round(root.font.size * 1.2)
   readonly property int iconSizeLarge: Math.round(root.font.size * 2)
   readonly property int controlHeight: root.iconSize + root.spaceMd
+  readonly property int panelMinWidth: Math.round(root.font.size * 25)
+  readonly property int panelMaxWidth: Math.round(root.font.size * 28)
 
   property bool settled: false
 

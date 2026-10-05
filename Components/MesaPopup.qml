@@ -14,8 +14,8 @@ Scope {
   property Item anchorItem: null
   property string namespace: "mesa-popup"
   property int keyboardFocus: WlrKeyboardFocus.None
-  readonly property int minimumWidth: Math.round(ConfigService.font.size * 25)
-  readonly property int maximumWidth: Math.max(root.minimumWidth, Math.round((root.screen?.width ?? 0) / 3))
+  readonly property int minimumWidth: Math.min(ConfigService.panelMinWidth, root.maximumWidth)
+  readonly property int maximumWidth: Math.min(ConfigService.panelMaxWidth, root.screen?.width || Infinity)
 
   readonly property real anchorLeft: {
     const item = root.anchorItem;

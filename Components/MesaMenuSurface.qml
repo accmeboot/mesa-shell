@@ -151,7 +151,7 @@ PopupWindow {
     id: background
 
     anchors.fill: parent
-    implicitWidth: entries.implicitWidth + border.width * 2
+    implicitWidth: Math.min(ConfigService.panelMaxWidth, entries.implicitWidth + border.width * 2)
     implicitHeight: entries.implicitHeight + border.width * 2
     color: ThemeService.colors.background
     border.width: ConfigService.border
@@ -261,12 +261,13 @@ PopupWindow {
               }
             }
 
-            MesaText {
+            MesaMarquee {
               Layout.fillWidth: !row.isSlider
 
               visible: !row.isInput
               text: row.modelData.text
               color: row.foreground
+              running: row.highlighted
             }
 
             Item {

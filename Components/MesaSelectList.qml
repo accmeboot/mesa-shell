@@ -29,7 +29,7 @@ Rectangle {
       widest = Math.max(widest, metrics.advanceWidth(option.text));
     }
 
-    return Math.ceil(widest) + root.contentMargin * 2 + root.border.width * 2;
+    return Math.min(ConfigService.panelMaxWidth, Math.ceil(widest) + root.contentMargin * 2 + root.border.width * 2);
   }
   implicitHeight: Math.min(root.options.length, root.maximumRows) * root.rowHeight + root.border.width * 2
 
@@ -73,15 +73,14 @@ Rectangle {
         onClicked: root.selected(option.modelData.value)
       }
 
-      MesaText {
+      MesaMarquee {
         anchors.fill: parent
         anchors.leftMargin: root.contentMargin - root.border.width
         anchors.rightMargin: root.contentMargin - root.border.width
 
         text: option.modelData.text
         color: option.highlighted ? ThemeService.colors.background : ThemeService.colors.foreground
-        verticalAlignment: Text.AlignVCenter
-        elide: Text.ElideRight
+        running: option.highlighted
       }
     }
   }

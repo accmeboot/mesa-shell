@@ -152,22 +152,22 @@ Rectangle {
 
       spacing: 0
 
-      MesaText {
+      MesaMarquee {
         Layout.fillWidth: true
 
         visible: root.label !== ""
         text: root.label
         color: root.highlighted ? root.contentColor : root.labelColor
-        elide: Text.ElideRight
+        running: root.highlighted
       }
 
-      MesaText {
+      MesaMarquee {
         Layout.fillWidth: true
 
         visible: root.sublabel !== ""
         text: root.sublabel
         color: root.mutedColor
-        elide: Text.ElideRight
+        running: root.highlighted
       }
     }
 

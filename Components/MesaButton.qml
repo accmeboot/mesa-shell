@@ -60,15 +60,15 @@ Rectangle {
   Keys.onEnterPressed: root.clicked({ button: Qt.LeftButton })
   Keys.onSpacePressed: root.clicked({ button: Qt.LeftButton })
 
-  MesaText {
+  MesaMarquee {
     id: label
     visible: !root.icon && root.labelVisible
     anchors.centerIn: parent
     width: Math.max(0, Math.min(root.contentWidth, root.width - root.horizontalPadding * 2))
     text: root.text
     color: root.effectiveContentColor
-    elide: Text.ElideRight
     textFormat: Text.StyledText
+    running: label.visible && (root.open || root.activeFocus || mouseArea.containsMouse)
   }
 
   Loader {
