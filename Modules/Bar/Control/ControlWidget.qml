@@ -3,7 +3,7 @@ import qs.Components
 
 MesaPanelWidget {
   panel: "control"
-  icon: "pan-down"
+  icon: "faders"
 
   content: ControlPanel {
     onRequestClose: PanelService.close("control")

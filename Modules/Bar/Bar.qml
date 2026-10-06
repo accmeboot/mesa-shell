@@ -111,6 +111,13 @@ Scope {
           id: audio
           Layout.fillHeight: true
           screen: modelData
+          output: true
+        }
+        AudioWidget {
+          id: microphone
+          Layout.fillHeight: true
+          screen: modelData
+          output: false
         }
         BluetoothWidget {
           id: bluetooth

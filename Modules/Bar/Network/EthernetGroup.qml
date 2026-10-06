@@ -12,7 +12,6 @@ MesaSection {
   readonly property var devices: Networking.devices.values.filter(device => device.type === DeviceType.Wired)
   readonly property alias count: repeater.count
 
-  title: "Ethernet"
   visible: root.count > 0
 
   ScriptModel {

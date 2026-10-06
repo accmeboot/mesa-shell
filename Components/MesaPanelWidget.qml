@@ -10,29 +10,23 @@ RowLayout {
   required property var screen
   required property string panel
 
-  property string icon
-  property color iconColor: ThemeService.colors.foreground
-  property var icons: [{ icon: root.icon, color: root.iconColor }]
+  property alias icon: button.icon
+  property alias iconColor: button.contentColor
+  property alias accent: button.accent
   property Component content: null
 
   readonly property bool isOpen: root.visible && PanelService.current === root.panel && PanelService.screen === root.screen.name
 
   spacing: 0
 
-  Repeater {
-    model: root.icons
+  MesaButton {
+    id: button
 
-    MesaButton {
-      required property var modelData
+    Layout.fillHeight: true
 
-      Layout.fillHeight: true
+    open: root.isOpen
 
-      icon: modelData.icon
-      contentColor: modelData.color
-      open: root.isOpen
-
-      onClicked: PanelService.toggle(root.panel, root.screen.name)
-    }
+    onClicked: PanelService.toggle(root.panel, root.screen.name)
   }
 
   MesaPopup {

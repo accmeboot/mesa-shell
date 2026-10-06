@@ -21,27 +21,32 @@ Singleton {
       if (!source || !target) continue;
 
       if (source.type === PwNodeType.AudioSource && target.type === PwNodeType.AudioInStream) {
-        users.push({ kind: "mic", app: root.appName(target), device: source.description || source.name });
+        users.push({ kind: "mic", app: root.appName(target) });
       } else if (source.type === PwNodeType.VideoSource) {
-        const camera = Boolean(source.properties["device.api"]);
-
-        users.push({ kind: camera ? "camera" : "screen", app: root.appName(target), device: camera ? source.description || source.name : "" });
+        users.push({ kind: source.properties["device.api"] ? "camera" : "screen", app: root.appName(target) });
       }
     }
 
     return users;
   }
 
-  readonly property var users: root.unique(root.pipewireUsers.concat(root.deviceUsers))
+  readonly property var apps: {
+    const apps = new Map();
 
-  readonly property var micUsers: root.users.filter(user => user.kind === "mic")
-  readonly property var cameraUsers: root.users.filter(user => user.kind === "camera")
-  readonly property var screenUsers: root.users.filter(user => user.kind === "screen")
+    for (const user of root.pipewireUsers.concat(root.deviceUsers)) {
+      const key = user.app.toLowerCase();
 
-  readonly property bool micActive: root.micUsers.length > 0
-  readonly property bool cameraActive: root.cameraUsers.length > 0
-  readonly property bool screenActive: root.screenUsers.length > 0
-  readonly property bool active: root.micActive || root.cameraActive || root.screenActive
+      if (!apps.has(key)) apps.set(key, { app: user.app, kinds: [] });
+
+      const kinds = apps.get(key).kinds;
+
+      if (!kinds.includes(user.kind)) kinds.push(user.kind);
+    }
+
+    return [...apps.values()];
+  }
+
+  readonly property bool active: root.apps.length > 0
 
   function cleanName(name: string): string {
     return name.replace(/^\./, "").replace(/-wrapped$/, "");
@@ -53,28 +58,15 @@ Singleton {
     return root.cleanName(props["application.name"] || props["application.process.binary"] || node.description || node.name || "Unknown");
   }
 
-  function unique(users: var): var {
-    const seen = new Set();
-
-    return users.filter(user => {
-      const key = `${user.kind}\t${user.app.toLowerCase()}\t${user.device}`;
-
-      if (seen.has(key)) return false;
-
-      seen.add(key);
-      return true;
-    });
-  }
-
   function parseDevices(text: string): void {
     const users = [];
 
     for (const line of text.split("\n")) {
-      const [device, comm] = line.split("\t");
+      const comm = line.trim();
 
-      if (!device || !comm || /^(pipewire|wireplumber)/.test(comm)) continue;
+      if (!comm || /^(pipewire|wireplumber)/.test(comm)) continue;
 
-      users.push({ kind: "camera", app: root.cleanName(comm), device: device });
+      users.push({ kind: "camera", app: root.cleanName(comm) });
     }
 
     root.deviceUsers = users;
@@ -90,7 +82,7 @@ Singleton {
   Process {
     id: scan
 
-    command: ["sh", "-c", "for d in /dev/video*; do [ -e \"$d\" ] || continue; for p in $(fuser \"$d\" 2>/dev/null); do printf '%s\\t%s\\n' \"$d\" \"$(cat /proc/$p/comm 2>/dev/null)\"; done; done"]
+    command: ["sh", "-c", "for d in /dev/video*; do [ -e \"$d\" ] || continue; for p in $(fuser \"$d\" 2>/dev/null); do cat /proc/$p/comm 2>/dev/null; done; done"]
 
     stdout: StdioCollector {
       onStreamFinished: root.parseDevices(this.text)

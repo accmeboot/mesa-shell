@@ -9,7 +9,6 @@ QtObject {
   property string icon: ""
   property bool enabled: true
   property bool isSeparator: false
-  property bool isHeader: false
   property bool isInput: false
   property bool secret: false
   property string placeholder: ""

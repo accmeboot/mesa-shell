@@ -1,42 +1,34 @@
 import QtQuick
+import QtQuick.Layouts
 
 import qs.Services
 import qs.Components
 
 MesaPanel {
-  id: root
-
-  component UserSection: MesaSection {
-    id: section
-
-    property var users: []
-
-    visible: section.users.length > 0
-
+  MesaSection {
     Repeater {
-      model: section.users
+      model: PrivacyService.apps
 
       MesaRow {
+        id: appRow
+
         required property var modelData
 
-        label: modelData.app
-        value: modelData.device
+        label: appRow.modelData.app
+
+        Repeater {
+          model: ["mic", "camera", "screen"].filter(kind => appRow.modelData.kinds.includes(kind))
+
+          MesaIcon {
+            required property string modelData
+
+            Layout.alignment: Qt.AlignVCenter
+
+            name: ({ mic: "audio-input-microphone-high", camera: "camera-web", screen: "screen-shared" })[modelData]
+            size: ConfigService.iconSizeSmall
+          }
+        }
       }
     }
-  }
-
-  UserSection {
-    title: "Microphone"
-    users: PrivacyService.micUsers
-  }
-
-  UserSection {
-    title: "Camera"
-    users: PrivacyService.cameraUsers
-  }
-
-  UserSection {
-    title: "Screen share"
-    users: PrivacyService.screenUsers
   }
 }

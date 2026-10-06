@@ -22,8 +22,6 @@ MesaSection {
 
   property BluetoothDevice pairingDevice: null
 
-  title: "Devices"
-
   Component.onDestruction: if (root.adapter) root.adapter.discovering = false
 
   Binding {

@@ -20,8 +20,6 @@ MesaPanel {
   }
 
   MesaSection {
-    title: "Battery"
-
     visible: root.available
 
     MesaRow {

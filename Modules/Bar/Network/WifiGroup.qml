@@ -12,7 +12,6 @@ MesaSection {
   readonly property WifiDevice device: Networking.devices.values.find(device => device.type === DeviceType.Wifi) || null
   readonly property var networks: root.device && Networking.wifiEnabled ? root.device.networks.values : []
 
-  title: "Wi-Fi"
   visible: root.device !== null
 
   Binding {
@@ -22,7 +21,7 @@ MesaSection {
   }
 
   MesaRow {
-    label: "Enabled"
+    label: "Wi-Fi"
     value: !Networking.wifiHardwareEnabled ? "Blocked by rfkill" : ""
     valueColor: ThemeService.colors.critical
     interactive: Networking.wifiHardwareEnabled

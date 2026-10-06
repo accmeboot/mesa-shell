@@ -105,6 +105,10 @@ Rectangle {
     onClicked: root.press()
   }
 
+  HoverHandler {
+    id: hover
+  }
+
   RowLayout {
     id: content
 
@@ -151,7 +155,7 @@ Rectangle {
         visible: root.label !== ""
         text: root.label
         color: root.labelColor
-        running: root.highlighted
+        running: root.highlighted || hover.hovered
       }
 
       MesaMarquee {
@@ -160,7 +164,7 @@ Rectangle {
         visible: root.sublabel !== ""
         text: root.sublabel
         color: ThemeService.muted
-        running: root.highlighted
+        running: root.highlighted || hover.hovered
       }
     }
 

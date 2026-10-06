@@ -44,6 +44,7 @@ exec mshell run
 
 bindsym $mod+d exec mshell dmenu toggle
 bindsym $mod+p exec mshell panel toggle audio
+bindsym $mod+Shift+p exec mshell panel toggle microphone
 bindsym $mod+n exec mshell panel toggle network
 bindsym $mod+c exec mshell panel toggle bluetooth
 bindsym $mod+t exec mshell panel toggle tray
@@ -59,10 +60,11 @@ bindsym $mod+bracketright exec mshell notifications dismissAll
 - **Bar**: workspaces, binding mode, launcher, clock and tray
   - click a workspace to switch to it
   - the current binding mode (`resize`, ...) shows next to the workspaces while it isn't `default`
-  - audio, network, battery, bluetooth and control each open their own panel from the bar
+  - audio, microphone, network, battery, bluetooth and control each open their own panel from the bar
+  - the audio panel holds the output devices and playback streams, the microphone panel the input devices and recording streams
   - the control panel holds the brightness slider, the dark theme and do-not-disturb toggles and the session actions (lock, suspend, log out, restart, shut down)
   - the dark theme toggle switches the desktop's `color-scheme` setting, and the shell follows that setting whoever changes it
-  - privacy indicators for microphone, camera and screen share, with a panel listing the apps using them
+  - a privacy indicator while the microphone, camera or screen share is in use, with a panel listing each app and what it uses
 - **Notifications**: `org.freedesktop.Notifications` daemon
 - **Lock**: `ext-session-lock-v1` lockscreen
 - **Wallpaper**: background layer

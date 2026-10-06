@@ -20,11 +20,6 @@ MesaPanel {
     signal confirmed()
 
     MesaMenuEntry {
-      isHeader: true
-      text: "Are you sure?"
-    }
-
-    MesaMenuEntry {
       text: "Confirm"
 
       onTriggered: confirmMenu.confirmed()
@@ -34,8 +29,6 @@ MesaPanel {
   BrightnessGroup {}
 
   MesaSection {
-    title: "Settings"
-
     MesaRow {
       label: "Dark theme"
       interactive: true
@@ -70,8 +63,6 @@ MesaPanel {
   }
 
   MesaSection {
-    title: "Session"
-
     MesaRow {
       id: lockRow
 

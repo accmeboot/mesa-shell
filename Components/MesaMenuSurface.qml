@@ -55,7 +55,7 @@ PopupWindow {
 
       const entry = entries[index];
 
-      if (entry.isSeparator || entry.isHeader || !entry.enabled) continue;
+      if (entry.isSeparator || !entry.enabled) continue;
 
       root.currentIndex = index;
       return;
@@ -65,7 +65,7 @@ PopupWindow {
   function activate(): void {
     const entry = root.entryAt(root.currentIndex);
 
-    if (!entry || entry.isSeparator || entry.isHeader || !entry.enabled) return;
+    if (!entry || entry.isSeparator || !entry.enabled) return;
 
     if (entry.slider) return;
 
@@ -120,6 +120,7 @@ PopupWindow {
   anchor.edges: root.submenu ? Edges.Right | Edges.Top : Edges.Bottom | Edges.Left
   anchor.gravity: root.submenu ? Edges.Right | Edges.Bottom : Edges.Bottom | Edges.Right
   anchor.adjustment: PopupAdjustment.Flip | PopupAdjustment.Slide
+  anchor.margins.top: root.submenu ? -ConfigService.border : 0
   implicitWidth: background.implicitWidth
   implicitHeight: background.implicitHeight
 
@@ -177,7 +178,6 @@ PopupWindow {
 
           readonly property bool highlighted: row.index === root.currentIndex
           readonly property bool isSlider: row.modelData.slider ?? false
-          readonly property bool isHeader: row.modelData.isHeader ?? false
           readonly property bool isInput: row.modelData.isInput ?? false
           readonly property real value: row.modelData.value ?? 0
           readonly property color surfaceColor: row.color
@@ -186,13 +186,11 @@ PopupWindow {
           Layout.fillWidth: true
           implicitWidth: {
             if (row.modelData.isSeparator) return 0;
-            if (row.isHeader) return headerText.implicitWidth + root.rowPadding * 2;
 
             return content.implicitWidth + root.rowPadding * 2;
           }
           implicitHeight: {
             if (row.modelData.isSeparator) return ConfigService.border;
-            if (row.isHeader) return headerText.implicitHeight + ConfigService.spaceSm * 2;
 
             return Math.max(content.implicitHeight, ConfigService.controlHeight);
           }
@@ -201,38 +199,10 @@ PopupWindow {
             return row.highlighted ? ThemeService.selection : ThemeService.colors.background;
           }
 
-          MesaText {
-            id: headerText
-
-            visible: row.isHeader
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: root.rowPadding
-            anchors.rightMargin: root.rowPadding
-            text: row.modelData.text
-            color: ThemeService.muted
-            font.bold: true
-            font.capitalization: Font.AllUppercase
-            font.letterSpacing: 1
-            font.pointSize: Math.max(1, ConfigService.font.size - 1)
-            elide: Text.ElideRight
-          }
-
-          Rectangle {
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-
-            visible: row.isHeader
-            height: ConfigService.border
-            color: ThemeService.colors.on_surface
-          }
-
           RowLayout {
             id: content
 
-            visible: !row.modelData.isSeparator && !row.isHeader
+            visible: !row.modelData.isSeparator
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
@@ -348,7 +318,7 @@ PopupWindow {
 
           MouseArea {
             anchors.fill: parent
-            enabled: !row.modelData.isSeparator && !row.isHeader && row.modelData.enabled
+            enabled: !row.modelData.isSeparator && row.modelData.enabled
             acceptedButtons: row.isSlider ? Qt.NoButton : Qt.LeftButton
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor

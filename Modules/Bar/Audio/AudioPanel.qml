@@ -5,12 +5,12 @@ import qs.Components
 MesaPanel {
   id: root
 
-  readonly property var nodes: Pipewire.nodes.values.filter(node => node.audio)
+  required property bool output
 
-  readonly property var sinks: root.nodes.filter(node => node.isSink && !node.isStream)
-  readonly property var sources: root.nodes.filter(node => !node.isSink && !node.isStream)
-  readonly property var playbacks: root.nodes.filter(node => node.isStream && node.isSink && !root.isMonitor(node))
-  readonly property var recordings: root.nodes.filter(node => node.isStream && !node.isSink && !root.isMonitor(node))
+  readonly property var nodes: Pipewire.nodes.values.filter(node => node.audio && node.isSink === root.output)
+
+  readonly property var devices: root.nodes.filter(node => !node.isStream)
+  readonly property var streams: root.nodes.filter(node => node.isStream && !root.isMonitor(node))
 
   function isMonitor(node: PwNode): bool {
     const monitor = node.properties["stream.monitor"];
@@ -22,32 +22,16 @@ MesaPanel {
   }
 
   AudioDeviceGroup {
-    title: "Output"
+    nodes: root.devices
+    defaultNode: root.output ? Pipewire.defaultAudioSink : Pipewire.defaultAudioSource
 
-    nodes: root.sinks
-    defaultNode: Pipewire.defaultAudioSink
-
-    onNodeSelected: node => Pipewire.preferredDefaultAudioSink = node
-  }
-
-  AudioDeviceGroup {
-    title: "Input"
-
-    nodes: root.sources
-    defaultNode: Pipewire.defaultAudioSource
-
-    onNodeSelected: node => Pipewire.preferredDefaultAudioSource = node
+    onNodeSelected: node => {
+      if (root.output) Pipewire.preferredDefaultAudioSink = node;
+      else Pipewire.preferredDefaultAudioSource = node;
+    }
   }
 
   AudioNodeGroup {
-    title: "Playback"
-
-    nodes: root.playbacks
-  }
-
-  AudioNodeGroup {
-    title: "Recording"
-
-    nodes: root.recordings
+    nodes: root.streams
   }
 }

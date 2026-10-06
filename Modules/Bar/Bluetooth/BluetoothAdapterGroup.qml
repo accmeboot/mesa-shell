@@ -19,7 +19,6 @@ MesaSection {
     return `${seconds}s`;
   }
 
-  title: "Adapter"
   visible: root.adapter !== null
 
   MesaRow {

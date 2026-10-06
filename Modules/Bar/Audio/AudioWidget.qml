@@ -5,14 +5,23 @@ import qs.Components
 MesaPanelWidget {
   id: root
 
-  readonly property PwNode sink: Pipewire.defaultAudioSink
+  required property bool output
 
-  panel: "audio"
-  icon: (root.sink?.audio?.muted ?? true) ? "audio-volume-muted" : "audio-volume-high"
+  readonly property PwNode node: root.output ? Pipewire.defaultAudioSink : Pipewire.defaultAudioSource
+  readonly property bool muted: root.node?.audio?.muted ?? true
 
-  content: AudioPanel {}
+  panel: root.output ? "audio" : "microphone"
+  icon: {
+    if (root.output) return root.muted ? "audio-volume-muted" : "audio-volume-high";
+
+    return root.muted ? "audio-input-microphone-muted" : "audio-input-microphone-high";
+  }
+
+  content: AudioPanel {
+    output: root.output
+  }
 
   PwObjectTracker {
-    objects: root.sink ? [root.sink] : []
+    objects: root.node ? [root.node] : []
   }
 }
