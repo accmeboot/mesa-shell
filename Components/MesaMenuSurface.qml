@@ -180,14 +180,8 @@ PopupWindow {
           readonly property bool isHeader: row.modelData.isHeader ?? false
           readonly property bool isInput: row.modelData.isInput ?? false
           readonly property real value: row.modelData.value ?? 0
-          readonly property color contentColor: row.foreground
           readonly property color surfaceColor: row.color
-          readonly property color disabledColor: Qt.alpha(row.highlighted ? ThemeService.colors.background : ThemeService.colors.foreground, 0.4)
-          readonly property color foreground: {
-            if (!row.modelData.enabled) return ThemeService.disabled;
-
-            return row.highlighted ? ThemeService.colors.background : ThemeService.colors.foreground;
-          }
+          readonly property color foreground: row.modelData.enabled ? ThemeService.colors.foreground : ThemeService.disabled
 
           Layout.fillWidth: true
           implicitWidth: {
@@ -204,9 +198,7 @@ PopupWindow {
           }
           color: {
             if (row.modelData.isSeparator) return ThemeService.colors.on_surface;
-            if (row.isHeader) return ThemeService.colors.surface;
-
-            return row.highlighted ? ThemeService.colors.highlight : ThemeService.colors.background;
+            return row.highlighted ? ThemeService.selection : ThemeService.colors.background;
           }
 
           MesaText {
@@ -219,11 +211,22 @@ PopupWindow {
             anchors.leftMargin: root.rowPadding
             anchors.rightMargin: root.rowPadding
             text: row.modelData.text
-            color: ThemeService.colors.foreground
+            color: ThemeService.muted
+            font.bold: true
             font.capitalization: Font.AllUppercase
             font.letterSpacing: 1
             font.pointSize: Math.max(1, ConfigService.font.size - 1)
             elide: Text.ElideRight
+          }
+
+          Rectangle {
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            visible: row.isHeader
+            height: ConfigService.border
+            color: ThemeService.colors.on_surface
           }
 
           RowLayout {

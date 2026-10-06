@@ -15,11 +15,7 @@ Item {
     return null;
   }
 
-  property color color: {
-    if (!root.enabled) return root.row ? root.row.disabledColor : ThemeService.disabled;
-
-    return root.row ? root.row.contentColor : ThemeService.colors.foreground;
-  }
+  property color color: root.enabled ? ThemeService.colors.foreground : ThemeService.disabled
   property color backgroundColor: root.row ? root.row.surfaceColor : ThemeService.colors.background
 
   readonly property int trackHeight: ConfigService.iconSizeSmall

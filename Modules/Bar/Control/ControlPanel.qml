@@ -81,7 +81,6 @@ MesaPanel {
       leading: MesaIcon {
         name: "lock"
         size: ConfigService.iconSizeSmall
-        color: lockRow.contentColor
       }
 
       onClicked: root.run(() => LockService.lock())
@@ -96,7 +95,6 @@ MesaPanel {
       leading: MesaIcon {
         name: "weather-clear-night"
         size: ConfigService.iconSizeSmall
-        color: suspendRow.contentColor
       }
 
       onClicked: root.run(() => PowerService.suspend())
@@ -111,7 +109,6 @@ MesaPanel {
       leading: MesaIcon {
         name: "application-exit"
         size: ConfigService.iconSizeSmall
-        color: exitRow.contentColor
       }
 
       menu: exitMenu
@@ -134,7 +131,6 @@ MesaPanel {
       leading: MesaIcon {
         name: "system-reboot"
         size: ConfigService.iconSizeSmall
-        color: rebootRow.contentColor
       }
 
       menu: rebootMenu
@@ -157,7 +153,6 @@ MesaPanel {
       leading: MesaIcon {
         name: "system-shutdown"
         size: ConfigService.iconSizeSmall
-        color: shutdownRow.contentColor
       }
 
       menu: shutdownMenu

@@ -6,16 +6,6 @@ import qs.Services
 Slider {
   id: root
 
-  readonly property var row: {
-    for (let item = root.parent; item; item = item.parent) {
-      if (item.surfaceColor !== undefined) return item;
-    }
-
-    return null;
-  }
-
-  readonly property bool inverted: root.row?.highlighted ?? false
-
   readonly property int handleSize: Math.round(ConfigService.font.size * 1.0)
   readonly property int trackSize: Math.max(ConfigService.border, Math.round(root.handleSize / 6))
 
@@ -61,13 +51,13 @@ Slider {
       anchors.verticalCenter: parent.verticalCenter
 
       height: root.trackSize
-      color: root.inverted ? Qt.alpha(root.row.contentColor, 0.4) : ThemeService.colors.on_surface
+      color: ThemeService.colors.on_surface
 
       Rectangle {
         width: root.visualPosition * parent.width
         height: parent.height
 
-        color: root.inverted ? root.row.contentColor : ThemeService.colors.highlight
+        color: ThemeService.colors.highlight
       }
     }
   }
@@ -79,7 +69,7 @@ Slider {
     implicitWidth: Math.max(ConfigService.border * 2, Math.round(root.handleSize * 0.6))
     implicitHeight: root.handleSize
 
-    color: root.inverted ? root.row.contentColor : ThemeService.colors.foreground
+    color: ThemeService.colors.foreground
   }
 
   // WheelHandler never receives events on this shell's layer-shell windows;

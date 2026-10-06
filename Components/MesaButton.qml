@@ -11,16 +11,8 @@ Rectangle {
   property color accent: "transparent"
   property color contentColor: root.accented ? ThemeService.colors.background : ThemeService.colors.foreground
   property color disabledContentColor: root.accented ? ThemeService.colors.background : ThemeService.disabled
-  property bool flat: false
   property bool open: false
   property bool labelVisible: true
-  readonly property var row: {
-    for (let item = root.parent; item; item = item.parent) {
-      if (item.surfaceColor !== undefined) return item;
-    }
-
-    return null;
-  }
 
   property int maximumContentWidth: 0
   property int horizontalPadding: ConfigService.spaceMd
@@ -28,16 +20,7 @@ Rectangle {
   property alias acceptedButtons: mouseArea.acceptedButtons
 
   readonly property bool accented: root.accent.a > 0
-  readonly property bool inverted: root.flat && root.activeFocus
-  readonly property color rowContent: root.row ? root.row.contentColor : ThemeService.colors.foreground
-  readonly property color rowSurface: root.row ? root.row.surfaceColor : ThemeService.colors.background
-  readonly property color rowAccent: root.row ? root.row.accentColor : ThemeService.colors.highlight
-  readonly property color effectiveContentColor: {
-    if (!root.flat) return root.enabled ? root.contentColor : root.disabledContentColor;
-    if (!root.enabled) return root.row ? root.row.disabledColor : ThemeService.disabled;
-
-    return root.inverted ? root.rowSurface : root.rowContent;
-  }
+  readonly property color effectiveContentColor: root.enabled ? root.contentColor : root.disabledContentColor
   readonly property real contentWidth: Math.ceil(root.maximumContentWidth > 0 ? Math.min(label.implicitWidth, root.maximumContentWidth) : label.implicitWidth)
 
   signal clicked(var mouse)
@@ -45,7 +28,6 @@ Rectangle {
   implicitWidth: (root.icon ? iconLoader.implicitWidth : root.contentWidth) + root.horizontalPadding * 2
   implicitHeight: (root.icon ? iconLoader.implicitHeight : label.implicitHeight) + root.verticalPadding
   color: {
-    if (root.flat) return root.inverted ? root.rowAccent : "transparent";
     if (root.accented) return root.enabled ? root.accent : ThemeService.colors.attention;
 
     return root.open ? ThemeService.colors.surface : "transparent";

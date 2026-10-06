@@ -65,7 +65,7 @@ Rectangle {
 
       width: list.width
       height: root.rowHeight
-      color: option.highlighted ? ThemeService.colors.highlight : ThemeService.colors.background
+      color: option.highlighted ? ThemeService.selection : ThemeService.colors.background
 
       MouseArea {
         anchors.fill: parent
@@ -79,7 +79,6 @@ Rectangle {
         anchors.rightMargin: root.contentMargin - root.border.width
 
         text: option.modelData.text
-        color: option.highlighted ? ThemeService.colors.background : ThemeService.colors.foreground
         running: option.highlighted
       }
     }

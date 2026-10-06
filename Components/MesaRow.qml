@@ -8,7 +8,7 @@ Rectangle {
   id: root
 
   property string label
-  property color labelColor: root.interactive ? ThemeService.colors.foreground : root.mutedColor
+  property color labelColor: root.interactive ? ThemeService.colors.foreground : ThemeService.muted
   property string sublabel
   property string value
   property string fallback
@@ -29,19 +29,11 @@ Rectangle {
   }
 
   readonly property bool highlighted: root.containsFocus
-  readonly property color contentColor: root.highlighted ? ThemeService.colors.background : ThemeService.colors.foreground
-  readonly property color mutedColor: Qt.alpha(root.contentColor, 0.6)
-  readonly property color disabledColor: Qt.alpha(root.contentColor, 0.4)
-  readonly property color surfaceColor: root.highlighted ? ThemeService.colors.highlight : ThemeService.colors.background
-  readonly property color accentColor: root.highlighted ? ThemeService.colors.background : ThemeService.colors.highlight
+  readonly property color surfaceColor: root.highlighted ? ThemeService.selection : ThemeService.colors.background
 
   readonly property bool hasValue: root.value !== ""
 
   readonly property int leadingSize: Math.round(ConfigService.font.size * 0.5)
-
-  function tone(color: color): color {
-    return root.highlighted ? root.contentColor : color;
-  }
 
   signal clicked()
 
@@ -49,7 +41,7 @@ Rectangle {
 
   implicitWidth: content.implicitWidth + ConfigService.spaceMd * 2
   implicitHeight: Math.max(content.implicitHeight, ConfigService.controlHeight)
-  color: root.highlighted ? ThemeService.colors.highlight : "transparent"
+  color: root.highlighted ? ThemeService.selection : "transparent"
 
   activeFocusOnTab: root.interactive
 
@@ -158,7 +150,7 @@ Rectangle {
 
         visible: root.label !== ""
         text: root.label
-        color: root.highlighted ? root.contentColor : root.labelColor
+        color: root.labelColor
         running: root.highlighted
       }
 
@@ -167,7 +159,7 @@ Rectangle {
 
         visible: root.sublabel !== ""
         text: root.sublabel
-        color: root.mutedColor
+        color: ThemeService.muted
         running: root.highlighted
       }
     }
@@ -180,10 +172,7 @@ Rectangle {
 
       visible: root.hasValue || root.fallback !== ""
       text: root.hasValue ? root.value : root.fallback
-      color: {
-        if (root.highlighted) return root.contentColor;
-        return root.hasValue ? root.valueColor : root.mutedColor;
-      }
+      color: root.hasValue ? root.valueColor : ThemeService.muted
     }
 
     RowLayout {

@@ -42,7 +42,6 @@ MesaRow {
       return root.muted ? "audio-input-microphone-muted" : "audio-input-microphone-high";
     }
     size: ConfigService.iconSizeSmall
-    color: root.contentColor
   }
 
   MesaChevron {}

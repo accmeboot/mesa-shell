@@ -49,7 +49,7 @@ MesaSection {
       valueColor: {
         const colors = ThemeService.colors;
 
-        if (!deviceRow.device.hasLink) return deviceRow.mutedColor;
+        if (!deviceRow.device.hasLink) return ThemeService.muted;
 
         switch (deviceRow.device.state) {
         case ConnectionState.Connecting:
@@ -67,7 +67,7 @@ MesaSection {
 
         visible: deviceRow.device.hasLink && deviceRow.device.linkSpeed > 0
         text: `${deviceRow.device.linkSpeed} Mbps`
-        color: deviceRow.mutedColor
+        color: ThemeService.muted
       }
 
       MesaChevron {}

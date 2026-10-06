@@ -16,6 +16,7 @@ Singleton {
   readonly property JsonObject colors: root.polarity === "light" ? ConfigService.colors.light : ConfigService.colors.dark
   readonly property color muted: Qt.alpha(root.colors.foreground, 0.6)
   readonly property color disabled: Qt.alpha(root.colors.foreground, 0.4)
+  readonly property color selection: Qt.tint(root.colors.background, Qt.alpha(root.colors.highlight, 0.25))
   readonly property url wallpaper: {
     if (!ConfigService.settled) return "";
 

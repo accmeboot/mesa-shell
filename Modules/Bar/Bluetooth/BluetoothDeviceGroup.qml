@@ -89,14 +89,14 @@ MesaSection {
         const colors = ThemeService.colors;
 
         if (deviceRow.device.pairing) return colors.attention;
-        if (!deviceRow.device.paired) return deviceRow.mutedColor;
+        if (!deviceRow.device.paired) return ThemeService.muted;
 
         switch (deviceRow.device.state) {
         case BluetoothDeviceState.Connected: return colors.ok;
         case BluetoothDeviceState.Connecting:
         case BluetoothDeviceState.Disconnecting:
           return colors.attention;
-        default: return deviceRow.mutedColor;
+        default: return ThemeService.muted;
         }
       }
       interactive: true
@@ -107,7 +107,7 @@ MesaSection {
 
         visible: deviceRow.device.connected && deviceRow.device.batteryAvailable
         text: `${Math.round(deviceRow.device.battery * 100)}%`
-        color: deviceRow.tone(ColorService.threshold(deviceRow.device.battery * 100, 30, 15))
+        color: ColorService.threshold(deviceRow.device.battery * 100, 30, 15)
       }
 
       MesaChevron {}
