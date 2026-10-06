@@ -78,11 +78,6 @@ MesaPanel {
       label: "Lock"
       interactive: true
 
-      leading: MesaIcon {
-        name: "lock"
-        size: ConfigService.iconSizeSmall
-      }
-
       onClicked: root.run(() => LockService.lock())
     }
 
@@ -92,11 +87,6 @@ MesaPanel {
       label: "Suspend"
       interactive: true
 
-      leading: MesaIcon {
-        name: "weather-clear-night"
-        size: ConfigService.iconSizeSmall
-      }
-
       onClicked: root.run(() => PowerService.suspend())
     }
 
@@ -105,11 +95,6 @@ MesaPanel {
 
       label: "Log out"
       interactive: true
-
-      leading: MesaIcon {
-        name: "application-exit"
-        size: ConfigService.iconSizeSmall
-      }
 
       menu: exitMenu
 
@@ -128,11 +113,6 @@ MesaPanel {
       label: "Restart"
       interactive: true
 
-      leading: MesaIcon {
-        name: "system-reboot"
-        size: ConfigService.iconSizeSmall
-      }
-
       menu: rebootMenu
 
       MesaChevron {}
@@ -149,11 +129,6 @@ MesaPanel {
 
       label: "Shut down"
       interactive: true
-
-      leading: MesaIcon {
-        name: "system-shutdown"
-        size: ConfigService.iconSizeSmall
-      }
 
       menu: shutdownMenu
 

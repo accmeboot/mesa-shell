@@ -21,7 +21,7 @@ PopupWindow {
 
   readonly property int rowPadding: ConfigService.spaceMd
   readonly property int indicatorSize: ConfigService.iconSize
-  readonly property bool hasIndicators: root.list.some(entry => entry.icon !== "" || entry.buttonType !== QsMenuButtonType.None)
+  readonly property bool hasIndicators: root.list.some(entry => (entry.icon !== "" && entry.text === "") || entry.buttonType !== QsMenuButtonType.None)
   readonly property bool hasToggles: root.list.some(entry => entry.buttonType === QsMenuButtonType.CheckBox)
   readonly property int indicatorWidth: root.hasToggles ? Math.max(root.indicatorSize, toggleMetrics.implicitWidth) : root.indicatorSize
 
@@ -259,7 +259,7 @@ PopupWindow {
 
               IconImage {
                 anchors.centerIn: parent
-                visible: !indicator.visible && row.modelData.icon !== ""
+                visible: !indicator.visible && row.modelData.icon !== "" && row.modelData.text === ""
                 implicitSize: root.indicatorSize
                 source: row.modelData.icon
               }

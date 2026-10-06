@@ -127,12 +127,7 @@ RowLayout {
       open: trayMenu.isOpen && trayMenu.anchorItem === item
 
       text: {
-        var appName = item.modelData.title || item.modelData.tooltipTitle || item.modelData.id;
-        const hasUnderscore = appName.includes("_")
-
-        if (hasUnderscore) {
-          appName = appName.substring(0, item.modelData.id.indexOf("_"));
-        }
+        const appName = (item.modelData.title || item.modelData.tooltipTitle || item.modelData.id).split("_")[0];
 
         return (appName.charAt(0) + appName.charAt(appName.length - 1)).toUpperCase()
       }
