@@ -1,4 +1,5 @@
-client.focused #{{base03-hex}} #{{base03-hex}} #{{base00-hex}} #{{base03-hex}} #{{base03-hex}}
-client.focused_inactive #{{base02-hex}} #{{base02-hex}} #{{base05-hex}} #{{base02-hex}} #{{base02-hex}}
-client.unfocused #{{base02-hex}} #{{base02-hex}} #{{base05-hex}} #{{base02-hex}} #{{base02-hex}}
+client.focused #{{highlight-hex}} #{{highlight-hex}} #{{base00-hex}} #{{highlight-hex}} #{{highlight-hex}}
+client.focused_inactive #{{base03-hex}} #{{base03-hex}} #{{base05-hex}} #{{base03-hex}} #{{base03-hex}}
+client.unfocused #{{base03-hex}} #{{base03-hex}} #{{base05-hex}} #{{base03-hex}} #{{base03-hex}}
 client.urgent #{{base08-hex}} #{{base08-hex}} #{{base00-hex}} #{{base08-hex}} #{{base08-hex}}
+font pango:{{font-sans}} {{font-size-desktop}}
