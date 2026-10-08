@@ -17,9 +17,9 @@ More screenshots in [`assets/screenshots`](assets/screenshots).
 - [`bluetoothctl`](https://github.com/bluez/bluez) from bluez (pairing agent)
 - [sway](https://swaywm.org): [`Quickshell.I3`](https://quickshell.org/docs/v0.3.1/types/Quickshell.I3/), `swaymsg`
 - [systemd](https://github.com/systemd/systemd)
-- [`gsettings`](https://gitlab.gnome.org/GNOME/glib) from glib2 with gsettings-desktop-schemas (dark theme follows and toggles `org.gnome.desktop.interface color-scheme`)
+- [`gsettings`](https://gitlab.gnome.org/GNOME/glib) from glib2 with gsettings-desktop-schemas (dark theme)
 - [`brightnessctl`](https://github.com/Hummer12007/brightnessctl) (optional)
-- [`fuser`](https://gitlab.com/psmisc/psmisc) from psmisc (optional, camera detection for apps opening `/dev/video*` directly)
+- [`fuser`](https://gitlab.com/psmisc/psmisc) from psmisc (optional, camera detection)
 - [`socat`](http://www.dest-unreach.org/socat/) (`mshell dmenu` only)
 - [`jq`](https://jqlang.org) (`mshell`)
 - [python](https://www.python.org) with [numpy](https://numpy.org) and [pillow](https://python-pillow.github.io) (`mshell build`'s retint)
@@ -35,9 +35,7 @@ git clone git@github.com:accmeboot/mesa-shell.git ~/setup/mesa-shell
 ~/setup/mesa-shell/install.sh
 ```
 
-`install.sh` installs the packages above from the Arch repos (sway itself is left to the compositor setup), enables NetworkManager and bluetooth, writes the GTK3/GTK4/fontconfig theme files (see Theming), copies `config.example.json` to `config.json` unless it exists, links the repo to `~/.config/quickshell/mesa-shell` and `mshell` to `~/.local/bin`, and runs `mshell build`. It uses `pacman -Syu`, never `-S`: installing against a stale package database is a partial upgrade.
-
-Start it from the sway config. sway sets `XDG_CURRENT_DESKTOP=sway`, which picks the sway backend:
+Start it from the sway config:
 
 ```
 exec mshell run
@@ -96,40 +94,24 @@ mshell <target> <function> [args]   qs -c mesa-shell ipc call <target> <function
 mshell ipc ...                      qs -c mesa-shell ipc ... (e.g. mshell ipc show)
 ```
 
-`mshell`'s own commands must never share a name with an IPC target, or the target becomes unreachable through it. The one exception is `dmenu`: with no function it runs the picker, with one (`mshell dmenu toggle`) it goes to the IPC target.
-
 ## Theming
 
-There are two palettes, `dark` and `light`. Each one starts from a base16 scheme (`theme/schemes/<name>.yaml`, or a path) and can have a wallpaper.
+There are two palettes, `dark` and `light`. Each one starts from a base16 scheme (`theme/schemes/<name>.yaml`, or a path), retinted toward its wallpaper if it has one. `mshell build` regenerates both and themes the shell, the apps below and the [templates](#templates).
 
-`mshell build`:
-
-1. retints each scheme toward its wallpaper (`theme/retint.py`). A scheme without a wallpaper is used as is
-2. writes the shell's `colors.dark` and `colors.light` into `config.json`
-3. renders every file in `theme/templates/` into `~/.local/state/mshell/{dark,light}/` (see [Templates](#templates))
-4. if gsettings is writable, sets the GTK fonts that live there rather than in a file (`font-name`, `monospace-font-name`) and runs `mshell apply` for the current polarity
-5. signals the apps that don't watch their files to reload: ghostty (`SIGUSR2`) and nvim (`SIGUSR1`)
-
-Files are rewritten in place, so anything watching them (such as the shell watching `config.json`) sees the change.
-
-`mshell wall <dark|light> [image]` sets `wallpaper.<polarity>` and builds. Without an image it opens yazi in `wallpaper.dir` as a file picker (`Enter` picks, `q` cancels).
+`mshell wall <dark|light>` without an image opens a yazi picker in `wallpaper.dir` (`Enter` picks, `q` cancels).
 
 ### Dark and light
 
-Both palettes are always rendered; the build doesn't track which one is active. Apps follow the desktop's color-scheme setting (`org.gnome.desktop.interface color-scheme`). Some do that on their own. For the rest, the shell runs `mshell apply <polarity>` on startup and whenever the setting changes.
+Everything switches together with the desktop's color-scheme setting, whether it's changed from the control panel, `mshell theme toggle` or elsewhere.
 
-| App | How it switches |
+| Themed | Notes |
 | --- | --- |
-| GTK4 / libadwaita | On its own. `~/.config/gtk-4.0/gtk.css` imports both palettes, each wrapped in `@media (prefers-color-scheme: ...)` |
-| ghostty, nvim | On their own |
-| GTK3 | `apply` sets `gtk-theme` to `base16-dark` / `base16-light` (adw-gtk3 with the palette on top). GTK3 has no color-scheme preference, so each palette is a separate theme |
-| Qt | `apply` links `qt5ct.conf` / `qt6ct.conf` to the polarity's `qtct.conf`, which sets the color scheme, icon theme and fonts. qt5ct/qt6ct reload on their own. Needs `QT_QPA_PLATFORMTHEME=qt5ct` in the session (qt6ct also answers to that name) |
-| Icons | `apply` sets `icon-theme` to `iconTheme.<polarity>` |
-| sway | `apply` points `~/.local/state/mshell/current` at the polarity and sends its `sway` file (the `client.*` border colors) to the running sway. Include `~/.local/state/mshell/current/sway` in the sway config so a reload or a new session picks it up too |
-
-Fonts don't depend on the polarity. `~/.config/fontconfig/fonts.conf` includes the rendered `fonts.conf`, which puts the configured fonts in front of `sans-serif`, `serif` and `monospace`. They are inserted right before the generic name, not at the top of the list, so a font an app asks for by name still wins.
-
-`install.sh` writes the GTK3 themes every time. It writes the GTK4 and fontconfig configs only if they don't exist yet.
+| GTK3, GTK4 / libadwaita | |
+| Qt | needs `QT_QPA_PLATFORMTHEME=qt5ct` in the session |
+| Icons | `iconTheme.<polarity>` |
+| ghostty, nvim | |
+| sway borders | `include ~/.local/state/mshell/current/sway` in the sway config |
+| Fonts | the configured fonts become the default `sans-serif`, `serif` and `monospace` |
 
 ### Templates
 
@@ -164,9 +146,7 @@ mshell panel toggle audio
 
 ## Keyboard navigation
 
-An open panel takes keyboard focus and selects its first interactive element, drawn as a fill in the highlight colour. Selection follows the mouse too: hovering an interactive row selects it, and opens that row's menu if it has one.
-
-Panels are built from rows. A row either acts on its own or opens a menu, and `Down`/`Up` move between rows until a menu is open, at which point they move within it.
+An open panel takes keyboard focus. Hovering a row selects it too, and opens its menu if it has one.
 
 | Key | Action |
 | --- | --- |
@@ -179,11 +159,11 @@ Panels are built from rows. A row either acts on its own or opens a menu, and `D
 | `Enter`, `Space` | activate the selection |
 | `Escape` | close the panel |
 
-Sliders live inside menus, except for brightness, which sits directly in the control panel. That one takes the selection itself, and `Left`/`h` and `Right`/`l` then decrease and increase it. Either kind moves in 1% steps.
+The brightness slider in the control panel is adjusted with `Left`/`h` and `Right`/`l` while selected. Sliders move in 1% steps.
 
 ### Menu text entry
 
-A menu entry can be a text field, such as the Wi-Fi password prompt. While one is selected, printable keys type into it, so `h`, `j`, `k` and `l` insert characters rather than navigating. The arrow keys still navigate.
+In text fields, such as the Wi-Fi password prompt, `h`, `j`, `k` and `l` type rather than navigate; the arrow keys still navigate.
 
 | Key | Action |
 | --- | --- |

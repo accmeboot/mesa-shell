@@ -34,6 +34,7 @@ RAMP = [f"base0{i}" for i in "01234567"]
 # foreground instead
 VIVID_CHROMA = 0.05
 VIVID_FRACTION = 0.025
+BACKDROP_RADIUS = 0.03
 HUE_BINS = 36
 
 
@@ -101,10 +102,16 @@ def image_tone(path, size=128):
 def image_peak_hue(path, size=128):
     img = Image.open(path).convert("RGB").resize((size, size), Image.LANCZOS)
     rgb = np.asarray(img, dtype=np.float64).reshape(-1, 3) / 255.0
-    L, C, h = to_lch(srgb_to_oklab(rgb))
+    lab = srgb_to_oklab(rgb)
+
+    # a flat backdrop would otherwise outvote a small colourful subject
+    _, cell, counts = np.unique(np.round(lab / BACKDROP_RADIUS), axis=0,
+                                return_inverse=True, return_counts=True)
+    backdrop = lab[cell.ravel() == counts.argmax()].mean(axis=0)
+    L, C, h = to_lch(lab[np.linalg.norm(lab - backdrop, axis=1) > BACKDROP_RADIUS])
 
     vivid = (L > 0.15) & (L < 0.95) & (C > VIVID_CHROMA)
-    if vivid.mean() < VIVID_FRACTION:
+    if not vivid.any() or vivid.mean() < VIVID_FRACTION:
         return None
 
     # the mode rather than the mean: a mean lands between the colours of a
