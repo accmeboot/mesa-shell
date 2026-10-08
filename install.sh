@@ -31,6 +31,8 @@ packages=(
   yazi
   papirus-icon-theme
   ttf-terminus-nerd
+  ttf-liberation
+  noto-fonts-emoji
   adw-gtk-theme
   qt5ct
   qt6ct
