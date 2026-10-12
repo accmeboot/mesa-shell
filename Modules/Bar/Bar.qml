@@ -39,13 +39,20 @@ Scope {
         right: true
       }
 
-      implicitHeight: Math.max(leftLayout.implicitHeight, rightLayout.implicitHeight)
+      implicitHeight: Math.max(leftLayout.implicitHeight, rightLayout.implicitHeight) + ConfigService.border
+
+      Rectangle {
+        y: ConfigService.bottom ? 0 : parent.height - height
+        width: parent.width
+        height: ConfigService.border
+        color: ThemeService.colors.on_surface
+      }
 
       ClockWidget {
         id: clock
 
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenter: leftLayout.verticalCenter
       }
 
       RowLayout {
@@ -55,6 +62,8 @@ Scope {
         anchors.right: clock.left
         anchors.top: parent.top
         anchors.bottom: parent.bottom
+        anchors.topMargin: ConfigService.bottom ? ConfigService.border : 0
+        anchors.bottomMargin: ConfigService.bottom ? 0 : ConfigService.border
 
         spacing: 0
 
@@ -82,6 +91,8 @@ Scope {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.bottom: parent.bottom
+        anchors.topMargin: ConfigService.bottom ? ConfigService.border : 0
+        anchors.bottomMargin: ConfigService.bottom ? 0 : ConfigService.border
 
         spacing: 0
 

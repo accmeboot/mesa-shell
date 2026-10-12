@@ -120,6 +120,9 @@ RowLayout {
       Layout.preferredWidth: root.listWidth
       Layout.maximumWidth: root.listWidth
 
+      topInset: ConfigService.bottom ? -ConfigService.border : 0
+      bottomInset: ConfigService.bottom ? 0 : -ConfigService.border
+
       onTextChanged: {
         root.currentIndex = 0;
       }

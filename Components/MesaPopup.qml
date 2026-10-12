@@ -73,6 +73,9 @@ Scope {
         right: !root.alignLeft
       }
 
+      margins.top: -ConfigService.border
+      margins.bottom: -ConfigService.border
+
       margins.left: {
         const available = root.screen?.width ?? 0;
 
