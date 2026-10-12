@@ -33,7 +33,8 @@ Scope {
       implicitHeight: notificationsColumn.implicitHeight
 
       anchors {
-        top: true
+        top: !ConfigService.bottom
+        bottom: ConfigService.bottom
       }
 
       ColumnLayout {
