@@ -48,6 +48,7 @@
     }
   },
   "dateTimeFormat": "ddd d MMM HH:mm",
+  "position": "top",
   "spacing": 8,
   "border": 1
 }

@@ -8,6 +8,7 @@ Rectangle {
   property var options: []
   property int currentIndex: -1
   property int maximumRows: 4
+  property bool bottomUp: false
 
   readonly property int contentMargin: ConfigService.spaceMd
   readonly property int rowHeight: ConfigService.controlHeight
@@ -52,6 +53,7 @@ Rectangle {
     anchors.margins: root.border.width
 
     model: root.options
+    verticalLayoutDirection: root.bottomUp ? ListView.BottomToTop : ListView.TopToBottom
     clip: true
     interactive: false
 
@@ -95,7 +97,9 @@ Rectangle {
     property int notches: 0
 
     onWheel: wheel => {
-      wheelArea.notches += wheel.angleDelta.y !== 0 ? wheel.angleDelta.y : wheel.angleDelta.x;
+      const delta = wheel.angleDelta.y !== 0 ? wheel.angleDelta.y : wheel.angleDelta.x;
+
+      wheelArea.notches += root.bottomUp ? -delta : delta;
 
       while (wheelArea.notches <= -120) {
         wheelArea.notches += 120;

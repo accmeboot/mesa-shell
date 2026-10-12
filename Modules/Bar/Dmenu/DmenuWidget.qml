@@ -128,10 +128,10 @@ RowLayout {
       Keys.onReturnPressed: root.submit()
       Keys.onEnterPressed: root.submit()
       Keys.onRightPressed: root.selectNext()
-      Keys.onDownPressed: root.selectNext()
+      Keys.onDownPressed: ConfigService.bottom ? root.selectPrevious() : root.selectNext()
       Keys.onTabPressed: root.selectNext()
       Keys.onLeftPressed: root.selectPrevious()
-      Keys.onUpPressed: root.selectPrevious()
+      Keys.onUpPressed: ConfigService.bottom ? root.selectNext() : root.selectPrevious()
       Keys.onBacktabPressed: root.selectPrevious()
 
       Keys.onPressed: event => {
@@ -139,10 +139,14 @@ RowLayout {
 
         switch (event.key) {
         case Qt.Key_J:
+          ConfigService.bottom ? root.selectPrevious() : root.selectNext();
+          break;
+        case Qt.Key_K:
+          ConfigService.bottom ? root.selectNext() : root.selectPrevious();
+          break;
         case Qt.Key_L:
           root.selectNext();
           break;
-        case Qt.Key_K:
         case Qt.Key_H:
           root.selectPrevious();
           break;
@@ -181,12 +185,14 @@ RowLayout {
       }
 
       anchors {
-        top: true
+        top: !ConfigService.bottom
+        bottom: ConfigService.bottom
         left: true
       }
 
       margins.left: root.anchorLeft
       margins.top: -ConfigService.border
+      margins.bottom: -ConfigService.border
 
       MesaSelectList {
         id: list
@@ -196,6 +202,7 @@ RowLayout {
         options: root.options
         currentIndex: root.currentIndex
         maximumRows: 20
+        bottomUp: ConfigService.bottom
 
         onStepped: delta => delta > 0 ? root.selectNext() : root.selectPrevious()
 

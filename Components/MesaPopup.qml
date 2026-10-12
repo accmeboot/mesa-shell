@@ -67,7 +67,8 @@ Scope {
       implicitHeight: background.implicitHeight
 
       anchors {
-        top: true
+        top: !ConfigService.bottom
+        bottom: ConfigService.bottom
         left: root.alignLeft
         right: !root.alignLeft
       }

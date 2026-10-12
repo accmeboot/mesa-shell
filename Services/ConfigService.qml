@@ -24,6 +24,7 @@ Singleton {
   readonly property alias spacing: adapter.spacing
   readonly property alias border: adapter.border
   readonly property alias dateTimeFormat: adapter.dateTimeFormat
+  readonly property bool bottom: adapter.position === "bottom"
 
   readonly property int spaceSm: Math.round(root.spacing / 2)
   readonly property int spaceMd: root.spacing
@@ -106,6 +107,8 @@ Singleton {
       }
 
       property string dateTimeFormat: "ddd d MMM HH:mm"
+
+      property string position: "top"
 
       property int spacing: 10
 

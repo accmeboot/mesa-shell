@@ -33,7 +33,8 @@ Scope {
       WlrLayershell.keyboardFocus: dmenu.isOpen || tray.menuOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
       anchors {
-        top: true
+        top: !ConfigService.bottom
+        bottom: ConfigService.bottom
         left: true
         right: true
       }

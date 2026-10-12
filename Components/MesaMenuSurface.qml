@@ -19,6 +19,9 @@ PopupWindow {
 
   readonly property real sliderStep: 0.01
 
+  readonly property int near: ConfigService.bottom ? Edges.Bottom : Edges.Top
+  readonly property int far: ConfigService.bottom ? Edges.Top : Edges.Bottom
+
   readonly property int rowPadding: ConfigService.spaceMd
   readonly property int indicatorSize: ConfigService.iconSize
   readonly property bool hasIndicators: root.list.some(entry => (entry.icon !== "" && entry.text === "") || entry.buttonType !== QsMenuButtonType.None)
@@ -117,10 +120,11 @@ PopupWindow {
   visible: root.shouldShow
   color: "transparent"
   anchor.item: root.anchorItem
-  anchor.edges: root.submenu ? Edges.Right | Edges.Top : Edges.Bottom | Edges.Left
-  anchor.gravity: root.submenu ? Edges.Right | Edges.Bottom : Edges.Bottom | Edges.Right
+  anchor.edges: root.submenu ? Edges.Right | root.near : root.far | Edges.Left
+  anchor.gravity: root.submenu ? Edges.Right | root.far : root.far | Edges.Right
   anchor.adjustment: PopupAdjustment.Flip | PopupAdjustment.Slide
-  anchor.margins.top: root.submenu ? -ConfigService.border : 0
+  anchor.margins.top: root.submenu && !ConfigService.bottom ? -ConfigService.border : 0
+  anchor.margins.bottom: root.submenu && ConfigService.bottom ? -ConfigService.border : 0
   implicitWidth: background.implicitWidth
   implicitHeight: background.implicitHeight
 
