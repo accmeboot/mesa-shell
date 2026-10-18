@@ -39,7 +39,7 @@ Scope {
         right: true
       }
 
-      implicitHeight: Math.max(leftLayout.implicitHeight, rightLayout.implicitHeight) + ConfigService.border
+      implicitHeight: Math.max(leftLayout.implicitHeight, rightLayout.implicitHeight) + ConfigService.barPadding * 2 + ConfigService.border
 
       Rectangle {
         y: ConfigService.bottom ? 0 : parent.height - height
@@ -48,98 +48,100 @@ Scope {
         color: ThemeService.colors.on_surface
       }
 
-      ClockWidget {
-        id: clock
+      Item {
+        anchors.fill: parent
+        anchors.margins: ConfigService.barPadding
+        anchors.topMargin: ConfigService.barPadding + (ConfigService.bottom ? ConfigService.border : 0)
+        anchors.bottomMargin: ConfigService.barPadding + (ConfigService.bottom ? 0 : ConfigService.border)
 
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: leftLayout.verticalCenter
-      }
+        ClockWidget {
+          id: clock
 
-      RowLayout {
-        id: leftLayout
+          anchors.centerIn: parent
+        }
 
-        anchors.left: parent.left
-        anchors.right: clock.left
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.topMargin: ConfigService.bottom ? ConfigService.border : 0
-        anchors.bottomMargin: ConfigService.bottom ? 0 : ConfigService.border
+        RowLayout {
+          id: leftLayout
 
-        spacing: 0
+          anchors.left: parent.left
+          anchors.right: clock.left
+          anchors.rightMargin: ConfigService.barPadding
+          height: parent.height
 
-        WorkspacesWidget {
-          Layout.alignment: Qt.AlignLeft
-          Layout.fillHeight: true
-          screen: modelData
-        }
-        DmenuWidget {
-          id: dmenu
-          Layout.fillHeight: true
-          Layout.fillWidth: true
-          screen: modelData
-        }
-        ModeWidget {
-          Layout.fillHeight: true
-        }
-        Item { Layout.fillWidth: true }
-      }
+          spacing: ConfigService.space
 
-      RowLayout {
-        id: rightLayout
+          WorkspacesWidget {
+            Layout.alignment: Qt.AlignLeft
+            Layout.fillHeight: true
+            screen: modelData
+          }
+          DmenuWidget {
+            id: dmenu
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            screen: modelData
+          }
+          ModeWidget {
+            Layout.fillHeight: true
+          }
+          Item { Layout.fillWidth: true }
+        }
 
-        anchors.left: clock.right
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.topMargin: ConfigService.bottom ? ConfigService.border : 0
-        anchors.bottomMargin: ConfigService.bottom ? 0 : ConfigService.border
+        RowLayout {
+          id: rightLayout
 
-        spacing: 0
+          anchors.left: clock.right
+          anchors.right: parent.right
+          anchors.leftMargin: ConfigService.barPadding
+          height: parent.height
 
-        Item { Layout.fillWidth: true }
+          spacing: ConfigService.space
 
-        TrayWidget {
-          id: tray
-          Layout.fillHeight: true
-          Layout.fillWidth: true
-          screen: modelData
-        }
-        PrivacyWidget {
-          id: privacy
-          Layout.fillHeight: true
-          screen: modelData
-        }
-        NetworkWidget {
-          id: network
-          Layout.fillHeight: true
-          screen: modelData
-        }
-        BatteryWidget {
-          id: battery
-          Layout.fillHeight: true
-          screen: modelData
-        }
-        AudioWidget {
-          id: audio
-          Layout.fillHeight: true
-          screen: modelData
-          output: true
-        }
-        AudioWidget {
-          id: microphone
-          Layout.fillHeight: true
-          screen: modelData
-          output: false
-        }
-        BluetoothWidget {
-          id: bluetooth
-          Layout.fillHeight: true
-          screen: modelData
-        }
-        ControlWidget {
-          id: control
-          Layout.fillHeight: true
-          screen: modelData
+          Item { Layout.fillWidth: true }
+
+          TrayWidget {
+            id: tray
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            screen: modelData
+          }
+          PrivacyWidget {
+            id: privacy
+            Layout.fillHeight: true
+            screen: modelData
+          }
+          NetworkWidget {
+            id: network
+            Layout.fillHeight: true
+            screen: modelData
+          }
+          BatteryWidget {
+            id: battery
+            Layout.fillHeight: true
+            screen: modelData
+          }
+          AudioWidget {
+            id: audio
+            Layout.fillHeight: true
+            screen: modelData
+            output: true
+          }
+          AudioWidget {
+            id: microphone
+            Layout.fillHeight: true
+            screen: modelData
+            output: false
+          }
+          BluetoothWidget {
+            id: bluetooth
+            Layout.fillHeight: true
+            screen: modelData
+          }
+          ControlWidget {
+            id: control
+            Layout.fillHeight: true
+            screen: modelData
+          }
         }
       }
     }

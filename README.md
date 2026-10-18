@@ -226,8 +226,8 @@ Paths are absolute, `~/` or relative to the repo.
 | `wallpaper.dir` | `~/Pictures` | where `mshell wall` opens its picker |
 | `dateTimeFormat` | `ddd d MMM HH:mm` | `Qt.formatDateTime` |
 | `position` | `top` | `top` or `bottom`, notifications stay at the top |
-| `spacing` | `10` | px |
 | `border` | `1` | px |
+| `radius` | `4` | px |
 
 ## dmenu
 

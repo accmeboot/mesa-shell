@@ -36,7 +36,7 @@ RowLayout {
     value: item
   }))
 
-  readonly property real anchorLeft: root.x + menuRow.x + searchField.x
+  readonly property real anchorLeft: PanelService.screenX(searchField)
 
   function selectNext(): void {
     if (root.currentIndex < 0) {
@@ -90,12 +90,12 @@ RowLayout {
     Layout.fillHeight: true
     icon: "cm_runterm"
     open: root.isOpen
+    topRightRadius: root.isOpen ? 0 : ConfigService.radius
+    bottomRightRadius: root.isOpen ? 0 : ConfigService.radius
     onClicked: root.isOpen ? DmenuService.close() : DmenuService.open(root.screen.name)
   }
 
   RowLayout {
-    id: menuRow
-
     Layout.fillWidth: true
 
     visible: root.isOpen
@@ -120,8 +120,8 @@ RowLayout {
       Layout.preferredWidth: root.listWidth
       Layout.maximumWidth: root.listWidth
 
-      topInset: ConfigService.bottom ? -ConfigService.border : 0
-      bottomInset: ConfigService.bottom ? 0 : -ConfigService.border
+      frame.topLeftRadius: 0
+      frame.bottomLeftRadius: 0
 
       onTextChanged: {
         root.currentIndex = 0;

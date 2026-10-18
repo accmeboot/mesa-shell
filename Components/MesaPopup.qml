@@ -17,19 +17,7 @@ Scope {
   readonly property int minimumWidth: Math.min(ConfigService.panelMinWidth, root.maximumWidth)
   readonly property int maximumWidth: Math.min(ConfigService.panelMaxWidth, root.screen?.width || Infinity)
 
-  readonly property real anchorLeft: {
-    const item = root.anchorItem;
-
-    if (!item) return 0;
-
-    let edge = 0;
-
-    for (let node = item; node; node = node.parent) {
-      edge += node.x;
-    }
-
-    return edge;
-  }
+  readonly property real anchorLeft: PanelService.screenX(root.anchorItem)
   readonly property real anchorRight: root.anchorLeft + (root.anchorItem?.width ?? 0)
   readonly property bool alignLeft: (root.anchorLeft + root.anchorRight) / 2 < (root.screen?.width ?? 0) / 2
 
@@ -168,28 +156,12 @@ Scope {
 
         Component.onCompleted: Qt.callLater(scope.focusFirst)
 
-        Rectangle {
+        MesaSurface {
           id: background
 
           anchors.fill: parent
 
-          implicitWidth: body.implicitWidth + border.width * 2
-          implicitHeight: body.implicitHeight + border.width * 2
-          color: ThemeService.colors.background
-
-          border.color: ThemeService.colors.on_surface
-          border.width: ConfigService.border
-
-          Loader {
-            id: body
-
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.leftMargin: background.border.width
-            anchors.rightMargin: background.border.width
-            anchors.topMargin: background.border.width
-
+          contentItem: Loader {
             sourceComponent: root.content
           }
         }

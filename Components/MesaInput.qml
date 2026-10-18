@@ -6,8 +6,9 @@ import qs.Services
 TextField {
   id: root
 
-  property color borderColor: ThemeService.colors.on_surface
+  property color borderColor: ThemeService.colors.surface
   property color backgroundColor: "transparent"
+  property alias frame: frame
 
   color: ThemeService.colors.foreground
   font.family: ConfigService.font.name
@@ -18,11 +19,16 @@ TextField {
   selectionColor: ThemeService.colors.highlight
   selectedTextColor: ThemeService.colors.background
 
-  leftPadding: ConfigService.spaceMd
-  rightPadding: ConfigService.spaceMd
+  leftPadding: ConfigService.space
+  rightPadding: ConfigService.space
+  topPadding: 0
+  bottomPadding: 0
 
   background: Rectangle {
+    id: frame
+
     color: root.backgroundColor
+    radius: ConfigService.radius
     border.color: root.borderColor
     border.width: ConfigService.border
   }

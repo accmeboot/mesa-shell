@@ -41,12 +41,13 @@ Scope {
       Rectangle {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: ConfigService.spaceLg
+        anchors.topMargin: ConfigService.space * 4
 
-        implicitWidth: date.implicitWidth + ConfigService.spaceLg * 2
-        implicitHeight: date.implicitHeight + ConfigService.spaceMd * 2
+        implicitWidth: date.implicitWidth + ConfigService.space * 8
+        implicitHeight: date.implicitHeight + ConfigService.space * 4
 
         color: ThemeService.colors.background
+        radius: ConfigService.radius
 
         MesaText {
           id: date
@@ -70,12 +71,13 @@ Scope {
 
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: ConfigService.spaceLg
+        anchors.bottomMargin: ConfigService.space * 4
 
-        implicitWidth: row.implicitWidth + ConfigService.spaceMd
-        implicitHeight: row.implicitHeight + ConfigService.spaceMd * 2
+        implicitWidth: row.implicitWidth + ConfigService.space * 2
+        implicitHeight: row.implicitHeight + ConfigService.space * 4
 
         color: ThemeService.colors.background
+        radius: ConfigService.radius
 
         focus: true
 
@@ -114,9 +116,9 @@ Scope {
           id: row
 
           anchors.fill: parent
-          anchors.leftMargin: ConfigService.spaceMd
+          anchors.leftMargin: ConfigService.space * 2
 
-          spacing: ConfigService.spaceMd
+          spacing: ConfigService.space * 2
 
           MesaIcon {
             name: "im-user"
@@ -126,7 +128,7 @@ Scope {
 
           Item {
             Layout.fillHeight: true
-            Layout.preferredWidth: Math.ceil(longest.width) + ConfigService.spaceMd * 2
+            Layout.preferredWidth: Math.ceil(longest.width) + ConfigService.space * 4
 
             TextMetrics {
               id: longest
@@ -173,7 +175,18 @@ Scope {
         Shape {
           id: flash
 
-          readonly property real perimeter: 2 * (width + height - bar.stroke * 2)
+          readonly property real inset: bar.stroke / 2
+          readonly property real corner: Math.max(0, bar.radius - flash.inset)
+          readonly property real perimeter: 2 * (width + height - bar.stroke * 2) - 8 * flash.corner + 2 * Math.PI * flash.corner
+          readonly property string loop: {
+            const a = flash.inset;
+            const r = flash.corner;
+            const w = flash.width;
+            const h = flash.height;
+            const arc = (x, y) => `A ${r} ${r} 0 0 1 ${x} ${y}`;
+
+            return `H ${w - a - r} ${arc(w - a, a + r)} V ${h - a - r} ${arc(w - a - r, h - a)} H ${a + r} ${arc(a, h - a - r)} V ${a + r} ${arc(a + r, a)}`;
+          }
           property real position: 0
           property real segment: 0
           property color color: ThemeService.colors.highlight
@@ -209,17 +222,7 @@ Scope {
             dashPattern: [flash.segment / bar.stroke, flash.perimeter * 2 / bar.stroke]
             dashOffset: (flash.perimeter * 2 + flash.segment - flash.position) / bar.stroke
 
-            startX: bar.stroke / 2
-            startY: bar.stroke / 2
-
-            PathLine { x: flash.width - bar.stroke / 2; y: bar.stroke / 2 }
-            PathLine { x: flash.width - bar.stroke / 2; y: flash.height - bar.stroke / 2 }
-            PathLine { x: bar.stroke / 2; y: flash.height - bar.stroke / 2 }
-            PathLine { x: bar.stroke / 2; y: bar.stroke / 2 }
-            PathLine { x: flash.width - bar.stroke / 2; y: bar.stroke / 2 }
-            PathLine { x: flash.width - bar.stroke / 2; y: flash.height - bar.stroke / 2 }
-            PathLine { x: bar.stroke / 2; y: flash.height - bar.stroke / 2 }
-            PathLine { x: bar.stroke / 2; y: bar.stroke / 2 }
+            PathSvg { path: `M ${flash.inset + flash.corner} ${flash.inset} ${flash.loop} ${flash.loop}` }
           }
         }
       }

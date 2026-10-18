@@ -7,25 +7,18 @@ import Quickshell.Services.Notifications
 import qs.Services
 import qs.Components
 
-Rectangle {
+MesaSurface {
   required property var modelData
-  readonly property int padding: ConfigService.spaceSm
-  readonly property int inset: root.border.width + root.padding
 
   id: root
 
   implicitWidth: Math.round(ConfigService.font.size * 28)
-  implicitHeight: notificationMainRow.implicitHeight + 2 * root.inset
 
   clip: true
 
-  color: ThemeService.colors.background
-
-  border.color: ThemeService.colors.on_surface
-  border.width: ConfigService.border
-
   MouseArea {
     anchors.fill: parent
+    z: -1
 
     enabled: Boolean(root.modelData.defaultActionId)
     cursorShape: Qt.PointingHandCursor
@@ -33,13 +26,8 @@ Rectangle {
     onClicked: NotificationsService.invokeDefaultAction(root.modelData.id)
   }
 
-  RowLayout {
-    id: notificationMainRow
-
-    anchors.fill: parent
-    anchors.margins: root.inset
-
-    spacing: root.padding
+  contentItem: RowLayout {
+    spacing: ConfigService.space
 
     MesaIcon {
       id: notificationIcon
@@ -54,12 +42,12 @@ Rectangle {
       id: notificationMainColumn
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignVCenter
-      spacing: ConfigService.spaceSm
+      spacing: ConfigService.space
 
       RowLayout {
         id: notificationHeader
         Layout.fillWidth: true
-        spacing: ConfigService.spaceMd
+        spacing: ConfigService.space
 
         MesaText {
           Layout.fillWidth: true
@@ -93,8 +81,6 @@ Rectangle {
           icon: "window-close"
           color: ThemeService.colors.critical
           contentColor: ThemeService.colors.background
-          horizontalPadding: ConfigService.spaceSm
-          verticalPadding: ConfigService.spaceSm
           onClicked: {
             NotificationsService.dismissOrExpireNotification(root.modelData.id);
           }
@@ -120,7 +106,7 @@ Rectangle {
       Flow {
         id: actionsFlow
         Layout.fillWidth: true
-        spacing: ConfigService.spaceSm
+        spacing: ConfigService.space
         visible: Boolean(modelData.actions.count)
 
         Repeater {

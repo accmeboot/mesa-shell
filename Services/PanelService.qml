@@ -9,6 +9,16 @@ Singleton {
   property string current: ""
   property string screen: ""
 
+  function screenX(item): real {
+    let edge = 0;
+
+    for (let node = item; node; node = node.parent) {
+      edge += node.x;
+    }
+
+    return edge;
+  }
+
   function open(panel: string, screen: string): void {
     root.current = panel;
     root.screen = screen;

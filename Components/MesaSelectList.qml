@@ -2,7 +2,7 @@ import QtQuick
 
 import qs.Services
 
-Rectangle {
+MesaSurface {
   id: root
 
   property var options: []
@@ -10,7 +10,6 @@ Rectangle {
   property int maximumRows: 4
   property bool bottomUp: false
 
-  readonly property int contentMargin: ConfigService.spaceMd
   readonly property int rowHeight: ConfigService.controlHeight
 
   signal selected(var value)
@@ -30,14 +29,9 @@ Rectangle {
       widest = Math.max(widest, metrics.advanceWidth(option.text));
     }
 
-    return Math.min(ConfigService.panelMaxWidth, Math.ceil(widest) + root.contentMargin * 2 + root.border.width * 2);
+    return Math.min(ConfigService.panelMaxWidth, Math.ceil(widest) + ConfigService.space * 2 + root.padding * 2);
   }
-  implicitHeight: Math.min(root.options.length, root.maximumRows) * root.rowHeight + root.border.width * 2
-
-  color: ThemeService.colors.background
-
-  border.color: ThemeService.colors.on_surface
-  border.width: ConfigService.border
+  implicitHeight: Math.min(root.options.length, root.maximumRows) * root.rowHeight + root.padding * 2
 
   FontMetrics {
     id: metrics
@@ -46,11 +40,8 @@ Rectangle {
     font.pointSize: ConfigService.font.size
   }
 
-  ListView {
+  contentItem: ListView {
     id: list
-
-    anchors.fill: parent
-    anchors.margins: root.border.width
 
     model: root.options
     verticalLayoutDirection: root.bottomUp ? ListView.BottomToTop : ListView.TopToBottom
@@ -68,6 +59,7 @@ Rectangle {
       width: list.width
       height: root.rowHeight
       color: option.highlighted ? ThemeService.selection : ThemeService.colors.background
+      radius: ConfigService.radius
 
       MouseArea {
         anchors.fill: parent
@@ -77,8 +69,8 @@ Rectangle {
 
       MesaMarquee {
         anchors.fill: parent
-        anchors.leftMargin: root.contentMargin - root.border.width
-        anchors.rightMargin: root.contentMargin - root.border.width
+        anchors.leftMargin: ConfigService.space
+        anchors.rightMargin: ConfigService.space
 
         text: option.modelData.text
         running: option.highlighted

@@ -66,8 +66,9 @@ Slider {
     x: root.leftPadding + root.visualPosition * (root.availableWidth - width)
     y: root.topPadding + Math.round((root.availableHeight - height) / 2)
 
-    implicitWidth: Math.max(ConfigService.border * 2, Math.round(root.handleSize * 0.6))
+    implicitWidth: root.handleSize
     implicitHeight: root.handleSize
+    radius: width / 2
 
     color: ThemeService.colors.foreground
   }

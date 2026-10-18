@@ -18,7 +18,7 @@ Rectangle {
   property bool interactive: false
   property bool wideTrailing: false
 
-  default property alias trailing: trailingRow.data
+  default property alias trailing: content.data
 
   readonly property bool containsFocus: {
     for (let item = root.Window.activeFocusItem; item; item = item.parent) {
@@ -39,9 +39,10 @@ Rectangle {
 
   Layout.fillWidth: true
 
-  implicitWidth: content.implicitWidth + ConfigService.spaceMd * 2
+  implicitWidth: content.implicitWidth + ConfigService.space * 2
   implicitHeight: Math.max(content.implicitHeight, ConfigService.controlHeight)
   color: root.highlighted ? ThemeService.selection : "transparent"
+  radius: ConfigService.radius
 
   activeFocusOnTab: root.interactive
 
@@ -115,10 +116,10 @@ Rectangle {
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.verticalCenter: parent.verticalCenter
-    anchors.leftMargin: ConfigService.spaceMd
-    anchors.rightMargin: ConfigService.spaceMd
+    anchors.leftMargin: ConfigService.space
+    anchors.rightMargin: ConfigService.space
 
-    spacing: 0
+    spacing: ConfigService.space
 
     Item {
       id: leadingSlot
@@ -143,7 +144,6 @@ Rectangle {
       id: labels
 
       Layout.fillWidth: true
-      Layout.leftMargin: leadingSlot.visible ? ConfigService.spaceMd : 0
 
       visible: !root.wideTrailing || root.label !== "" || root.sublabel !== ""
 
@@ -172,21 +172,10 @@ Rectangle {
       id: valueText
 
       Layout.alignment: Qt.AlignVCenter
-      Layout.leftMargin: labels.visible ? ConfigService.spaceMd : 0
 
       visible: root.hasValue || root.fallback !== ""
       text: root.hasValue ? root.value : root.fallback
       color: root.hasValue ? root.valueColor : ThemeService.muted
-    }
-
-    RowLayout {
-      id: trailingRow
-
-      Layout.fillWidth: root.wideTrailing
-      Layout.alignment: Qt.AlignVCenter
-      Layout.leftMargin: trailingRow.implicitWidth > 0 && (labels.visible || valueText.visible) ? ConfigService.spaceMd : 0
-
-      spacing: ConfigService.spaceSm
     }
   }
 }

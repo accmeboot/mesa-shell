@@ -6,9 +6,10 @@ import qs.Services
 Rectangle {
   visible: CompositorService.mode !== "" && CompositorService.mode !== "default"
   color: ThemeService.colors.attention
+  radius: ConfigService.radius
 
-  implicitWidth: label.implicitWidth + ConfigService.spaceMd * 2
-  implicitHeight: label.implicitHeight + ConfigService.spaceMd
+  implicitWidth: label.implicitWidth + ConfigService.space * 2
+  implicitHeight: label.implicitHeight + ConfigService.space
 
   MesaText {
     id: label

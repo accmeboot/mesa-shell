@@ -21,18 +21,19 @@ Singleton {
       return fallback > 0 ? fallback : 10;
     }
   }
-  readonly property alias spacing: adapter.spacing
   readonly property alias border: adapter.border
+  readonly property alias radius: adapter.radius
   readonly property alias dateTimeFormat: adapter.dateTimeFormat
   readonly property bool bottom: adapter.position === "bottom"
 
-  readonly property int spaceSm: Math.round(root.spacing / 2)
-  readonly property int spaceMd: root.spacing
-  readonly property int spaceLg: root.spacing * 2
+  readonly property int space: Math.round(root.font.size / 2)
+  readonly property int barPadding: root.space
+  readonly property int popupPadding: root.space
+  readonly property int popupInset: root.border + root.popupPadding
   readonly property int iconSize: Math.round(root.font.size * 1.5)
   readonly property int iconSizeSmall: Math.round(root.font.size * 1.2)
   readonly property int iconSizeLarge: Math.round(root.font.size * 2)
-  readonly property int controlHeight: root.iconSize + root.spaceMd
+  readonly property int controlHeight: root.iconSize + root.space
   readonly property int panelMinWidth: Math.round(root.font.size * 25)
   readonly property int panelMaxWidth: Math.round(root.font.size * 28)
 
@@ -110,9 +111,9 @@ Singleton {
 
       property string position: "top"
 
-      property int spacing: 10
-
       property int border: 1
+
+      property int radius: 4
     }
   }
 }

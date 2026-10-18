@@ -15,8 +15,8 @@ Rectangle {
   property bool labelVisible: true
 
   property int maximumContentWidth: 0
-  property int horizontalPadding: ConfigService.spaceMd
-  property int verticalPadding: ConfigService.spaceMd
+  property int horizontalPadding: ConfigService.space
+  property int verticalPadding: ConfigService.space
   property alias acceptedButtons: mouseArea.acceptedButtons
 
   readonly property bool accented: root.accent.a > 0
@@ -33,6 +33,7 @@ Rectangle {
     return root.open ? ThemeService.colors.surface : "transparent";
   }
 
+  radius: ConfigService.radius
   border.color: ThemeService.colors.on_surface
   border.width: 0
 

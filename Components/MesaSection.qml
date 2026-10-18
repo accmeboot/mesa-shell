@@ -1,8 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 
-import qs.Services
-
 ColumnLayout {
   id: root
 
@@ -12,11 +10,9 @@ ColumnLayout {
 
   spacing: 0
 
-  Rectangle {
+  MesaSeparator {
     Layout.fillWidth: true
 
     visible: !root.first
-    implicitHeight: ConfigService.border
-    color: ThemeService.colors.on_surface
   }
 }

@@ -22,7 +22,6 @@ PopupWindow {
   readonly property int near: ConfigService.bottom ? Edges.Bottom : Edges.Top
   readonly property int far: ConfigService.bottom ? Edges.Top : Edges.Bottom
 
-  readonly property int rowPadding: ConfigService.spaceMd
   readonly property int indicatorSize: ConfigService.iconSize
   readonly property bool hasIndicators: root.list.some(entry => (entry.icon !== "" && entry.text === "") || entry.buttonType !== QsMenuButtonType.None)
   readonly property bool hasToggles: root.list.some(entry => entry.buttonType === QsMenuButtonType.CheckBox)
@@ -123,8 +122,10 @@ PopupWindow {
   anchor.edges: root.submenu ? Edges.Right | root.near : root.far | Edges.Left
   anchor.gravity: root.submenu ? Edges.Right | root.far : root.far | Edges.Right
   anchor.adjustment: PopupAdjustment.Flip | PopupAdjustment.Slide
-  anchor.margins.top: root.submenu && !ConfigService.bottom ? -ConfigService.border : 0
-  anchor.margins.bottom: root.submenu && ConfigService.bottom ? -ConfigService.border : 0
+  anchor.margins.top: root.submenu ? (ConfigService.bottom ? 0 : -ConfigService.popupInset) : (ConfigService.bottom ? -ConfigService.barPadding : 0)
+  anchor.margins.bottom: root.submenu ? (ConfigService.bottom ? -ConfigService.popupInset : 0) : (ConfigService.bottom ? 0 : -ConfigService.barPadding)
+  anchor.margins.left: root.submenu ? -ConfigService.popupPadding : 0
+  anchor.margins.right: root.submenu ? -ConfigService.popupPadding : 0
   implicitWidth: background.implicitWidth
   implicitHeight: background.implicitHeight
 
@@ -152,21 +153,13 @@ PopupWindow {
     text: "100%"
   }
 
-  Rectangle {
+  MesaSurface {
     id: background
 
     anchors.fill: parent
-    implicitWidth: Math.min(ConfigService.panelMaxWidth, entries.implicitWidth + border.width * 2)
-    implicitHeight: entries.implicitHeight + border.width * 2
-    color: ThemeService.colors.background
-    border.width: ConfigService.border
-    border.color: ThemeService.colors.on_surface
+    implicitWidth: Math.min(ConfigService.panelMaxWidth, background.implicitContentWidth + background.padding * 2)
 
-    ColumnLayout {
-      id: entries
-
-      anchors.fill: parent
-      anchors.margins: background.border.width
+    contentItem: ColumnLayout {
       spacing: 0
 
       Repeater {
@@ -191,16 +184,24 @@ PopupWindow {
           implicitWidth: {
             if (row.modelData.isSeparator) return 0;
 
-            return content.implicitWidth + root.rowPadding * 2;
+            return content.implicitWidth + ConfigService.space * 2;
           }
           implicitHeight: {
-            if (row.modelData.isSeparator) return ConfigService.border;
+            if (row.modelData.isSeparator) return separator.implicitHeight;
 
             return Math.max(content.implicitHeight, ConfigService.controlHeight);
           }
           color: {
-            if (row.modelData.isSeparator) return ThemeService.colors.on_surface;
+            if (row.modelData.isSeparator) return "transparent";
             return row.highlighted ? ThemeService.selection : ThemeService.colors.background;
+          }
+          radius: ConfigService.radius
+
+          MesaSeparator {
+            id: separator
+
+            visible: row.modelData.isSeparator
+            width: parent.width
           }
 
           RowLayout {
@@ -210,9 +211,9 @@ PopupWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: root.rowPadding
-            anchors.rightMargin: root.rowPadding
-            spacing: ConfigService.spaceMd
+            anchors.leftMargin: ConfigService.space
+            anchors.rightMargin: ConfigService.space
+            spacing: ConfigService.space
 
             Item {
               visible: root.hasIndicators

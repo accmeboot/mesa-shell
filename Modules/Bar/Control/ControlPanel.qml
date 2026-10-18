@@ -14,18 +14,6 @@ MesaPanel {
     root.requestClose();
   }
 
-  component ConfirmMenu: MesaRowMenu {
-    id: confirmMenu
-
-    signal confirmed()
-
-    MesaMenuEntry {
-      text: "Confirm"
-
-      onTriggered: confirmMenu.confirmed()
-    }
-  }
-
   BrightnessGroup {}
 
   MesaSection {
@@ -87,15 +75,7 @@ MesaPanel {
       label: "Log out"
       interactive: true
 
-      menu: exitMenu
-
-      MesaChevron {}
-
-      ConfirmMenu {
-        id: exitMenu
-
-        onConfirmed: root.run(() => PowerService.exitSession())
-      }
+      onClicked: root.run(() => PowerService.exitSession())
     }
 
     MesaRow {
@@ -104,15 +84,7 @@ MesaPanel {
       label: "Restart"
       interactive: true
 
-      menu: rebootMenu
-
-      MesaChevron {}
-
-      ConfirmMenu {
-        id: rebootMenu
-
-        onConfirmed: root.run(() => PowerService.reboot())
-      }
+      onClicked: root.run(() => PowerService.reboot())
     }
 
     MesaRow {
@@ -121,15 +93,7 @@ MesaPanel {
       label: "Shut down"
       interactive: true
 
-      menu: shutdownMenu
-
-      MesaChevron {}
-
-      ConfirmMenu {
-        id: shutdownMenu
-
-        onConfirmed: root.run(() => PowerService.shutdown())
-      }
+      onClicked: root.run(() => PowerService.shutdown())
     }
   }
 }

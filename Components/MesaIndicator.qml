@@ -37,19 +37,22 @@ Item {
     visible: root.radio && root.checked
     width: parent.width - root.knobInset * 2
     height: width
+    radius: ConfigService.radius
     color: root.color
   }
 
   Rectangle {
     anchors.fill: parent
     visible: !root.radio
-    color: root.color
+    radius: height / 2
+    color: root.checked && root.enabled ? ThemeService.colors.ok : root.color
 
     Rectangle {
       x: root.checked ? parent.width - width - root.knobInset : root.knobInset
       anchors.verticalCenter: parent.verticalCenter
       width: parent.height - root.knobInset * 2
       height: width
+      radius: width / 2
       color: root.backgroundColor
     }
   }
