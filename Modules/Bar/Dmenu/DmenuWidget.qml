@@ -178,13 +178,13 @@ RowLayout {
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
       WlrLayershell.namespace: "mesa-dmenu"
 
-      readonly property real limit: (root.screen?.width ?? 0) - root.anchorLeft
+      readonly property real limit: (root.screen?.width ?? 0) - root.anchorLeft - list.flare
 
-      implicitWidth: searchField.width
+      implicitWidth: searchField.width + list.flare * 2
       implicitHeight: list.implicitHeight
 
       Component.onCompleted: {
-        root.listWidth = Math.min(list.implicitWidth, window.limit);
+        root.listWidth = Math.min(list.implicitBodyWidth, window.limit);
       }
 
       anchors {
@@ -193,14 +193,17 @@ RowLayout {
         left: true
       }
 
-      margins.left: root.anchorLeft
+      margins.left: root.anchorLeft - list.flare
       margins.top: -ConfigService.border
       margins.bottom: -ConfigService.border
+
+      mask: Region { item: list.background }
 
       MesaSelectList {
         id: list
 
         anchors.fill: parent
+        attached: true
 
         options: root.options
         currentIndex: root.currentIndex

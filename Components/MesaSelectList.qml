@@ -22,16 +22,7 @@ MesaSurface {
   onCurrentIndexChanged: root.ensureVisible()
   onOptionsChanged: Qt.callLater(root.ensureVisible)
 
-  implicitWidth: {
-    let widest = 0;
-
-    for (const option of root.options) {
-      widest = Math.max(widest, metrics.advanceWidth(option.text));
-    }
-
-    return Math.min(ConfigService.panelMaxWidth, Math.ceil(widest) + ConfigService.space * 2 + root.padding * 2);
-  }
-  implicitHeight: Math.min(root.options.length, root.maximumRows) * root.rowHeight + root.padding * 2
+  maximumWidth: ConfigService.panelMaxWidth
 
   FontMetrics {
     id: metrics
@@ -42,6 +33,17 @@ MesaSurface {
 
   contentItem: ListView {
     id: list
+
+    implicitWidth: {
+      let widest = 0;
+
+      for (const option of root.options) {
+        widest = Math.max(widest, metrics.advanceWidth(option.text));
+      }
+
+      return Math.ceil(widest) + ConfigService.space * 2;
+    }
+    implicitHeight: Math.min(root.options.length, root.maximumRows) * root.rowHeight
 
     model: root.options
     verticalLayoutDirection: root.bottomUp ? ListView.BottomToTop : ListView.TopToBottom

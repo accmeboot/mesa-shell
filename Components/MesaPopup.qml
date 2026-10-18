@@ -51,7 +51,7 @@ Scope {
       WlrLayershell.keyboardFocus: root.keyboardFocus
       WlrLayershell.namespace: root.namespace
 
-      implicitWidth: Math.max(root.minimumWidth, Math.min(root.maximumWidth, background.implicitWidth))
+      implicitWidth: background.implicitWidth
       implicitHeight: background.implicitHeight
 
       anchors {
@@ -64,13 +64,15 @@ Scope {
       margins.top: -ConfigService.border
       margins.bottom: -ConfigService.border
 
+      mask: Region { item: background.background }
+
       margins.left: {
         const available = root.screen?.width ?? 0;
 
         if (!root.alignLeft || !root.anchorItem || available === 0) return 0;
 
-        const desired = root.anchorLeft - ConfigService.border;
-        const furthest = Math.max(0, available - root.maximumWidth);
+        const desired = root.anchorLeft - ConfigService.border - background.flare;
+        const furthest = Math.max(0, available - background.implicitWidth);
 
         return Math.round(Math.max(0, Math.min(desired, furthest)));
       }
@@ -80,8 +82,8 @@ Scope {
 
         if (root.alignLeft || !root.anchorItem || available === 0) return 0;
 
-        const desired = available - root.anchorRight - ConfigService.border;
-        const furthest = Math.max(0, available - root.maximumWidth);
+        const desired = available - root.anchorRight - ConfigService.border - background.flare;
+        const furthest = Math.max(0, available - background.implicitWidth);
 
         return Math.round(Math.max(0, Math.min(desired, furthest)));
       }
@@ -160,6 +162,9 @@ Scope {
           id: background
 
           anchors.fill: parent
+          attached: true
+          minimumWidth: root.minimumWidth
+          maximumWidth: root.maximumWidth
 
           contentItem: Loader {
             sourceComponent: root.content

@@ -225,7 +225,7 @@ Paths are absolute, `~/` or relative to the repo.
 | `wallpaper.{dark,light}` | `assets/wallpaper-dark.png` / `assets/wallpaper-light.jpg` | `""` for none |
 | `wallpaper.dir` | `~/Pictures` | where `mshell wall` opens its picker |
 | `dateTimeFormat` | `ddd d MMM HH:mm` | `Qt.formatDateTime` |
-| `position` | `top` | `top` or `bottom`, notifications stay at the top |
+| `position` | `top` | `top` or `bottom`, notifications and popups follow the bar |
 | `border` | `1` | px |
 | `radius` | `4` | px |
 

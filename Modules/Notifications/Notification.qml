@@ -14,8 +14,6 @@ MesaSurface {
 
   implicitWidth: Math.round(ConfigService.font.size * 28)
 
-  clip: true
-
   MouseArea {
     anchors.fill: parent
     z: -1

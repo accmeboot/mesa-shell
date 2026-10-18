@@ -37,8 +37,13 @@ Scope {
         bottom: ConfigService.bottom
       }
 
+      margins.top: ConfigService.space
+      margins.bottom: ConfigService.space
+
       ColumnLayout {
         id: notificationsColumn
+
+        spacing: ConfigService.space
 
         Repeater {
           model: NotificationsService.activeList

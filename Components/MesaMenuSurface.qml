@@ -124,10 +124,11 @@ PopupWindow {
   anchor.adjustment: PopupAdjustment.Flip | PopupAdjustment.Slide
   anchor.margins.top: root.submenu ? (ConfigService.bottom ? 0 : -ConfigService.popupInset) : (ConfigService.bottom ? -ConfigService.barPadding : 0)
   anchor.margins.bottom: root.submenu ? (ConfigService.bottom ? -ConfigService.popupInset : 0) : (ConfigService.bottom ? 0 : -ConfigService.barPadding)
-  anchor.margins.left: root.submenu ? -ConfigService.popupPadding : 0
+  anchor.margins.left: root.submenu ? -ConfigService.popupPadding : -background.flare
   anchor.margins.right: root.submenu ? -ConfigService.popupPadding : 0
   implicitWidth: background.implicitWidth
   implicitHeight: background.implicitHeight
+  mask: Region { item: background.background }
 
   onBackerVisibilityChanged: if (!root.backingWindowVisible && root.shouldShow) root.backerHidden()
 
@@ -157,7 +158,8 @@ PopupWindow {
     id: background
 
     anchors.fill: parent
-    implicitWidth: Math.min(ConfigService.panelMaxWidth, background.implicitContentWidth + background.padding * 2)
+    attached: !root.submenu
+    maximumWidth: ConfigService.panelMaxWidth
 
     contentItem: ColumnLayout {
       spacing: 0
