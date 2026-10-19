@@ -62,7 +62,7 @@ RowLayout {
     PanelService.close("tray");
   }
 
-  spacing: 0
+  spacing: ConfigService.space
 
   onIpcOpenChanged: trayRow.ipcOpen ? Qt.callLater(trayRow.openFirstMenu) : trayMenu.close()
 

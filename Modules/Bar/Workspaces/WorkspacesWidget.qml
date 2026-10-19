@@ -10,7 +10,7 @@ RowLayout {
 
   required property var screen
 
-  spacing: 0
+  spacing: ConfigService.space
 
   Repeater {
     model: CompositorService.workspaces(root.screen.name)
