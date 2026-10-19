@@ -27,7 +27,7 @@ Singleton {
   readonly property bool bottom: adapter.position === "bottom"
 
   readonly property int space: Math.round(root.font.size / 2)
-  readonly property int barPadding: root.space
+  readonly property int barPadding: root.space / 2
   readonly property int popupPadding: root.space
   readonly property int popupInset: root.border + root.popupPadding
   readonly property int iconSize: Math.round(root.font.size * 1.5)
