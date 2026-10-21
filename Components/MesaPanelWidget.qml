@@ -13,6 +13,7 @@ RowLayout {
   property alias icon: button.icon
   property alias iconColor: button.contentColor
   property alias accent: button.accent
+  property alias direction: popup.direction
   property Component content: null
 
   readonly property bool isOpen: root.visible && PanelService.current === root.panel && PanelService.screen === root.screen.name
@@ -30,6 +31,8 @@ RowLayout {
   }
 
   MesaPopup {
+    id: popup
+
     open: root.isOpen
     screen: root.screen
     anchorItem: root

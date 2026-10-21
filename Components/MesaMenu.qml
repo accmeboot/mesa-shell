@@ -7,6 +7,7 @@ Scope {
   property QsMenuHandle menuHandle: null
   property Item anchorItem: null
   property bool submenu: false
+  property string direction: "auto"
   property var parentMenu: null
   property bool autoSelect: false
   property Item openRow: null
@@ -122,6 +123,7 @@ Scope {
     active: root.isOpen
     anchorItem: root.anchorItem
     submenu: root.submenu
+    direction: root.direction
 
     onTriggered: index => {
       const entry = surface.entryAt(index);

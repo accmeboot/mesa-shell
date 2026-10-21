@@ -68,7 +68,7 @@ Slider {
 
     implicitWidth: root.handleSize
     implicitHeight: root.handleSize
-    radius: width / 2
+    radius: ConfigService.radius
 
     color: ThemeService.colors.foreground
   }

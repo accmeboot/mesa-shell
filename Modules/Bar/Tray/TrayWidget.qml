@@ -11,6 +11,7 @@ RowLayout {
   id: trayRow
 
   required property var screen
+  property alias direction: trayMenu.direction
 
   readonly property bool menuOpen: trayMenu.isOpen
   readonly property bool ipcOpen: PanelService.current === "tray" && PanelService.screen === trayRow.screen.name

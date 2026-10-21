@@ -41,6 +41,14 @@ Singleton {
 
   readonly property alias wallpaper: adapter.wallpaper
 
+  function nestedRadius(inset: real): int {
+    if (root.radius <= 0) return 0;
+
+    const concentric = Math.min(1, root.radius / inset);
+
+    return root.radius + inset * (1 + concentric) / 2;
+  }
+
   function toUrl(path: string): string {
     path = (path ?? "").trim();
 

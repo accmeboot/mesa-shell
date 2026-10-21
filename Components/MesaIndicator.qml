@@ -44,7 +44,7 @@ Item {
   Rectangle {
     anchors.fill: parent
     visible: !root.radio
-    radius: height / 2
+    radius: ConfigService.nestedRadius(root.knobInset)
     color: root.checked && root.enabled ? ThemeService.colors.ok : root.color
 
     Rectangle {
@@ -52,7 +52,7 @@ Item {
       anchors.verticalCenter: parent.verticalCenter
       width: parent.height - root.knobInset * 2
       height: width
-      radius: width / 2
+      radius: ConfigService.radius
       color: root.backgroundColor
     }
   }

@@ -104,43 +104,51 @@ Scope {
             Layout.fillHeight: true
             Layout.fillWidth: true
             screen: modelData
+            direction: "left"
           }
           PrivacyWidget {
             id: privacy
             Layout.fillHeight: true
             screen: modelData
+            direction: "left"
           }
           NetworkWidget {
             id: network
             Layout.fillHeight: true
             screen: modelData
+            direction: "left"
           }
           BatteryWidget {
             id: battery
             Layout.fillHeight: true
             screen: modelData
+            direction: "left"
           }
           AudioWidget {
             id: audio
             Layout.fillHeight: true
             screen: modelData
+            direction: "left"
             output: true
           }
           AudioWidget {
             id: microphone
             Layout.fillHeight: true
             screen: modelData
+            direction: "left"
             output: false
           }
           BluetoothWidget {
             id: bluetooth
             Layout.fillHeight: true
             screen: modelData
+            direction: "left"
           }
           ControlWidget {
             id: control
             Layout.fillHeight: true
             screen: modelData
+            direction: "left"
           }
         }
       }

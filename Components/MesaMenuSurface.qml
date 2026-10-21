@@ -11,6 +11,7 @@ PopupWindow {
   property var entries: []
   property Item anchorItem: null
   property bool submenu: false
+  property string direction: "auto"
   property bool active: false
   property int currentIndex: -1
 
@@ -21,6 +22,7 @@ PopupWindow {
 
   readonly property int near: ConfigService.bottom ? Edges.Bottom : Edges.Top
   readonly property int far: ConfigService.bottom ? Edges.Top : Edges.Bottom
+  readonly property bool opensLeft: !root.submenu && root.direction === "left"
 
   readonly property int indicatorSize: ConfigService.iconSize
   readonly property bool hasIndicators: root.list.some(entry => (entry.icon !== "" && entry.text === "") || entry.buttonType !== QsMenuButtonType.None)
@@ -119,13 +121,13 @@ PopupWindow {
   visible: root.shouldShow
   color: "transparent"
   anchor.item: root.anchorItem
-  anchor.edges: root.submenu ? Edges.Right | root.near : root.far | Edges.Left
-  anchor.gravity: root.submenu ? Edges.Right | root.far : root.far | Edges.Right
+  anchor.edges: root.submenu ? Edges.Right | root.near : root.far | (root.opensLeft ? Edges.Right : Edges.Left)
+  anchor.gravity: root.submenu ? Edges.Right | root.far : root.far | (root.opensLeft ? Edges.Left : Edges.Right)
   anchor.adjustment: PopupAdjustment.Flip | PopupAdjustment.Slide
   anchor.margins.top: root.submenu ? (ConfigService.bottom ? 0 : -ConfigService.popupInset) : (ConfigService.bottom ? -ConfigService.barPadding : 0)
   anchor.margins.bottom: root.submenu ? (ConfigService.bottom ? -ConfigService.popupInset : 0) : (ConfigService.bottom ? 0 : -ConfigService.barPadding)
   anchor.margins.left: root.submenu ? -ConfigService.popupPadding : -background.flare
-  anchor.margins.right: root.submenu ? -ConfigService.popupPadding : 0
+  anchor.margins.right: root.submenu ? -ConfigService.popupPadding : -background.flare
   implicitWidth: background.implicitWidth
   implicitHeight: background.implicitHeight
   mask: Region { item: background.background }

@@ -11,7 +11,7 @@ Control {
   property real minimumWidth: 0
   property real maximumWidth: Infinity
 
-  readonly property int corner: ConfigService.radius > 0 ? ConfigService.radius + ConfigService.popupInset : 0
+  readonly property int corner: ConfigService.nestedRadius(ConfigService.popupInset)
   readonly property bool shaped: root.attached && root.corner > 0
   readonly property int flare: root.shaped ? root.corner : 0
   readonly property real implicitBodyWidth: Math.max(root.minimumWidth, Math.min(root.maximumWidth, root.implicitContentWidth + root.padding * 2))

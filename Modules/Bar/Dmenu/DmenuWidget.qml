@@ -36,7 +36,7 @@ RowLayout {
     value: item
   }))
 
-  readonly property real anchorLeft: PanelService.screenX(searchField)
+  readonly property real anchorLeft: PanelService.screenX(searchField) - ConfigService.popupInset
 
   function selectNext(): void {
     if (root.currentIndex < 0) {
@@ -75,7 +75,7 @@ RowLayout {
     }
   }
 
-  spacing: 0
+  spacing: ConfigService.popupInset
 
   MesaCatcher {
     active: root.isOpen
@@ -90,8 +90,6 @@ RowLayout {
     Layout.fillHeight: true
     icon: "cm_runterm"
     open: root.isOpen
-    topRightRadius: root.isOpen ? 0 : ConfigService.radius
-    bottomRightRadius: root.isOpen ? 0 : ConfigService.radius
     onClicked: root.isOpen ? DmenuService.close() : DmenuService.open(root.screen.name)
   }
 
@@ -114,14 +112,14 @@ RowLayout {
     MesaInput {
       id: searchField
 
-      Layout.fillHeight: true
+      Layout.preferredHeight: ConfigService.controlHeight
       Layout.fillWidth: true
       Layout.minimumWidth: Math.round(ConfigService.font.size * 6)
       Layout.preferredWidth: root.listWidth
       Layout.maximumWidth: root.listWidth
 
-      frame.topLeftRadius: 0
-      frame.bottomLeftRadius: 0
+      borderColor: "transparent"
+      placeholderText: root.choosing ? "Select…" : "Run…"
 
       onTextChanged: {
         root.currentIndex = 0;
@@ -180,11 +178,11 @@ RowLayout {
 
       readonly property real limit: (root.screen?.width ?? 0) - root.anchorLeft - list.flare
 
-      implicitWidth: searchField.width + list.flare * 2
-      implicitHeight: list.implicitHeight
+      implicitWidth: searchField.width + (ConfigService.popupInset + list.flare) * 2
+      implicitHeight: root.screen?.height ?? list.implicitHeight
 
       Component.onCompleted: {
-        root.listWidth = Math.min(list.implicitBodyWidth, window.limit);
+        root.listWidth = Math.min(list.implicitBodyWidth, window.limit) - ConfigService.popupInset * 2;
       }
 
       anchors {
@@ -202,7 +200,10 @@ RowLayout {
       MesaSelectList {
         id: list
 
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: ConfigService.bottom ? undefined : parent.top
+        anchors.bottom: ConfigService.bottom ? parent.bottom : undefined
         attached: true
 
         options: root.options
