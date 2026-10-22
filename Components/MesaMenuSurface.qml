@@ -25,9 +25,7 @@ PopupWindow {
   readonly property bool opensLeft: !root.submenu && root.direction === "left"
 
   readonly property int indicatorSize: ConfigService.iconSize
-  readonly property bool hasIndicators: root.list.some(entry => (entry.icon !== "" && entry.text === "") || entry.buttonType !== QsMenuButtonType.None)
-  readonly property bool hasToggles: root.list.some(entry => entry.buttonType === QsMenuButtonType.CheckBox)
-  readonly property int indicatorWidth: root.hasToggles ? Math.max(root.indicatorSize, toggleMetrics.implicitWidth) : root.indicatorSize
+  readonly property bool hasIndicators: root.list.some(entry => (entry.icon !== "" && entry.text === "") || entry.buttonType === QsMenuButtonType.RadioButton)
 
   signal triggered(int index)
   signal submenuRequested(int index)
@@ -134,12 +132,6 @@ PopupWindow {
 
   onBackerVisibilityChanged: if (!root.backingWindowVisible && root.shouldShow) root.backerHidden()
 
-  MesaIndicator {
-    id: toggleMetrics
-
-    visible: false
-  }
-
   TextMetrics {
     id: inputMetrics
 
@@ -221,7 +213,7 @@ PopupWindow {
 
             Item {
               visible: root.hasIndicators
-              Layout.preferredWidth: root.indicatorWidth
+              Layout.preferredWidth: root.indicatorSize
               Layout.preferredHeight: root.indicatorSize
 
               MesaIndicator {
@@ -229,9 +221,9 @@ PopupWindow {
 
                 anchors.centerIn: parent
                 enabled: row.modelData.enabled
-                visible: row.modelData.buttonType !== QsMenuButtonType.None
+                visible: row.modelData.buttonType === QsMenuButtonType.RadioButton
                 checked: row.modelData.checkState === Qt.Checked
-                radio: row.modelData.buttonType === QsMenuButtonType.RadioButton
+                radio: true
                 color: row.foreground
                 backgroundColor: row.color
               }
@@ -318,6 +310,14 @@ PopupWindow {
               text: `${Math.round(row.value * 100)}%`
               color: row.foreground
               horizontalAlignment: Text.AlignRight
+            }
+
+            MesaIndicator {
+              visible: row.modelData.buttonType === QsMenuButtonType.CheckBox
+              enabled: row.modelData.enabled
+              checked: row.modelData.checkState === Qt.Checked
+              color: row.foreground
+              backgroundColor: row.color
             }
 
             MesaChevron {
