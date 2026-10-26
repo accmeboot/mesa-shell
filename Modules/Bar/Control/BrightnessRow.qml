@@ -7,7 +7,11 @@ import qs.Components
 MesaRow {
   id: root
 
+  interactive: true
   wideTrailing: true
+  activeFocusOnTab: false
+
+  onActiveFocusChanged: if (root.activeFocus) brightness.forceActiveFocus(Qt.MouseFocusReason)
 
   Component.onCompleted: BrightnessService.refresh()
 
@@ -31,6 +35,8 @@ MesaRow {
 
     Layout.alignment: Qt.AlignVCenter
     Layout.fillWidth: true
+
+    hoverEnabled: false
 
     // 0% cuts the backlight entirely, which reads as a dead screen
     from: 0.01
