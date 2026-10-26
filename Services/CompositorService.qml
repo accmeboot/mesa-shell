@@ -20,6 +20,7 @@ Singleton {
   readonly property string focusedOutput: root.backend?.focusedOutput || (Quickshell.screens[0]?.name ?? "")
   readonly property string exitCommand: root.backend?.exitCommand ?? "loginctl terminate-session \"$XDG_SESSION_ID\""
   readonly property string mode: root.backend?.mode ?? ""
+  readonly property var windows: root.backend?.windows ?? []
 
   function workspaces(output: string): var {
     return root.backend?.workspaces(output) ?? [];

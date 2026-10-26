@@ -9,6 +9,8 @@ Singleton {
   id: root
 
   property string mode: "default"
+  property var windows: []
+  property bool windowsStale: false
 
   readonly property string focusedOutput: I3.focusedMonitor?.name ?? ""
   readonly property string exitCommand: "swaymsg exit"
@@ -28,11 +30,48 @@ Singleton {
       }));
   }
 
+  function refreshWindows(): void {
+    if (tree.running) root.windowsStale = true;
+    else tree.running = true;
+  }
+
+  function collectWindows(node): var {
+    const children = [...node.nodes, ...node.floating_nodes].reduce((all, child) => all.concat(root.collectWindows(child)), []);
+
+    if (node.pid === undefined) return children;
+
+    return [{
+      appId: node.app_id ?? node.window_properties?.class ?? "",
+      title: node.name ?? "",
+      urgent: node.urgent,
+      activate: () => I3.dispatch(`[con_id=${node.id}] focus`),
+    }, ...children];
+  }
+
   I3IpcListener {
-    subscriptions: ["mode"]
+    subscriptions: ["mode", "window"]
 
     onIpcEvent: (event) => {
       if (event.type === "mode") root.mode = JSON.parse(event.data).change;
+      if (event.type === "window") root.refreshWindows();
+    }
+  }
+
+  Process {
+    id: tree
+
+    command: ["swaymsg", "-t", "get_tree"]
+    running: true
+
+    stdout: StdioCollector {
+      onStreamFinished: root.windows = root.collectWindows(JSON.parse(this.text))
+    }
+
+    onExited: {
+      if (!root.windowsStale) return;
+
+      root.windowsStale = false;
+      tree.running = true;
     }
   }
 

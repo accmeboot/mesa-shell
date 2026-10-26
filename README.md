@@ -46,6 +46,7 @@ bindsym $mod+Shift+p exec mshell panel toggle microphone
 bindsym $mod+n exec mshell panel toggle network
 bindsym $mod+c exec mshell panel toggle bluetooth
 bindsym $mod+t exec mshell panel toggle tray
+bindsym $mod+Tab exec mshell panel toggle windows
 bindsym $mod+q exec mshell panel toggle control
 bindsym $mod+grave exec mshell theme toggle
 bindsym $mod+backslash exec mshell notifications toggle
@@ -56,7 +57,7 @@ bindsym $mod+bracketright exec mshell notifications dismissAll
 ## Modules
 
 - **Bar**: workspaces, binding mode, launcher, clock and tray
-  - click a workspace to switch to it
+  - click a workspace to switch to it, right-click the workspaces to list open windows and focus one
   - the current binding mode (`resize`, ...) shows next to the workspaces while it isn't `default`
   - audio, microphone, network, battery, bluetooth and control each open their own panel from the bar
   - the audio panel holds the output devices and playback streams, the microphone panel the input devices and recording streams
@@ -80,6 +81,8 @@ bindsym $mod+bracketright exec mshell notifications dismissAll
 | ![dmenu launcher](assets/screenshots/dmenu.png) | ![Notification](assets/screenshots/notification.png) |
 | **Tray menu** | **Lock screen** |
 | ![Tray menu](assets/screenshots/tray-menu.png) | ![Lock screen](assets/screenshots/lock.png) |
+| **Windows** | |
+| ![Windows panel](assets/screenshots/windows.png) | |
 
 ## mshell
 
@@ -138,7 +141,7 @@ Everything switches together with the desktop's color-scheme setting, whether it
 | `notifications` | `toggle`, `isDoNotDisturb`, `dismissLast`, `dismissAll` |
 | `config` | `reload` |
 
-Panel names: `audio`, `network`, `bluetooth`, `battery`, `control`, `tray`, `privacy`. `privacy` only opens while a microphone, camera or screen share is in use.
+Panel names: `audio`, `network`, `bluetooth`, `battery`, `control`, `tray`, `privacy`, `windows`. `privacy` only opens while a microphone, camera or screen share is in use.
 
 ```bash
 mshell panel toggle audio

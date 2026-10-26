@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Wayland
 
 import qs.Services
 import qs.Components
@@ -10,7 +11,27 @@ RowLayout {
 
   required property var screen
 
+  readonly property bool windowsOpen: PanelService.current === "windows" && PanelService.screen === root.screen.name
+
   spacing: ConfigService.space
+
+  TapHandler {
+    acceptedButtons: Qt.RightButton
+    onTapped: PanelService.toggle("windows", root.screen.name)
+  }
+
+  MesaPopup {
+    open: root.windowsOpen
+    screen: root.screen
+    anchorItem: root
+    exclude: root
+    namespace: "mesa-windows"
+    keyboardFocus: WlrKeyboardFocus.Exclusive
+
+    content: WindowsPanel {}
+
+    onDismissed: PanelService.close("windows")
+  }
 
   Repeater {
     model: CompositorService.workspaces(root.screen.name)
