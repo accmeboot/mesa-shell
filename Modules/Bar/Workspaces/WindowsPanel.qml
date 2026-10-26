@@ -32,6 +32,8 @@ MesaPanel {
           }
         }
 
+        Component.onCompleted: if (windowRow.modelData.focused) Qt.callLater(() => windowRow.forceActiveFocus())
+
         onClicked: {
           windowRow.modelData.activate();
           PanelService.close("windows");
