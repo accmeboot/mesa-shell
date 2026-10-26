@@ -25,4 +25,8 @@ Singleton {
   function workspaces(output: string): var {
     return root.backend?.workspaces(output) ?? [];
   }
+
+  function refreshWindows(): void {
+    root.backend?.refreshWindows();
+  }
 }

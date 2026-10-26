@@ -5,6 +5,8 @@ import qs.Services
 import qs.Components
 
 MesaPanel {
+  Component.onCompleted: CompositorService.refreshWindows()
+
   MesaSection {
     Repeater {
       model: CompositorService.windows

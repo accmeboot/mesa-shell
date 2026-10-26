@@ -10,7 +10,6 @@ Singleton {
 
   property string mode: "default"
   property var windows: []
-  property bool windowsStale: false
 
   readonly property string focusedOutput: I3.focusedMonitor?.name ?? ""
   readonly property string exitCommand: "swaymsg exit"
@@ -31,8 +30,7 @@ Singleton {
   }
 
   function refreshWindows(): void {
-    if (tree.running) root.windowsStale = true;
-    else tree.running = true;
+    tree.running = true;
   }
 
   function collectWindows(node, active: bool): var {
@@ -50,11 +48,10 @@ Singleton {
   }
 
   I3IpcListener {
-    subscriptions: ["mode", "window", "workspace"]
+    subscriptions: ["mode"]
 
     onIpcEvent: (event) => {
       if (event.type === "mode") root.mode = JSON.parse(event.data).change;
-      if (event.type === "window" || event.type === "workspace") root.refreshWindows();
     }
   }
 
@@ -62,17 +59,9 @@ Singleton {
     id: tree
 
     command: ["swaymsg", "-t", "get_tree"]
-    running: true
 
     stdout: StdioCollector {
       onStreamFinished: root.windows = root.collectWindows(JSON.parse(this.text), true)
-    }
-
-    onExited: {
-      if (!root.windowsStale) return;
-
-      root.windowsStale = false;
-      tree.running = true;
     }
   }
 
