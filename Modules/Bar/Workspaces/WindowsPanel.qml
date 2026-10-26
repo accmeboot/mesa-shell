@@ -18,6 +18,17 @@ MesaPanel {
 
         label: `[${windowRow.appName}] ${windowRow.modelData.title}`
         interactive: true
+        leading: focusedIndicator
+
+        Component {
+          id: focusedIndicator
+
+          MesaIndicator {
+            radio: true
+            activeFocusOnTab: false
+            checked: windowRow.modelData.focused
+          }
+        }
 
         onClicked: {
           windowRow.modelData.activate();
@@ -29,8 +40,10 @@ MesaPanel {
 
           visible: windowRow.modelData.urgent
 
-          x: Math.round(width / 2)
-          y: x
+          readonly property int overlap: Math.round(width / 2)
+
+          x: windowRow.labelPosition.x - overlap
+          y: windowRow.labelPosition.y - overlap
           width: Math.round(ConfigService.font.size / 2)
           height: width
 

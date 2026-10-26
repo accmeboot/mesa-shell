@@ -31,6 +31,10 @@ Rectangle {
   readonly property color muted: Qt.alpha(root.foreground, 0.6)
 
   readonly property int leadingSize: Math.round(ConfigService.font.size * 0.5)
+  readonly property point labelPosition: Qt.point(
+    content.x + labels.x + labelText.x + labelMetrics.tightBoundingRect.x,
+    content.y + labels.y + labelText.y + labelText.baselineOffset + labelMetrics.tightBoundingRect.y
+  )
 
   signal clicked()
 
@@ -106,6 +110,14 @@ Rectangle {
     id: hover
   }
 
+  TextMetrics {
+    id: labelMetrics
+
+    font.family: ConfigService.font.name
+    font.pointSize: ConfigService.font.size
+    text: root.label
+  }
+
   RowLayout {
     id: content
 
@@ -146,6 +158,8 @@ Rectangle {
       spacing: 0
 
       MesaMarquee {
+        id: labelText
+
         Layout.fillWidth: true
 
         visible: root.label !== ""

@@ -35,8 +35,8 @@ Singleton {
     else tree.running = true;
   }
 
-  function collectWindows(node): var {
-    const children = [...node.nodes, ...node.floating_nodes].reduce((all, child) => all.concat(root.collectWindows(child)), []);
+  function collectWindows(node, active: bool): var {
+    const children = [...node.nodes, ...node.floating_nodes].reduce((all, child) => all.concat(root.collectWindows(child, active && node.focus[0] === child.id)), []);
 
     if (node.pid === undefined) return children;
 
@@ -44,16 +44,17 @@ Singleton {
       appId: node.app_id ?? node.window_properties?.class ?? "",
       title: node.name ?? "",
       urgent: node.urgent,
+      focused: active,
       activate: () => I3.dispatch(`[con_id=${node.id}] focus`),
     }, ...children];
   }
 
   I3IpcListener {
-    subscriptions: ["mode", "window"]
+    subscriptions: ["mode", "window", "workspace"]
 
     onIpcEvent: (event) => {
       if (event.type === "mode") root.mode = JSON.parse(event.data).change;
-      if (event.type === "window") root.refreshWindows();
+      if (event.type === "window" || event.type === "workspace") root.refreshWindows();
     }
   }
 
@@ -64,7 +65,7 @@ Singleton {
     running: true
 
     stdout: StdioCollector {
-      onStreamFinished: root.windows = root.collectWindows(JSON.parse(this.text))
+      onStreamFinished: root.windows = root.collectWindows(JSON.parse(this.text), true)
     }
 
     onExited: {

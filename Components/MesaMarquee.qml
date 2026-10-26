@@ -20,6 +20,7 @@ Item {
 
   implicitWidth: label.implicitWidth
   implicitHeight: label.implicitHeight
+  baselineOffset: label.y + label.baselineOffset
   clip: root.sliding
 
   onOverflowChanged: if (slide.running) slide.restart()
