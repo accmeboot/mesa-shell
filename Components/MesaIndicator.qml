@@ -16,15 +16,15 @@ Item {
   }
 
   property color color: root.enabled ? root.row?.foreground ?? ThemeService.colors.foreground : ThemeService.disabled
-  property color backgroundColor: root.row ? root.row.surfaceColor : ThemeService.colors.background
+  readonly property color accent: root.row?.highlighted ? root.color : ThemeService.colors.highlight
 
-  readonly property int trackHeight: ConfigService.iconSizeSmall
-  readonly property int knobInset: Math.max(ConfigService.border * 2, Math.round(root.trackHeight / 6))
+  readonly property int handleSize: Math.round(ConfigService.font.size * 1.0)
+  readonly property int trackSize: Math.max(ConfigService.border, Math.round(root.handleSize / 6))
 
   signal toggled
 
-  implicitWidth: root.radio ? root.trackHeight : root.trackHeight * 2
-  implicitHeight: root.trackHeight
+  implicitWidth: root.radio ? root.handleSize : root.handleSize * 2
+  implicitHeight: root.handleSize
 
   activeFocusOnTab: root.enabled
 
@@ -33,26 +33,28 @@ Item {
   Keys.onSpacePressed: root.toggled()
 
   Rectangle {
-    anchors.centerIn: parent
+    anchors.fill: parent
     visible: root.radio && root.checked
-    width: parent.width - root.knobInset * 2
-    height: width
     color: root.color
   }
 
-  Rectangle {
+  Item {
     anchors.fill: parent
     visible: !root.radio
-    color: root.checked ? root.color : "transparent"
-    border.color: root.color
-    border.width: ConfigService.border
 
     Rectangle {
-      x: root.checked ? parent.width - width - root.knobInset : root.knobInset
+      anchors.left: parent.left
+      anchors.right: parent.right
       anchors.verticalCenter: parent.verticalCenter
-      width: parent.height - root.knobInset * 2
+      height: root.trackSize
+      color: root.checked ? root.accent : Qt.alpha(root.color, 0.3)
+    }
+
+    Rectangle {
+      x: root.checked ? parent.width - width : 0
+      width: parent.height
       height: width
-      color: root.checked ? root.backgroundColor : root.color
+      color: root.color
     }
   }
 
