@@ -15,7 +15,7 @@ Item {
     return null;
   }
 
-  property color color: root.enabled ? ThemeService.colors.foreground : ThemeService.disabled
+  property color color: root.enabled ? root.row?.foreground ?? ThemeService.colors.foreground : ThemeService.disabled
   property color backgroundColor: root.row ? root.row.surfaceColor : ThemeService.colors.background
 
   readonly property int trackHeight: ConfigService.iconSizeSmall
@@ -37,23 +37,22 @@ Item {
     visible: root.radio && root.checked
     width: parent.width - root.knobInset * 2
     height: width
-    radius: ConfigService.radius
     color: root.color
   }
 
   Rectangle {
     anchors.fill: parent
     visible: !root.radio
-    radius: ConfigService.nestedRadius(root.knobInset)
-    color: root.checked && root.enabled ? ThemeService.colors.ok : root.color
+    color: root.checked ? root.color : "transparent"
+    border.color: root.color
+    border.width: ConfigService.border
 
     Rectangle {
       x: root.checked ? parent.width - width - root.knobInset : root.knobInset
       anchors.verticalCenter: parent.verticalCenter
       width: parent.height - root.knobInset * 2
       height: width
-      radius: ConfigService.radius
-      color: root.backgroundColor
+      color: root.checked ? root.backgroundColor : root.color
     }
   }
 

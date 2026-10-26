@@ -28,7 +28,6 @@ TextField {
     id: frame
 
     color: root.backgroundColor
-    radius: ConfigService.radius
     border.color: root.borderColor
     border.width: ConfigService.border
   }

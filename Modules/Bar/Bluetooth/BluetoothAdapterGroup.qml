@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell.Bluetooth
 
-import qs.Services
 import qs.Components
 
 MesaSection {
@@ -24,7 +23,6 @@ MesaSection {
   MesaRow {
     label: "Enabled"
     value: root.blocked ? "Blocked by rfkill" : ""
-    valueColor: ThemeService.colors.critical
     interactive: !root.busy && !root.blocked
 
     onClicked: root.adapter.enabled = !root.adapter.enabled
@@ -43,7 +41,6 @@ MesaSection {
   MesaRow {
     label: "Discoverable"
     value: root.adapter?.discoverable && root.adapter.discoverableTimeout > 0 ? `resets after ${root.formatTimeout(root.adapter.discoverableTimeout)}` : ""
-    valueColor: ThemeService.muted
     interactive: root.adapter?.enabled ?? false
 
     onClicked: root.adapter.discoverable = !root.adapter.discoverable
@@ -57,11 +54,5 @@ MesaSection {
 
       onToggled: root.adapter.discoverable = !root.adapter.discoverable
     }
-  }
-
-  MesaRow {
-    label: "Name"
-    value: root.adapter?.name || root.adapter?.adapterId || ""
-    fallback: "Unknown"
   }
 }

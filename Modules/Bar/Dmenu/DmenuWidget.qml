@@ -176,13 +176,13 @@ RowLayout {
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
       WlrLayershell.namespace: "mesa-dmenu"
 
-      readonly property real limit: (root.screen?.width ?? 0) - root.anchorLeft - list.flare
+      readonly property real limit: (root.screen?.width ?? 0) - root.anchorLeft
 
-      implicitWidth: searchField.width + (ConfigService.popupInset + list.flare) * 2
+      implicitWidth: searchField.width + ConfigService.popupInset * 2
       implicitHeight: root.screen?.height ?? list.implicitHeight
 
       Component.onCompleted: {
-        root.listWidth = Math.min(list.implicitBodyWidth, window.limit) - ConfigService.popupInset * 2;
+        root.listWidth = Math.min(list.implicitWidth, window.limit) - ConfigService.popupInset * 2;
       }
 
       anchors {
@@ -191,7 +191,7 @@ RowLayout {
         left: true
       }
 
-      margins.left: root.anchorLeft - list.flare
+      margins.left: root.anchorLeft
       margins.top: -ConfigService.border
       margins.bottom: -ConfigService.border
 
@@ -204,7 +204,6 @@ RowLayout {
         anchors.right: parent.right
         anchors.top: ConfigService.bottom ? undefined : parent.top
         anchors.bottom: ConfigService.bottom ? parent.bottom : undefined
-        attached: true
 
         options: root.options
         currentIndex: root.currentIndex

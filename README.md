@@ -227,7 +227,6 @@ Paths are absolute, `~/` or relative to the repo.
 | `dateTimeFormat` | `ddd d MMM HH:mm` | `Qt.formatDateTime` |
 | `position` | `top` | `top` or `bottom`, notifications and popups follow the bar |
 | `border` | `1` | px |
-| `radius` | `4` | px |
 
 ## dmenu
 

@@ -60,8 +60,7 @@ MesaSurface {
 
       width: list.width
       height: root.rowHeight
-      color: option.highlighted ? ThemeService.selection : ThemeService.colors.background
-      radius: ConfigService.radius
+      color: option.highlighted ? ThemeService.colors.highlight : ThemeService.colors.background
 
       MouseArea {
         anchors.fill: parent
@@ -75,6 +74,7 @@ MesaSurface {
         anchors.rightMargin: ConfigService.space
 
         text: option.modelData.text
+        color: option.highlighted ? ThemeService.colors.background : ThemeService.colors.foreground
         running: option.highlighted
       }
     }

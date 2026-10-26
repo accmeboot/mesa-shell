@@ -3,7 +3,6 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Bluetooth
 
-import qs.Services
 import qs.Components
 
 MesaSection {
@@ -52,7 +51,6 @@ MesaSection {
   MesaRow {
     visible: root.listed.length === 0
     label: root.scanning ? "Scanning" : "No devices"
-    labelColor: root.scanning ? ThemeService.colors.attention : ThemeService.muted
   }
 
   ScriptModel {
@@ -83,20 +81,6 @@ MesaSection {
         default: return "Disconnected";
         }
       }
-      valueColor: {
-        const colors = ThemeService.colors;
-
-        if (deviceRow.device.pairing) return colors.attention;
-        if (!deviceRow.device.paired) return ThemeService.muted;
-
-        switch (deviceRow.device.state) {
-        case BluetoothDeviceState.Connected: return colors.ok;
-        case BluetoothDeviceState.Connecting:
-        case BluetoothDeviceState.Disconnecting:
-          return colors.attention;
-        default: return ThemeService.muted;
-        }
-      }
       interactive: true
       menu: deviceMenu
 
@@ -105,10 +89,12 @@ MesaSection {
 
         visible: deviceRow.device.connected && deviceRow.device.batteryAvailable
         text: `${Math.round(deviceRow.device.battery * 100)}%`
-        color: ColorService.threshold(deviceRow.device.battery * 100, 30, 15)
+        color: deviceRow.foreground
       }
 
-      MesaChevron {}
+      MesaChevron {
+        color: deviceRow.foreground
+      }
 
       MesaRowMenu {
         id: deviceMenu

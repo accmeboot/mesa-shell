@@ -49,6 +49,5 @@
   },
   "dateTimeFormat": "ddd d MMM HH:mm",
   "position": "top",
-  "border": 1,
-  "radius": 4
+  "border": 1
 }

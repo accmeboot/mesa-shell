@@ -8,11 +8,8 @@ Rectangle {
   id: root
 
   property string label
-  property color labelColor: root.interactive ? ThemeService.colors.foreground : ThemeService.muted
   property string sublabel
   property string value
-  property string fallback
-  property color valueColor: ThemeService.colors.foreground
   property Component leading: null
   property MesaRowMenu menu: null
   property bool interactive: false
@@ -29,9 +26,9 @@ Rectangle {
   }
 
   readonly property bool highlighted: root.containsFocus
-  readonly property color surfaceColor: root.highlighted ? ThemeService.selection : ThemeService.colors.background
-
-  readonly property bool hasValue: root.value !== ""
+  readonly property color surfaceColor: root.highlighted ? ThemeService.colors.highlight : ThemeService.colors.background
+  readonly property color foreground: root.highlighted ? ThemeService.colors.background : ThemeService.colors.foreground
+  readonly property color muted: Qt.alpha(root.foreground, 0.6)
 
   readonly property int leadingSize: Math.round(ConfigService.font.size * 0.5)
 
@@ -41,8 +38,7 @@ Rectangle {
 
   implicitWidth: content.implicitWidth + ConfigService.space * 2
   implicitHeight: Math.max(content.implicitHeight, ConfigService.controlHeight)
-  color: root.highlighted ? ThemeService.selection : "transparent"
-  radius: ConfigService.radius
+  color: root.highlighted ? root.surfaceColor : "transparent"
 
   activeFocusOnTab: root.interactive
 
@@ -154,7 +150,7 @@ Rectangle {
 
         visible: root.label !== ""
         text: root.label
-        color: root.labelColor
+        color: root.interactive ? root.foreground : root.muted
         running: root.highlighted || hover.hovered
       }
 
@@ -163,7 +159,7 @@ Rectangle {
 
         visible: root.sublabel !== ""
         text: root.sublabel
-        color: ThemeService.muted
+        color: root.muted
         running: root.highlighted || hover.hovered
       }
     }
@@ -173,9 +169,9 @@ Rectangle {
 
       Layout.alignment: Qt.AlignVCenter
 
-      visible: root.hasValue || root.fallback !== ""
-      text: root.hasValue ? root.value : root.fallback
-      color: root.hasValue ? root.valueColor : ThemeService.muted
+      visible: root.value !== ""
+      text: root.value
+      color: root.foreground
     }
   }
 }

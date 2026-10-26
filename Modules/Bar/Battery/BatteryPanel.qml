@@ -1,6 +1,5 @@
 import Quickshell.Services.UPower
 
-import qs.Services
 import qs.Components
 
 MesaPanel {
@@ -36,27 +35,11 @@ MesaPanel {
         default: return "Unknown";
         }
       }
-      valueColor: {
-        const colors = ThemeService.colors;
-
-        switch (root.device?.state) {
-        case UPowerDeviceState.Charging:
-        case UPowerDeviceState.FullyCharged:
-          return colors.ok;
-        case UPowerDeviceState.PendingCharge:
-        case UPowerDeviceState.PendingDischarge:
-          return colors.attention;
-        case UPowerDeviceState.Empty: return colors.critical;
-        case UPowerDeviceState.Discharging: return colors.foreground;
-        default: return ThemeService.muted;
-        }
-      }
     }
 
     MesaRow {
       label: "Charge"
       value: `${root.percentage}%`
-      valueColor: ColorService.threshold(root.percentage, 50, 20)
     }
 
     MesaRow {

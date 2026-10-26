@@ -33,7 +33,6 @@ Rectangle {
     return root.open ? ThemeService.colors.surface : "transparent";
   }
 
-  radius: ConfigService.radius
   border.color: ThemeService.colors.on_surface
   border.width: 0
 

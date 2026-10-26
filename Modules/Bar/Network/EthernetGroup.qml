@@ -3,7 +3,6 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Networking
 
-import qs.Services
 import qs.Components
 
 MesaSection {
@@ -45,19 +44,6 @@ MesaSection {
         default: return "Unknown";
         }
       }
-      valueColor: {
-        const colors = ThemeService.colors;
-
-        if (!deviceRow.device.hasLink) return ThemeService.muted;
-
-        switch (deviceRow.device.state) {
-        case ConnectionState.Connecting:
-        case ConnectionState.Disconnecting:
-          return colors.attention;
-        default:
-          return ColorService.status(deviceRow.device.connected);
-        }
-      }
       interactive: true
       menu: deviceMenu
 
@@ -66,10 +52,12 @@ MesaSection {
 
         visible: deviceRow.device.hasLink && deviceRow.device.linkSpeed > 0
         text: `${deviceRow.device.linkSpeed} Mbps`
-        color: ThemeService.muted
+        color: deviceRow.muted
       }
 
-      MesaChevron {}
+      MesaChevron {
+        color: deviceRow.foreground
+      }
 
       MesaRowMenu {
         id: deviceMenu

@@ -36,7 +36,6 @@ RowLayout {
         y: Math.floor((parent.height - height) / 2)
         width: Math.round(ConfigService.font.size) | 1
         height: width
-        radius: ConfigService.radius
 
         color: ThemeService.colors.highlight
       }
@@ -53,7 +52,6 @@ RowLayout {
 
         width: Math.round(ConfigService.font.size / 2)
         height: width
-        radius: ConfigService.radius
 
         color: ThemeService.colors.critical
       }

@@ -23,7 +23,6 @@ MesaSection {
   MesaRow {
     label: "Wi-Fi"
     value: !Networking.wifiHardwareEnabled ? "Blocked by rfkill" : ""
-    valueColor: ThemeService.colors.critical
     interactive: Networking.wifiHardwareEnabled
 
     onClicked: Networking.wifiEnabled = !Networking.wifiEnabled
@@ -42,7 +41,6 @@ MesaSection {
   MesaRow {
     visible: Networking.wifiEnabled && root.networks.length === 0
     label: "Scanning"
-    labelColor: ThemeService.colors.attention
   }
 
   ScriptModel {
@@ -124,7 +122,6 @@ MesaSection {
           default: return entry.network.connected ? "Connected" : "";
           }
         }
-        valueColor: entry.network.stateChanging ? ThemeService.colors.attention : ThemeService.colors.ok
         interactive: true
         menu: networkMenu
 
@@ -133,10 +130,12 @@ MesaSection {
 
           name: entry.network.security === WifiSecurityType.Open || entry.network.security === WifiSecurityType.Owe ? "unlock" : "lock"
           size: ConfigService.iconSizeSmall
-          color: ThemeService.muted
+          color: networkRow.muted
         }
 
-        MesaChevron {}
+        MesaChevron {
+          color: networkRow.foreground
+        }
 
         MesaRowMenu {
           id: networkMenu
@@ -192,7 +191,6 @@ MesaSection {
       MesaRow {
         visible: entry.error !== ""
         label: entry.error
-        labelColor: ThemeService.colors.critical
       }
     }
   }

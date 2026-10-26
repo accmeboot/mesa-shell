@@ -22,7 +22,6 @@ Singleton {
     }
   }
   readonly property alias border: adapter.border
-  readonly property alias radius: adapter.radius
   readonly property alias dateTimeFormat: adapter.dateTimeFormat
   readonly property bool bottom: adapter.position === "bottom"
 
@@ -40,14 +39,6 @@ Singleton {
   property bool settled: false
 
   readonly property alias wallpaper: adapter.wallpaper
-
-  function nestedRadius(inset: real): int {
-    if (root.radius <= 0) return 0;
-
-    const concentric = Math.min(1, root.radius / inset);
-
-    return root.radius + inset * (1 + concentric) / 2;
-  }
 
   function toUrl(path: string): string {
     path = (path ?? "").trim();
@@ -120,8 +111,6 @@ Singleton {
       property string position: "top"
 
       property int border: 1
-
-      property int radius: 4
     }
   }
 }

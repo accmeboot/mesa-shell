@@ -47,7 +47,6 @@ Scope {
         implicitHeight: date.implicitHeight + ConfigService.space * 4
 
         color: ThemeService.colors.background
-        radius: ConfigService.radius
 
         MesaText {
           id: date
@@ -77,7 +76,6 @@ Scope {
         implicitHeight: row.implicitHeight + ConfigService.space * 4
 
         color: ThemeService.colors.background
-        radius: ConfigService.radius
 
         focus: true
 
@@ -176,16 +174,11 @@ Scope {
           id: flash
 
           readonly property real inset: bar.stroke / 2
-          readonly property real corner: Math.max(0, bar.radius - flash.inset)
-          readonly property real perimeter: 2 * (width + height - bar.stroke * 2) - 8 * flash.corner + 2 * Math.PI * flash.corner
+          readonly property real perimeter: 2 * (width + height - bar.stroke * 2)
           readonly property string loop: {
             const a = flash.inset;
-            const r = flash.corner;
-            const w = flash.width;
-            const h = flash.height;
-            const arc = (x, y) => `A ${r} ${r} 0 0 1 ${x} ${y}`;
 
-            return `H ${w - a - r} ${arc(w - a, a + r)} V ${h - a - r} ${arc(w - a - r, h - a)} H ${a + r} ${arc(a, h - a - r)} V ${a + r} ${arc(a + r, a)}`;
+            return `H ${flash.width - a} V ${flash.height - a} H ${a} V ${a}`;
           }
           property real position: 0
           property real segment: 0
@@ -222,7 +215,7 @@ Scope {
             dashPattern: [flash.segment / bar.stroke, flash.perimeter * 2 / bar.stroke]
             dashOffset: (flash.perimeter * 2 + flash.segment - flash.position) / bar.stroke
 
-            PathSvg { path: `M ${flash.inset + flash.corner} ${flash.inset} ${flash.loop} ${flash.loop}` }
+            PathSvg { path: `M ${flash.inset} ${flash.inset} ${flash.loop} ${flash.loop}` }
           }
         }
       }

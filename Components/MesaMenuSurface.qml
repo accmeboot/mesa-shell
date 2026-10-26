@@ -124,8 +124,8 @@ PopupWindow {
   anchor.adjustment: PopupAdjustment.Flip | PopupAdjustment.Slide
   anchor.margins.top: root.submenu ? (ConfigService.bottom ? 0 : -ConfigService.popupInset) : (ConfigService.bottom ? -ConfigService.barPadding : 0)
   anchor.margins.bottom: root.submenu ? (ConfigService.bottom ? -ConfigService.popupInset : 0) : (ConfigService.bottom ? 0 : -ConfigService.barPadding)
-  anchor.margins.left: root.submenu ? -ConfigService.popupPadding : -background.flare
-  anchor.margins.right: root.submenu ? -ConfigService.popupPadding : -background.flare
+  anchor.margins.left: root.submenu ? -ConfigService.popupPadding : 0
+  anchor.margins.right: root.submenu ? -ConfigService.popupPadding : 0
   implicitWidth: background.implicitWidth
   implicitHeight: background.implicitHeight
   mask: Region { item: background.background }
@@ -152,7 +152,6 @@ PopupWindow {
     id: background
 
     anchors.fill: parent
-    attached: !root.submenu
     maximumWidth: ConfigService.panelMaxWidth
 
     contentItem: ColumnLayout {
@@ -174,7 +173,11 @@ PopupWindow {
           readonly property bool isInput: row.modelData.isInput ?? false
           readonly property real value: row.modelData.value ?? 0
           readonly property color surfaceColor: row.color
-          readonly property color foreground: row.modelData.enabled ? ThemeService.colors.foreground : ThemeService.disabled
+          readonly property color foreground: {
+            if (!row.modelData.enabled) return ThemeService.disabled;
+
+            return row.highlighted ? ThemeService.colors.background : ThemeService.colors.foreground;
+          }
 
           Layout.fillWidth: true
           implicitWidth: {
@@ -189,9 +192,8 @@ PopupWindow {
           }
           color: {
             if (row.modelData.isSeparator) return "transparent";
-            return row.highlighted ? ThemeService.selection : ThemeService.colors.background;
+            return row.highlighted ? ThemeService.colors.highlight : ThemeService.colors.background;
           }
-          radius: ConfigService.radius
 
           MesaSeparator {
             id: separator
@@ -224,8 +226,6 @@ PopupWindow {
                 visible: row.modelData.buttonType === QsMenuButtonType.RadioButton
                 checked: row.modelData.checkState === Qt.Checked
                 radio: true
-                color: row.foreground
-                backgroundColor: row.color
               }
 
               IconImage {
@@ -316,12 +316,11 @@ PopupWindow {
               visible: row.modelData.buttonType === QsMenuButtonType.CheckBox
               enabled: row.modelData.enabled
               checked: row.modelData.checkState === Qt.Checked
-              color: row.foreground
-              backgroundColor: row.color
             }
 
             MesaChevron {
               visible: row.modelData.hasChildren
+              color: row.foreground
             }
           }
 

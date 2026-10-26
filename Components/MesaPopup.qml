@@ -52,7 +52,7 @@ Scope {
       WlrLayershell.keyboardFocus: root.keyboardFocus
       WlrLayershell.namespace: root.namespace
 
-      readonly property real desiredLeft: root.anchorLeft - ConfigService.border - background.flare
+      readonly property real desiredLeft: root.anchorLeft - ConfigService.border
       readonly property bool opensRight: {
         if (root.direction !== "auto") return root.direction === "right";
 
@@ -89,7 +89,7 @@ Scope {
 
         if (window.opensRight || !root.anchorItem || available === 0) return 0;
 
-        const desired = available - root.anchorRight - ConfigService.border - background.flare;
+        const desired = available - root.anchorRight - ConfigService.border;
         const furthest = Math.max(0, available - background.implicitWidth);
 
         return Math.round(Math.max(0, Math.min(desired, furthest)));
@@ -172,7 +172,6 @@ Scope {
           anchors.right: parent.right
           anchors.top: ConfigService.bottom ? undefined : parent.top
           anchors.bottom: ConfigService.bottom ? parent.bottom : undefined
-          attached: true
           minimumWidth: root.minimumWidth
           maximumWidth: root.maximumWidth
 
